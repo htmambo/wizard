@@ -10,7 +10,7 @@ return [
     /**
      * 当前版本
      */
-    'version'          => '1.1.0',
+    'version'          => '1.2.0',
     /**
      * 版本检查
      */
@@ -42,6 +42,20 @@ return [
      * 是否启用文档评论功能
      */
     'reply_support'    => env('WIZARD_REPLY_SUPPORT', true),
+
+    /**
+     * CDN 加速
+     */
+    'cdn'              => [
+        /**
+         * 是否启用 CDN 加速
+         */
+        'enabled' => env('CDN_ENABLED', false),
+        /**
+         * CDN 服务器地址，比如七牛云，就用七牛云配置的融合CDN域名
+         */
+        'url'     => env('CDN_URL', 'http://cdn.example.com'),
+    ],
 
     /**
      * LDAP

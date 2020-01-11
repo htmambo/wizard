@@ -65,6 +65,7 @@ $.wz.mdEditor = function (editor_id, params) {
             jsonToTable: '从json创建表格',
             sqlToTable: '从SQL创建表格',
             sqlCreateBox: 'SQL建表语句',
+            mindMapping: '思维导图',
             confirmBtn: '确定',
             cancelBtn: '取消'
         }
@@ -94,13 +95,14 @@ $.wz.mdEditor = function (editor_id, params) {
                 "h2", "h3", "h4", "h5", "|",
                 "list-ul", "list-ol", "hr", "|",
                 "link", "image", "code", "code-block", "table", "pagebreak", "|",
-                "template", "jsonToTable", "sqlToTable", "sqlCreateBox", "|",
+                "template", "mindMapping", "jsonToTable", "sqlToTable", "sqlCreateBox", "|",
                 "watch", "preview", "fullscreen", "|",
                 "help"
             ];
         },
         toolbarIconTexts: {
             template: "模板",
+            mindMapping: '思维导图',
             jsonToTable: "JSON-&gt;表格",
             sqlToTable: "SQL-&gt;表格",
             sqlCreateBox: 'SQL建表语句',
@@ -120,6 +122,39 @@ $.wz.mdEditor = function (editor_id, params) {
 
                             cm.replaceSelection(config.templateSelected(this));
                             this.hide().lockScreen(false).hideMask();
+
+                            return false;
+                        }],
+
+                        cancel: [config.lang.cancelBtn, function () {
+                            this.hide().lockScreen(false).hideMask();
+
+                            return false;
+                        }]
+                    }
+                });
+            },
+            mindMapping: function(cm, icon, cursor, selection) {
+                this.createDialog({
+                    title: config.lang.mindMapping,
+                    width: '100%',
+                    height: '100%',
+                    content: '<iframe src="/mind-mapping/editor?readonly=0" frameborder="0" width="100%" height="' + (window.innerHeight - 140) + 'px" allowfullscreen="true" id="mind-mapping-editor"></iframe>',
+                    mask: true,
+                    drag: false,
+                    lockScreen: true,
+                    buttons: {
+                        enter: [config.lang.confirmBtn, function () {
+                            let self = this;
+                            let iframe = window.top.document.getElementById('mind-mapping-editor').contentWindow;
+                            if (iframe !== null && iframe !== undefined) {
+                                iframe.saveMindMapping(function (data) {
+                                    cm.replaceSelection("[" + data.name + "](" + data.url + "&readonly=true \"wizard-style:frame\")");
+                                    self.hide().lockScreen(false).hideMask();
+                                });
+                            } else {
+                                $.wz.message_failed('思维导图编辑器回调失败');
+                            }
 
                             return false;
                         }],
@@ -209,6 +244,7 @@ $.wz.mdEditor = function (editor_id, params) {
                 jsonToTable: config.lang.jsonToTable,
                 sqlToTable: config.lang.sqlToTable,
                 sqlCreateBox: config.lang.sqlCreateBox,
+                mindMapping: config.lang.mindMapping,
             }
         },
         onload: function () {
