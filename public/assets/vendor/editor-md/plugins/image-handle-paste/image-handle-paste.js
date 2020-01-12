@@ -28,28 +28,13 @@
                 //判断图片类型
                 if (items && items[0].type.indexOf('image') > -1) {
                     var file = items[0].getAsFile();
-                    /*生成blob
-                    var blobImg = URL.createObjectURL(file);
-                    */
-                    /*base64
-                    var reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = function (e) {
-                        var base64Img = e.target.result //图片的base64
-                    }
-                    */
                     // 创建FormData对象进行ajax上传
                     var forms = new FormData(document.forms[0]); //Filename
                     forms.append(classPrefix + "image-file", file, "file_"+Date.parse(new Date())+".png"); // 文件
-                    _this.executePlugin("imageDialog", "image-dialog/image-dialog");
                     _ajax(settings.imageUploadURL, forms, function(ret){
                         if(ret.success == 1){
-                            var dialog = $("." + classPrefix + "image-dialog");
-                            dialog.find("input[data-url]").val(ret.url);
-                            dialog.find('input[data-alt]').val('size:800,1000');
-                            //cm.replaceSelection("![](" + ret.url  + ")");
+                            cm.replaceSelection("![](" + ret.url  + ")");
                         }
-                        console.log(ret.message);
                     })
                 }
             })
