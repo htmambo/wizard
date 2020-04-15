@@ -874,6 +874,11 @@ tr.warning {
     margin-bottom: 10px;
 }
 
+.wz-comment-editor .wz-comment-editor-tip {
+    margin-left: 11px;
+    color: #6b6b6b;
+}
+
 .wz-comment-tip {
     display: none;
     position: absolute;
@@ -1366,4 +1371,21 @@ pre.prettyprint *,
 .markdown-body .wz-card-frame .card-header .card-header-title,
 .markdown-body .wz-card-frame .card-header .card-header-tool .bmd-btn-icon {
     line-height: 1.8;
+}
+
+.wz-new-project-box {
+    margin: 0;
+    padding: 0;
+}
+.wz-new-project-box  .wz-new-project-btn {
+    display: block;
+    color: #b8b8b8;
+    padding: 15px;
+    border-radius: 3px;
+    width: 100%;
+    text-align: center;
+}
+.wz-new-project-box .wz-new-project-btn:hover {
+    background: #eaeaea;
+    color: #545454;
 }

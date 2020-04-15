@@ -80,18 +80,12 @@
                 @if($type === 'table')
                     <textarea id="x-spreadsheet-content" class="d-none">{{ processSpreedSheet($pageItem->content) }}</textarea>
                     <div class="wz-spreadsheet">
-                        <div class="wz-spreadsheet-control">
-                            <button class="btn btn-primary wz-spreadsheet-mode pull-right" data-mode="photo">
-                                <i class="fa fa-clipboard" title="文本复制模式"></i>
-                            </button>
-                            <div class="clearfix"></div>
-                        </div>
                         <div id="x-spreadsheet"></div>
                     </div>
                 @endif
             </div>
 
-            <div class="text-center wz-panel-limit mt-3">~ END ~</div>
+            <div class="text-center wz-panel-limit mt-3 wz-content-end">~ END ~</div>
 
             @if(count($pageItem->attachments) > 0)
                 <div class="wz-attachments wz-panel-limit">
@@ -132,7 +126,7 @@
             <h1>{{ $project->name ?? '' }}</h1>
 
             <p class="wz-document-header wz-panel-limit">@lang('document.document_create_info', ['username' => $project->user->name, 'time' => $project->created_at])</p>
-            <p class="wz-panel-limit">{{ $project->description ?? '' }}</p>
+            <p class="wz-panel-limit wz-project-description">{{ $project->description ?? '' }}</p>
 
             @if (!Auth::guest())
                 <div class="wz-recently-log wz-panel-limit">
