@@ -92,7 +92,7 @@ function navigator(
             'id'         => (int)$page->id,
             'name'       => $page->title,
             'pid'        => (int)$page->pid,
-            'url'        => route('project:home', ['id' => $projectID, 'p' => $page->id]),
+            'url'        => wzRoute('project:home', ['id' => $projectID, 'p' => $page->id]),
             'selected'   => $pageID === (int)$page->id,
             'type'       => documentType($page->type),
             'created_at' => $page->created_at,
@@ -692,7 +692,7 @@ function convertSqlTo(string $sql, $callback)
 function processSpreedSheet(string $content): string
 {
     if (empty($content)) {
-        $content = '[]';
+        $content = '[{"name":"sheet1","cols":{"len":25},"rows":{"len":100}}]';
     }
 
     $minRow = config('wizard.spreedsheet.min_rows');
