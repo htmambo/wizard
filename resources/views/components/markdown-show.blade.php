@@ -37,6 +37,7 @@
         }
         editormd.markdownToHTML('markdown-body', {
             tocm: true,
+            toc: true,
             tocDropdown: false,
             markdownSourceCode: true,
             taskList: true,
