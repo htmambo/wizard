@@ -20,14 +20,16 @@
 
 /* Custom page footer */
 .footer {
-    padding-top: 19px;
+    padding-top: 5px;
     padding-left: 20px !important;
     text-align: center;
     color: #777;
     border-top: 1px solid #e5e5e5;
     padding-bottom: 5px;
 }
-
+.footer p {
+    margin: 0;
+}
 .btn:hover {
     transform: scale(1.1);
 }
@@ -76,7 +78,7 @@ form {
 
 @media screen and (min-width: 768px) {
     .wz-main-container-full {
-        padding: 0 15px 15px;
+        padding: 0 15px;
     }
 }
 
@@ -416,12 +418,11 @@ a:hover {
 }
 
 .wz-edit-control {
-    margin-bottom: 15px;
-
+    margin-bottom: 5px;
     position: relative;
     border: 1px dashed #ccc;
     background: #f3f3f3;
-    padding: 20px;
+    padding: 5px;
 }
 
 .wz-edit-btn-group {
@@ -560,9 +561,8 @@ a:hover {
 
 
 #scrollUp {
-    bottom: 20px;
+    bottom: 5px;
     right: 20px;
-    padding: 10px 20px;
 }
 
 .layui-layer-msg {
@@ -1253,7 +1253,8 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
 .wz-document-form .form-group {
     float: left;
     width: 40%;
-    margin-right: 30px;
+    margin-right: 10px;
+    margin-bottom: 5px;
 }
 
 .wz-document-form .wz-document-form-select {

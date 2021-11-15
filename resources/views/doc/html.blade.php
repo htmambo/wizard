@@ -35,7 +35,8 @@
             editor.config.onchange = function (html) {
                 $text1.val(html);
             }
-            editor.config.height = window.innerHeight - $('.footer').height() - 80;
+	    // 编辑器工具栏高度：42，底部：35
+            editor.config.height = window.innerHeight - 77;
             editor.create();
             $text1.val(editor.txt.html());
             $.global.markdownEditor = editor;
