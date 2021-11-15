@@ -35,7 +35,7 @@
             editor.config.onchange = function (html) {
                 $text1.val(html);
             }
-            editor.config.height = window.innerHeight;
+            editor.config.height = window.innerHeight - $('.footer').height() - 80;
             editor.create();
             $text1.val(editor.txt.html());
             $.global.markdownEditor = editor;
