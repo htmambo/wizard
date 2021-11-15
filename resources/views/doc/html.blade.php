@@ -29,15 +29,15 @@
     <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/wangEditor.min.js') }}?{{ resourceVersion() }}"></script>
     <script type="text/javascript">
         $(function () {
-    const E = window.wangEditor
-    const editor = new E('#editormd')
-    const $text1 = $('#content')
-    editor.config.onchange = function (html) {
-        $text1.val(html)
-    }
-    editor.create()
-
-    $text1.val(editor.txt.html())
+            const E = window.wangEditor;
+            const editor = new E('#editormd');
+            const $text1 = $('#content');
+            editor.config.onchange = function (html) {
+                $text1.val(html);
+            }
+            editor.config.height = window.innerHeight;
+            editor.create();
+            $text1.val(editor.txt.html());
             $.global.markdownEditor = editor;
 
             $.global.getEditorContent = function () {
