@@ -802,6 +802,10 @@ a:hover {
     max-width: 1100px;
 }
 
+.wz-panel-limit img {
+    max-width: 100%;
+}
+
 .layui-layer-btn .layui-layer-btn0, .layui-layer-btn .layui-layer-btn1, .layui-layer-btn .layui-layer-btn2 {
     color: #fff !important;
     background-color: #009688;
