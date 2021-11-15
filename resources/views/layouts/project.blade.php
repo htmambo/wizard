@@ -21,7 +21,10 @@
                         <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="new-document" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="material-icons" data-toggle="tooltip" title="创建文档">add_to_photos</i>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-left" aria-labelledby="new-document" style="min-width: 13rem;">
+                        <ul class="dropdown-menu dropdown-menu-left" aria-labelledby="new-document" style="min-width: 13rem; overflow: hidden;">
+                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'html', 'pid' => $pageID]) !!}" class="dropdown-item">
+                                <i class="fa fa-book mr-2"></i> 创建 @lang('common.html')
+                            </a>
                             <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'pid' => $pageID]) !!}" class="dropdown-item">
                                 <i class="fa fa-book mr-2"></i> 创建 @lang('common.markdown')
                             </a>

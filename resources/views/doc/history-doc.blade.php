@@ -46,6 +46,9 @@
             </table>
         </div>
         <div class="markdown-body wz-panel-limit" id="markdown-body">
+            @if($type == 'html')
+                {{ print_r($history->content) }}
+            @endif
             @if($type == 'markdown')
                 <textarea id="append-test" style="display:none;">{{ $history->content }}</textarea>
             @endif

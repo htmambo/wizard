@@ -94,6 +94,9 @@
             @endif
 
             <div class="markdown-body wz-panel-limit {{ $type == 'markdown' ? 'wz-markdown-style-fix' : '' }}" id="markdown-body">
+                @if($type == 'html')
+                    {!! $pageItem->content !!}
+                @endif
                 @if($type === 'markdown')
                     <textarea class="d-none wz-markdown-content">{{ processMarkdown($pageItem->content ?? '') }}</textarea>
                 @endif

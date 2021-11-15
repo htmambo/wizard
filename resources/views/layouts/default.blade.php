@@ -146,7 +146,22 @@
                 }
 
                 var minHeight = (window_height > frame_height ? window_height : frame_height) + "px";
-                $($('.wz-panel-right').length ? '.wz-panel-right' : '.wz-body').css('min-height', minHeight);
+
+                let h = $(window).height() - $('.footer').height() - 25;
+                if($('.wz-left-nav').length) {
+                    let pos=$('.wz-left-nav').offset();
+                    $('.wz-left-nav').height(h - pos.top).css({'overflow-y':'auto'});
+                }
+                if($('.wz-panel-right').length) {
+                    pos = $('.wz-panel-right').offset();
+                    let w = $(window).width() - pos.left + 'px';
+                    $('.wz-panel-breadcrumb').css({'height':'58px', 'width':w,'position':'fixed', 'z-index':'999999'});
+                    $('.wz-project-main').first().css({'padding-top':'68px'});
+                    $('.wz-panel-right').height(h - pos.top).css({'overflow-y':'auto'});
+                } else {
+                    $('.wz-body').css('min-height', minHeight);
+                }
+
 
                 $.global.windowResize();
                 $.global.panel_height = minHeight;

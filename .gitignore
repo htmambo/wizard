@@ -16,3 +16,16 @@ yarn-error.log
 /old2
 custom/
 composer.lock
+@eaDir
+.DS_Store
+.user.ini
+/.htaccess
+/404.html
+/index.html
+/public/.well-known/
+/public/0781-5567-0001-320113114592.key
+/public/6f7215d2bba32a2ff8f9cb30e56f799f.log
+/public/builds/
+/public/ip.php
+/public/test.php
+/public/wework.php

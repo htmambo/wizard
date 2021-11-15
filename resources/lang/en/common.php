@@ -8,6 +8,7 @@
 
 return [
     'document'   => 'Document',
+    'html'        => 'HTML',
     'swagger'    => 'Swagger API',
     'project'    => 'Project',
     'user_home'  => 'Home',

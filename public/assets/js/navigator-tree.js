@@ -102,7 +102,7 @@ $.wz.navigator_tree = function (left_nav, mode) {
     // 当前选中元素的下级元素自动展开
     childrenShow(left_nav.find('li.active'));
     left_nav.find('li:not(.wz-has-child)').map(function () {
-        var nav_icon = ($(this).data('type') === 'swagger' ? 'fa-code' : ($(this).data('type') === 'markdown' ? 'fa-file-text-o' : 'fa-table'));
+        var nav_icon = ($(this).data('type') === 'swagger' ? 'fa-code' : ($(this).data('type') === 'markdown' ? 'fa-file-text-o' : ($(this).data('type') === 'html' ? 'fa-html5' : 'fa-table')));
         $(this).prepend('<a class="fa ' + nav_icon + ' wz-nav-fold" href="javascript:;"></a>');
     });
 

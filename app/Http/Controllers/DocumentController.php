@@ -29,6 +29,7 @@ class DocumentController extends Controller
 {
 
     protected $types = [
+        Document::TYPE_HTML    => 'html',
         Document::TYPE_DOC     => 'markdown',
         Document::TYPE_SWAGGER => 'swagger',
         Document::TYPE_TABLE   => 'table',
@@ -48,7 +49,7 @@ class DocumentController extends Controller
     {
         $this->validate(
             $request,
-            ['type' => 'in:swagger,markdown,table', 'pid' => 'integer|min:0']
+            ['type' => 'in:swagger,markdown,table,html', 'pid' => 'integer|min:0']
         );
 
         /** @var Project $project */
@@ -112,7 +113,7 @@ class DocumentController extends Controller
             [
                 'project_id' => "required|integer|min:1|in:{$id}|project_exist",
                 'title'      => 'required|between:1,255',
-                'type'       => 'required|in:markdown,swagger,table',
+                'type'       => 'required|in:markdown,swagger,table,html',
                 'pid'        => 'integer|min:0',
                 'sort_level' => 'integer',
                 'sync_url'   => 'nullable|url',
@@ -236,6 +237,12 @@ class DocumentController extends Controller
             }
 
             $content = $this->processTableRequest($content);
+        } else if ($pageItem->isMarkdown()) {
+            //简介信息
+            $content_html = $request->input('editormd-html-code', '');
+            if($content_html) {
+                $pageItem->description = mb_substr(strip_tags($content_html), 0, 300);
+            }
         }
 
         $this->authorize('page-edit', $pageItem);

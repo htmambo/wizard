@@ -66,6 +66,7 @@ class Document extends Repository
 
     use SoftDeletes;
 
+    const TYPE_HTML    = 0;
     const TYPE_DOC     = 1;
     const TYPE_SWAGGER = 2;
     const TYPE_TABLE   = 3;

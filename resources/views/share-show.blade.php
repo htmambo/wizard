@@ -11,6 +11,9 @@
     <hr />
 </nav>
 <div class="markdown-body" id="markdown-body">
+    @if($type == 'html')
+        {{ print_r($pageItem->content) }}
+    @endif
     @if($type == 'markdown')
         <textarea id="append-test" style="display:none;">{{ $pageItem->content }}</textarea>
     @endif

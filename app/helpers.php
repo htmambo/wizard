@@ -43,6 +43,7 @@ function wzRoute($name, $parameters = [], $absolute = false)
 function documentType($type): string
 {
     $types = [
+        Document::TYPE_HTML    => 'html',
         Document::TYPE_DOC     => 'markdown',
         Document::TYPE_SWAGGER => 'swagger',
         Document::TYPE_TABLE   => 'table',

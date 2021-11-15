@@ -3427,14 +3427,6 @@
 
             var headingHTML = "<h" + level + " id=\"h" + level + "-" + this.options.headerPrefix + id + "\">";
 
-            // Wizard 添加样式 START
-            if (level === 2) {
-                headingHTML += "<i class='fa fa-thumb-tack mr-2'></i>";
-            } else if (level === 1) {
-                headingHTML += "<i class='fa fa-slack mr-2'></i>";
-            }
-
-            // Wizard 添加样式 END
             headingHTML += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
             headingHTML += "<span class=\"header-link octicon octicon-link\"></span>";
             headingHTML += (hasLinkReg) ? this.atLink(this.emoji(linkText)) : this.atLink(this.emoji(text));
