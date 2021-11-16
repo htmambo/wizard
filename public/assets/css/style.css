@@ -1251,22 +1251,20 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
 
 
 .wz-document-form {
-    max-width: 80%;
 }
 
 .wz-document-form .form-group {
     float: left;
-    width: 40%;
+    width: 45%;
     margin-right: 10px;
     margin-bottom: 5px;
 }
 
 .wz-document-form .wz-document-form-select {
-    width: 90%;
+    width: calc( 90% + 10px );
 }
 
 .wz-document-form .wz-document-form-select select {
-    max-width: 300px;
 }
 
 /* 顶部搜索 */

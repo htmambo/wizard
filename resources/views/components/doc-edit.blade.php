@@ -55,7 +55,7 @@
                 @endif
             </div>
         </div>
-        <div class="pull-left wz-document-form">
+        <div class="pull-left wz-document-form" style="width: calc( 100% - 95px);">
             <div class="form-group wz-document-form-select">
                 <label for="form-pid" class="bmd-label-static">上级页面</label>
                 <select class="form-control" name="pid" id="form-pid">
@@ -64,16 +64,21 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="editor-title" class="bmd-label-static">@lang('document.title')</label>
-                <input type="text" class="form-control wz-input-long" name="title" id="editor-title"
-                       value="{{ $pageItem->title ?? '' }}">
-            </div>
-
             @if($type === 'swagger')
+                <div class="form-group">
+                    <label for="editor-title" class="bmd-label-static">@lang('document.title')</label>
+                    <input type="text" class="form-control wz-input-long" name="title" id="editor-title"
+                           value="{{ $pageItem->title ?? '' }}">
+                </div>
                 <div class="form-group">
                     <label for="form-sync-url" class="bmd-label-static">文档同步地址</label>
                     <input type="text" class="form-control wz-input-long" name="sync_url" id="editor-sync_url" value="{{ $pageItem->sync_url ?? '' }}" placeholder="http://"/>
+                </div>
+            @else
+                <div class="form-group wz-document-form-select">
+                    <label for="editor-title" class="bmd-label-static">@lang('document.title')</label>
+                    <input type="text" class="form-control wz-input-long" name="title" id="editor-title"
+                           value="{{ $pageItem->title ?? '' }}">
                 </div>
             @endif
         </div>

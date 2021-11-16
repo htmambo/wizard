@@ -147,7 +147,7 @@
 
                 var minHeight = (window_height > frame_height ? window_height : frame_height) + "px";
 
-                let h = $(window).height() - $('.footer').height() - 5;
+                let h = $(window).height() - $('.footer').outerHeight();
                 if($('.wz-left-nav').length) {
                     let pos=$('.wz-left-nav').offset();
                     $('.wz-left-nav').height(h - pos.top).css({'overflow-y':'auto'});
