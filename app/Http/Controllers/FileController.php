@@ -14,6 +14,11 @@ use Illuminate\Http\Request;
 class FileController extends Controller
 {
     /**
+     * 主要是给处理一下不同的上传组件所需要的数据格式
+     * @var string
+     */
+    private $uploadFrom = '';
+    /**
      * 上传图片文件
      *
      * @param Request $request
@@ -22,6 +27,7 @@ class FileController extends Controller
      */
     public function imageUpload(Request $request)
     {
+        $this->uploadFrom = $request->input('from');
         $file = $request->file('editormd-image-file');
         if (!$file->isValid()) {
             return $this->response(false,
@@ -38,11 +44,25 @@ class FileController extends Controller
 
     private function response(bool $isSuccess, string $message, $url = null)
     {
-        return [
+        $result = [
             'success' => $isSuccess ? 1 : 0,
             'message' => $message,
             'url'     => $url,
         ];
+        if($this->uploadFrom == 'wangEditor') {
+            $result = [
+                'errno' => $isSuccess ? 0 : 1,
+                'message' => $message,
+                'data' => [
+                    [
+                        'url' => $url,
+                        'alt' => '',
+                        'href' => ''
+                    ]
+                ]
+            ];
+        }
+        return $result;
     }
 
 }

@@ -37,6 +37,12 @@
             }
             // 编辑器工具栏高度：42，底部：35
             editor.config.height = window.innerHeight - 77;
+	    editor.config.uploadImgServer = '/upload';
+            editor.config.uploadFileName = 'editormd-image-file';
+            editor.config.uploadImgMaxLength = 1;
+            editor.config.uploadImgParams = {
+                from: 'wangEditor'
+            };
             editor.create();
             $text1.val(editor.txt.html());
             $.global.markdownEditor = editor;
