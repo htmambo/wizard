@@ -162,7 +162,9 @@
                     $('.wz-body').css('min-height', minHeight);
                 }
 
-
+                if($('.w-e-text-container').length) {
+                    $('.w-e-text-container').height(window.innerHeight-$('.footer').outerHeight()-$('.w-e-toolbar').outerHeight());
+                }
                 $.global.windowResize();
                 $.global.panel_height = minHeight;
             };
