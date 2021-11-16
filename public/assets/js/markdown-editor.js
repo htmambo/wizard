@@ -81,7 +81,7 @@ $.wz.mdEditor = function (editor_id, params) {
     var mdEditor = editormd(editor_id, {
         saveHTMLToTextarea: true,
         path: "/assets/vendor/editor-md/lib/",
-        height: 800,
+        height: window.innerHeight - 35,        //底部：35
         taskList: true,
         tex: true,
         toc: true,
