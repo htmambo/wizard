@@ -137,15 +137,6 @@
         </div>
         @include('components.doc-compare-script')
     @endif
-
-    <div class="wz-version-suggest">
-        <ul class="wz-version-suggest-items">
-            <li>1. 增加配置项 <a href="https://github.com/mylxsw/wizard/wiki/%E9%9A%90%E8%97%8F%E5%8A%9F%E8%83%BD%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E#%E5%90%AF%E7%94%A8%E4%B8%A5%E6%A0%BC%E7%9A%84-markdown-%E6%A0%BC%E5%BC%8F">WIZARD_MARKDOWN_STRICT</a> 来控制是否启用 Markdown 文档的兼容模式</li>
-            <li>2. 增加配置项 <a href="https://github.com/mylxsw/wizard/wiki/%E9%9A%90%E8%97%8F%E5%8A%9F%E8%83%BD%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E#markdown-%E6%96%87%E6%A1%A3%E8%87%AA%E5%8A%A8%E6%B7%BB%E5%8A%A0%E7%9B%AE%E5%BD%95">WIZARD_MARKDOWN_TOC_DEFAULT</a> 来控制是否为 Markdown 文档自动添加目录</li>
-            <li>3. Markdown 文档中，引用块样式调整，恢复默认样式；去掉图片的阴影，避免图片和正文看起来有种违和感</li>
-        </ul>
-    </div>
-
 @endsection
 
 @push('script')
@@ -190,29 +181,4 @@
             });
         </script>
     @endif
-
-    <script>
-        // 新版本更新时，弹出版本更新内容提示框，告知用户更新了哪些内容
-        $(function () {
-            var currentVersion = '{{ config('wizard.version') }}';
-            var storedVersion = store.get('feature_suggest');
-
-            if (currentVersion !== storedVersion) {
-                window.setTimeout(function () {
-                    layer.open({
-                        type: 1,
-                        title: 'v' + currentVersion + '更新内容',
-                        shade: false,
-                        skin: 'layui-layer-molv',
-                        offset: 'rb',
-                        content: $('.wz-version-suggest').html(),
-                        area: ['420px'],
-                        cancel: function () {
-                            store.set('feature_suggest', currentVersion);
-                        }
-                    });
-                }, 500);
-            }
-        });
-    </script>
 @endpush
