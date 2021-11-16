@@ -1502,3 +1502,6 @@ pre.prettyprint *,
         display: none;
     }
 }
+.editormd {
+    margin: 0 auto;
+}
