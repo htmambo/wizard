@@ -90,7 +90,7 @@
 
                     var contentBody = $('#markdown-body').clone();
                     contentBody.find('textarea').remove();
-
+                    contentBody.find('div.markdown-toc').remove();
                     $.wz.dynamicFormSubmit(
                         'generate-pdf-{{ $pageItem->id }}',
                         'POST',
