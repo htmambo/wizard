@@ -422,7 +422,7 @@ a:hover {
     position: relative;
     border: 1px dashed #ccc;
     background: #f3f3f3;
-    padding: 5px;
+    padding: 0 5px;
 }
 
 .wz-edit-btn-group {
