@@ -84,8 +84,10 @@
 
                     var contentBody = $('#markdown-body').clone();
                     contentBody.find('textarea').remove();
+                    contentBody.find('.bmd-form-group').remove();
                     //移除可能配置了的目录
-                    contentBody.find('div.markdown-toc').remove();
+                    contentBody.find('.editormd-toc-menu').remove();
+                    contentBody.find('br').first().remove();
                     //移除可能存在的SQL_CREATE的多余部分
                     if($('.wz-sql-create').length) {
                         contentBody.find('nav').remove();
