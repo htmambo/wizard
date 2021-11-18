@@ -194,15 +194,15 @@ a:hover {
 }
 
 .wz-project-title {
-    padding-top: 20px;
-    padding-left: 20px;
+    padding-top: 10px;
+    padding-left: 10px;
     font-size: 18px;
     position: relative;
 }
 
 .wz-project-title > .dropdown {
     position: absolute;
-    top: 20px;
+    top: 10px;
     right: 0;
     width: 145px;
     text-align: right;
