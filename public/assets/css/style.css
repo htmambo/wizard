@@ -416,7 +416,7 @@ a:hover {
 .wz-page-control {
     margin-bottom: 10px;
 }
-.nav .nav-pills .pull-right {
+.nav.nav-pills.pull-right {
     padding-top: 10px;
 }
 .wz-edit-control {
