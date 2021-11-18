@@ -98,7 +98,7 @@
                     var tags = [];
                     $('.tm-tag').each(function(a,b){tags.push($(b).text());})
                     if(tags.length) {
-                        tags = '<h3>' + tags.join(',') + '</h3>';
+                        tags = '<span>' + tags.join(',') + '</span>';
                         contentBody.prepend(tags);
                     }
                     //标题
