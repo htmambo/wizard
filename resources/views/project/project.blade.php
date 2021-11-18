@@ -1,6 +1,7 @@
 @extends('layouts.project')
 @section('page-content')
     @if($pageID !== 0)
+        @include('components.page-menus-export', ['project' => $project, 'pageItem' => $pageItem])
         <div class="wz-panel-breadcrumb">
             <ol class="breadcrumb pull-left">
                 <li class="breadcrumb-item"><a href="{{ wzRoute('home') }}">首页</a></li>
@@ -40,7 +41,6 @@
                         <span class="fa fa-laptop"></span>
                     </button>
                 </li>
-                @include('components.page-menus-export', ['project' => $project, 'pageItem' => $pageItem])
                 @include('components.page-menus', ['project' => $project, 'pageItem' => $pageItem])
             </ul>
             <div class="clearfix"></div>
