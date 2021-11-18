@@ -92,9 +92,10 @@
                     contentBody.find('textarea').remove();
                     //移除可能配置了的目录
                     contentBody.find('div.markdown-toc').remove();
-                    //移除可能存在的SQL_CREATE
+                    //移除可能存在的SQL_CREATE的多余部分
                     contentBody.find('nav').remove();
-                    contentBody.find('tab-pane').addClass('show').addClass('active');
+                    contentBody.find('.tab-pane.show').removeClass('tab-pane');
+                    contentBody.find('.tab-pane').remove();
                     //标签
                     var tags = [];
                     $('.tm-tag').each(function(a,b){tags.push($(b).text());})
