@@ -90,7 +90,10 @@
 
                     var contentBody = $('#markdown-body').clone();
                     contentBody.find('textarea').remove();
+                    //移除可能配置了的目录
                     contentBody.find('div.markdown-toc').remove();
+                    //添加标题
+                    contentBody.prepend($('h1.wz-page-title'));
                     $.wz.dynamicFormSubmit(
                         'generate-pdf-{{ $pageItem->id }}',
                         'POST',
