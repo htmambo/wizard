@@ -139,14 +139,6 @@
         window.setTimeout(function () {
             // 重置窗口大小，避免内容过少无法撑开页面
             var resize_window = function () {
-                var window_height = $(window).height() - $('.wz-top-navbar').height() - $('.footer').height() - 82;
-                var frame_height = $('.wz-main-container').height();
-                if (frame_height === null) {
-                    frame_height = $('.wz-main-container-full').height();
-                }
-
-                var minHeight = (window_height > frame_height ? window_height : frame_height) + "px";
-
                 let h = $(window).height() - $('.footer').outerHeight();
                 if($('.wz-left-nav').length) {
                     let pos=$('.wz-left-nav').offset();
@@ -161,10 +153,24 @@
                 } else {
                     $('.wz-body').css('min-height', minHeight);
                 }
-
+                // 当前页面中是否有 wangEditor 编辑器存在
                 if($('.w-e-text-container').length) {
                     $('.w-e-text-container').height(window.innerHeight-$('.footer').outerHeight()-$('.w-e-toolbar').outerHeight());
                 }
+                // 当前页面中是否有 editorMd 编辑器存在
+                if($('#editormd').length) {
+                    $('#editormd').height(window.innerHeight-$('.footer').outerHeight());
+                    $('.CodeMirror').height(window.innerHeight-$('.footer').outerHeight() - $('.editormd-toolbar').innerHeight() - 1);
+                    $('.editormd-preview').height(window.innerHeight-$('.footer').outerHeight() - $('.editormd-toolbar').innerHeight() - 1);
+                }
+
+                var window_height = $(window).height() - $('.wz-top-navbar').height() - $('.footer').height() - 82;
+                var frame_height = $('.wz-main-container').height();
+                if (frame_height === null) {
+                    frame_height = $('.wz-main-container-full').height();
+                }
+                var minHeight = (window_height > frame_height ? window_height : frame_height) + "px";
+
                 $.global.windowResize();
                 $.global.panel_height = minHeight;
             };
