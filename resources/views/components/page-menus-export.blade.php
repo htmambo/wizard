@@ -93,7 +93,11 @@
                     //移除可能配置了的目录
                     contentBody.find('div.markdown-toc').remove();
                     //添加标题
-                    contentBody.prepend($('h1.wz-page-title'));
+                    var tags = $('.wz-tags').clone();
+                    tags.find('.bmd-form-group').remove();
+                    contentBody.prepend(tags);
+                    var title = $('h1.wz-page-title').clone();
+                    contentBody.prepend(title);
                     $.wz.dynamicFormSubmit(
                         'generate-pdf-{{ $pageItem->id }}',
                         'POST',
