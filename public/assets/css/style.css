@@ -1503,3 +1503,6 @@ pre.prettyprint *,
 .editormd {
     margin: 0 auto !important;
 }
+.modal-content {
+    z-index: 999999;
+}

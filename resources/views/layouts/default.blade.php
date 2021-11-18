@@ -147,7 +147,7 @@
                 if($('.wz-panel-breadcrumb').length) {
                     pos = $('.wz-panel-right').offset();
                     let w = $(window).width() - pos.left + 'px';
-                    $('.wz-panel-breadcrumb').css({'height':'48px', 'width':w,'position':'fixed', 'z-index':'999999'});
+                    $('.wz-panel-breadcrumb').css({'height':'48px', 'width':w,'position':'fixed', 'z-index':'99'});
                     $('.wz-project-main').first().css({'padding-top':'58px'});
                     $('.wz-panel-right').height(h - pos.top).css({'overflow-y':'auto'});
                 } else {
