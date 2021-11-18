@@ -762,7 +762,7 @@ a:hover {
     position: fixed;
     right: 40px;
     top: 20px;
-    z-index: 9999;
+    z-index: 99;
 }
 
 #wz-toc-container ul {
@@ -1502,7 +1502,4 @@ pre.prettyprint *,
 }
 .editormd {
     margin: 0 auto !important;
-}
-.modal-content {
-    z-index: 999999;
 }
