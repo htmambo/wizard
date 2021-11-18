@@ -35,10 +35,14 @@
                         </button>
                     </li>
                 @endif
-
                 <li role="presentation" class="mr-2">
                     <button type="button" data-href="{{ wzRoute('project:doc:read', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}" data-toggle="tooltip" title="阅读模式" class="btn btn-primary bmd-btn-icon">
                         <span class="fa fa-laptop"></span>
+                    </button>
+                </li>
+                <li role="presentation" class="mr-2">
+                    <button type="button" data-toggle="modal" data-target="#wz-export" title="导出文件" class="btn btn-primary bmd-btn-icon" id="wz-export-trigger">
+                        <span class="fa fa-download" data-toggle="tooltip" title="导出为"></span>
                     </button>
                 </li>
                 @include('components.page-menus', ['project' => $project, 'pageItem' => $pageItem])
