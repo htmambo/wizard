@@ -93,9 +93,12 @@
                     //移除可能配置了的目录
                     contentBody.find('div.markdown-toc').remove();
                     //标签
-                    var tags = $('.wz-tags').clone();
-                    tags.find('.bmd-form-group').remove();
-                    contentBody.prepend(tags);
+                    var tags = [];
+                    $('.tm-tag').each(function(a,b){tags.push($(b).text());})
+                    if(tags.length) {
+                        tags = '<h3>' + tags.join(',') + '</h3>';
+                        contentBody.prepend(tags);
+                    }
                     //标题
                     var title = $('h1.wz-page-title').clone();
                     contentBody.prepend(title);
