@@ -103,6 +103,6 @@ class ExportController extends Controller
             $mpdf->WriteHTML('<p class="pdf-error">部分文档生成失败</p>');
         }
 
-        $mpdf->Output();
+        $mpdf->Output($title . '.pdf', 'I');
     }
 }
