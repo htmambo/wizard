@@ -59,11 +59,20 @@
 
             // TOC导航插入到侧边随滚动展示
             var tocElement = $('.markdown-body > .markdown-toc');
-            if (tocElement.length < 1) {
+            var html;
+            if (tocElement.length > 0) {
+                html = tocElement.html();
+            } else {
+                tocElement = $('.markdown-body').find('.markdown-toc').children();
+                if(tocElement.length < 1) {
+                    return ;
+                }
+                html = '<ul>' + tocElement.html().replace('<ul>','').replace('</ul>', '') + '</ul>';
+            }
+            if (html.length < 20) {
                 return ;
             }
-
-            $('body').append('<div id="wz-toc-container" class="d-none"><span class="fa fa-th-list"></span>' + tocElement.html() + '</div>');
+            $('body').append('<div id="wz-toc-container" class="d-none"><span class="fa fa-th-list"></span>' + html + '</div>');
 
             $('.wz-panel-right').scroll(function () {
                 var tocContainer = $('#wz-toc-container');

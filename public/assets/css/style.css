@@ -760,8 +760,8 @@ a:hover {
 
 #wz-toc-container {
     position: fixed;
-    right: 40px;
-    top: 20px;
+    right: 10px;
+    top: 120px;
     z-index: 99;
 }
 
