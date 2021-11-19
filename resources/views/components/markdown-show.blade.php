@@ -67,6 +67,7 @@
                 if(tocElement.length < 1) {
                     return ;
                 }
+                tocElement.children().first().remove();
                 html = '<ul>' + tocElement.html().replace('<ul>','').replace('</ul>', '') + '</ul>';
             }
             if (html.length < 20) {
