@@ -3374,8 +3374,17 @@
             }
 
             // Wizard 功能增强 END
-            // TODO 需要处理一下链接是否要强制新页面打开
+            // 检测到外部链接时使用新窗口打开
+            var hosturl = window.location.protocol+'//'+window.location.hostname+'/';
+            var host = window.location.hostname.split('.');
+            if(host.length>2 && host[host.length-2].length>3) {
+                host = host.slice(host.length - 2).join('.')
+            }
+            var ud = new URL(href, hosturl);
             var out = "<a href=\"" + href + "\"";
+            if(ud.hostname.indexOf(host)==-1){
+                out += " target=\"_blank\"";
+            }
 
             if (atLinkReg.test(title) || atLinkReg.test(text)) {
                 if (title) {
