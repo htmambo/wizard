@@ -31,7 +31,7 @@ class ShareController extends Controller
         $share = PageShare::where('code', $hash)->firstOrFail();
 
         $projectId = $share->project_id;
-        $pageId = $share->page_id;
+        $pageId    = $share->page_id;
 
         /** @var Project $project */
         $project = Project::with([
@@ -42,6 +42,26 @@ class ShareController extends Controller
 
         $page = Document::where('project_id', $projectId)->where('id', $pageId)->firstOrFail();
         $type = $page->type == Document::TYPE_DOC ? 'markdown' : 'swagger';
+        /**
+         * 检查一下当前分享是否需要使用密码打开
+         */
+        if ($share->password) {
+            $inppwd = $request->input('password');
+            if (!$inppwd) {
+                $inppwd = cookie('share-page-' . $share->id);
+            }
+            if (!$inppwd || $share->password != $inppwd) {
+                return view('share-password', [
+                    'project'  => $project,
+                    'pageItem' => $page,
+                    'type'     => $type,
+                    'code'     => $hash,
+                    'noheader' => true,
+                ]);
+            } else {
+                cookie('share-page-' . $share->id, $inppwd);
+            }
+        }
 
         return view('share-show', [
             'project'  => $project,
@@ -71,8 +91,8 @@ class ShareController extends Controller
         $this->authorize('page-share', $page_id);
 
         PageShare::where('project_id', $project_id)
-                 ->where('page_id', $page_id)
-                 ->delete();
+            ->where('page_id', $page_id)
+            ->delete();
 
         $this->alertSuccess('取消分享成功');
         return [];
@@ -94,20 +114,22 @@ class ShareController extends Controller
             ['page_id' => $page_id,],
             ['page_id' => "required|page_exist:{$project_id}",]
         );
+        $password = $request->input('password');
 
         $this->authorize('page-share', $page_id);
 
         $share = PageShare::where('project_id', $project_id)
-                          ->where('page_id', $page_id)
-                          ->where('user_id', \Auth::user()->id)
-                          ->first();
+            ->where('page_id', $page_id)
+            ->where('user_id', \Auth::user()->id)
+            ->first();
         if (empty($share)) {
-            $code = sha1("{$project_id}-{$page_id}-" . microtime() . rand(0, 9999999999));
+            $code  = sha1("{$project_id}-{$page_id}-" . microtime() . rand(0, 9999999999));
             $share = PageShare::create([
                 'code'       => $code,
                 'project_id' => $project_id,
                 'page_id'    => $page_id,
                 'user_id'    => \Auth::user()->id,
+                'password'   => $password,
             ]);
         }
 

@@ -40,6 +40,7 @@ Route::group(['middleware' => 'locale'], function () {
 
         // 分享页面
         Route::get('/s/{hash}', 'ShareController@page')->name('share:show');
+        Route::post('/s/{hash}', 'ShareController@page')->name('share:show');
         // 用户账号激活
         Route::get('/user/activate', 'UserController@activate')->name('user:activate');
 

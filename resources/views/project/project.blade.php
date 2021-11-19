@@ -77,6 +77,11 @@
                                 或者
                             @endcan
                             <a target="_blank" class="btn btn-primary btn-link" href="{{ wzRoute('share:show', ['hash' => $share->code]) }}">打开分享链接</a>
+                            @can('page-edit', $pageItem)
+                                @if($share->password)
+                                    分享密钥：<span>{{ $share->password  }}</span>
+                                @endif
+                            @endcan
                         </p>
                     @endif
 

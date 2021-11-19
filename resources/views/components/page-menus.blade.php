@@ -86,9 +86,31 @@
             @can('page-edit', $pageItem)
             $('a[wz-share]').on('click', function (e) {
                 e.preventDefault();
-
                 var $this = $(this);
-
+                layer.open({
+                    title: '确定要为该文档创建分享链接?',
+                    area: ['300px', '240px'],
+                    btnAlign: 'c',
+                    closeBtn:'1',//右上角的关闭
+                    content: `<div class="form-group"><p>分享密码:</p><input name="passwd" id="passwd" class="form-control" placeholder="请输入密码" /><span class="bmd-label-floating">留空则为公开分享</span></div>`,
+                    btn:['确认','取消'],
+                    yes: function (index, layero) {
+                        var url = $this.data('url');
+                        var value1 = $('#passwd').val();//获取多行文本框的值
+                        $.wz.request('post', url, {
+                            expireddays: 0,
+                            password:value1
+                        }, function (data) {
+                            var html = '分享链接地址为: <br /><a target="_blank" href="' + $.wz.url(data.link) + '">' + $.wz.url(data.link) + '</a>';
+                            if(value1) {
+                                html += '<br />链接密码：' + value1;
+                            }
+                            $.wz.alert(html);
+                        });
+                        layer.close(index);
+                    }
+                });
+                return false;
                 $.wz.confirm('确定要为该文档创建分享链接？', function () {
                     var url = $this.data('url');
 

@@ -42,5 +42,6 @@ class PageShare extends Repository
             'page_id',
             'user_id',
             'expired_at',
+            'password',
         ];
 }
