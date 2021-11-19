@@ -533,7 +533,7 @@ a:hover {
 
 /* 解决markdown编辑器全屏时页面中的input框在编辑器之上的问题 */
 .editormd-fullscreen {
-    z-index: 10;
+    z-index: 100;
 }
 
 .wz-compare-container .CodeMirror {
@@ -1155,7 +1155,7 @@ tr.warning {
     padding: 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    z-index: 10;
+    z-index: 100;
     overflow-y: auto;
 }
 
