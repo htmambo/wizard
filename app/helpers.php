@@ -648,6 +648,7 @@ function convertSqlTo(string $sql, $callback)
                 $sql = str_replace($str, $rep, $sql);
             }
         }
+        $sql = trim($sql);
         $parser = new PHPSQLParser\PHPSQLParser();
         $parsed = $parser->parse($sql);
 
