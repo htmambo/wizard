@@ -144,7 +144,7 @@
                     let pos=$('.wz-left-nav').offset();
                     $('.wz-left-nav').height(h - pos.top).css({'overflow-y':'auto'});
                 }
-                if($('.wz-panel-breadcrumb').length) {
+                if($('.wz-panel-breadcrumb').length && $('.wz-panel-right').length) {
                     pos = $('.wz-panel-right').offset();
                     let w = $(window).width() - pos.left + 'px';
                     $('.wz-panel-breadcrumb').css({'height':'48px', 'width':w,'position':'fixed', 'z-index':'99'});

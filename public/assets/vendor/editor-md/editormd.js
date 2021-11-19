@@ -3374,7 +3374,7 @@
             }
 
             // Wizard 功能增强 END
-
+            // TODO 需要处理一下链接是否要强制新页面打开
             var out = "<a href=\"" + href + "\"";
 
             if (atLinkReg.test(title) || atLinkReg.test(text)) {
