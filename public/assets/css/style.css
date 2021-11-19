@@ -1150,6 +1150,7 @@ tr.warning {
 .wz-table-float {
     position: fixed;
     top: 50px;
+    left: 10px;
     right: 10px;
     background: #fff;
     padding: 10px;
