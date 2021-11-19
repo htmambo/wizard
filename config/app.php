@@ -179,6 +179,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         ImpersonateServiceProvider::class,
+
+        Intervention\Image\ImageServiceProvider::class
     ],
 
     /*
@@ -229,6 +231,7 @@ return [
         'View'         => Illuminate\Support\Facades\View::class,
         'Debugbar'     => \Barryvdh\Debugbar\Facade::class,
         'Adldap'       => Adldap\Laravel\Facades\Adldap::class,
+        'Image'        => Intervention\Image\Facades\Image::class
     ],
 
 ];

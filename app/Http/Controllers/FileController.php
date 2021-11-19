@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 class FileController extends Controller
 {
@@ -35,10 +36,14 @@ class FileController extends Controller
         }
 
         if (!in_array(strtolower($file->extension()), ["jpg", "jpeg", "gif", "png", "bmp", "svg"])) {
-            return $this->response(false, __('common.upload.invalid_type'));
+            return $this->response(false, __('common.upload.invalid_type') . '.' . strtolower($file->extension()));
         }
 
         $path = $file->storePublicly(sprintf('public/%s', date('Y/m-d')));
+        $file1 = public_path('storage/' . substr($path, 7));
+        $img = Image::make($file1);
+        $img->insert(public_path('logo.png'),'bottom-right',0, 0);
+        $img->save();
         return $this->response(true, __('common.upload.success'), \Storage::url($path));
     }
 
