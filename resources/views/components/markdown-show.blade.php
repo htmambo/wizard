@@ -65,10 +65,10 @@
 
             $('body').append('<div id="wz-toc-container" class="d-none"><span class="fa fa-th-list"></span>' + tocElement.html() + '</div>');
 
-            $(window).scroll(function () {
+            $('.wz-panel-right').scroll(function () {
                 var tocContainer = $('#wz-toc-container');
 
-                if ($(window).scrollTop() > 300) {
+                if ($('.wz-panel-right').scrollTop() > 300) {
                     tocContainer.removeClass('d-none');
                 } else {
                     tocContainer.addClass('d-none');
