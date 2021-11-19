@@ -1,6 +1,6 @@
 <div class="wz-top-navbar d-flex flex-column flex-md-row align-items-center px-md-4 bg-white border-bottom box-shadow @impersonating() wz-impersonating @endImpersonating">
     <h5 class="my-0 mr-md-auto font-weight-normal wz-top-nav-item">
-        <a href="/">{{ config('app.name', 'Wizard API') }}</a>
+        <a href="/"><img src="/logo.png" style="height:50px; margin:-1rem 0;" title="{{ config('app.name', 'Wizard API') }}"></a>
     </h5>
     <div class="wz-top-nav-search ml-md-auto d-flex justify-content-end">
         <form action="{{ wzRoute('search:search') }}" method="get">
