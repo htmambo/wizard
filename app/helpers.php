@@ -640,6 +640,14 @@ HEADER;
 function convertSqlTo(string $sql, $callback)
 {
     try {
+        $sql .= "\n";
+        if(preg_match_all('@\)\s*ENGINE\s*=.+COMMENT\s*=\s*[^\n]+\n@i', $sql, $match)) {
+            foreach($match as $v) {
+                $str = $v[0];
+                $rep = preg_replace('@\s+COMMENT\s*=\s*@', ' COMMENT ', $str);
+                $sql = str_replace($str, $rep, $sql);
+            }
+        }
         $parser = new PHPSQLParser\PHPSQLParser();
         $parsed = $parser->parse($sql);
 
