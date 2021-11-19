@@ -55,7 +55,7 @@ class ExportController extends Controller
             'useSubstitutions' => true,
             'backupSubsFont'   => ['dejavusanscondensed', 'arialunicodems', 'sun-exta'],
         ]);
-
+        $mpdf->SetHeader($title);
         $mpdf->SetFooter('{PAGENO} / {nbpg}');
         $mpdf->SetTitle($title);
 
