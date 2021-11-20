@@ -24,7 +24,9 @@ class HomeController extends Controller
         print_r($cfg);
         $source = public_path('test.jpg');
         $file1  = public_path('tt.jpg');
-        unlink($file1);
+        if (file_exists($file1)) {
+            unlink($file1);
+        }
         copy($source, $file1);
         watermark($file1);
         return '<img src="/tt.jpg?t=' . time() . '">';
