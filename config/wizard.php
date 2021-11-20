@@ -156,11 +156,11 @@ return [
         /**
          * 是否启用图片水印，默认为不启用
          */
-        'enabled' => env('WIZARD_WATERMARK_ENABLED', true),
+        'enabled' => env('WIZARD_WATERMARK_ENABLED', false),
         /**
          * 水印类型，text或者logo，默认为logo
          */
-        'type' => env('WIZARD_WATERMARK_TYPE', 'text'),
+        'type' => env('WIZARD_WATERMARK_TYPE', 'logo'),
         /**
          * 水印图片
          */
