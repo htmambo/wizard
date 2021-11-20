@@ -993,10 +993,7 @@ function impersonateUser()
 
 function getThemeByCookie()
 {
-    $name = '';
-    if(isset($_COOKIE['wizard-theme'])) {
-        $name = $_COOKIE['wizard-theme'];
-    }
+    $name = \Illuminate\Support\Facades\Cookie::get('wizard-theme');
     if($name == 'dark') {
         $name = 'wz-dark-theme';
     } else {
