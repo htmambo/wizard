@@ -990,3 +990,17 @@ function impersonateUser()
     $impersonateUser = $user->impersonator();
     return ['id' => $impersonateUser->id, 'name' => $impersonateUser->name];
 }
+
+function getThemeByCookie()
+{
+    $name = '';
+    if(isset($_COOKIE['wizard-theme'])) {
+        $name = $_COOKIE['wizard-theme'];
+    }
+    if($name == 'dark') {
+        $name = 'wz-dark-theme';
+    } else {
+        $name = '';
+    }
+    return $name;
+}

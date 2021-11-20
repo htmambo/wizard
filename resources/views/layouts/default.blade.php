@@ -40,7 +40,7 @@
     <link href="/assets/css/style-dark.css?{{ resourceVersion() }}" rel="stylesheet">
 </head>
 
-<body>
+<body class="{{ getThemeByCookie() }}">
 @unless($hideGlobalAlert ?? false)
     @if(Auth::user() && !Auth::user()->isActivated())
         <div class="alert alert-danger" style="border-radius: 0; margin-bottom: 0;">
@@ -79,6 +79,7 @@
         if (currentTheme === undefined) {
             currentTheme = '{{ config('wizard.theme') }}';
         }
+        $.wz.setCookie('wizard-theme', currentTheme, 365)
 
         if (currentTheme === 'dark') {
             $('body').addClass('wz-dark-theme');

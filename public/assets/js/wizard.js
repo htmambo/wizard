@@ -307,5 +307,29 @@ $.wz = {
         $('.markdown-body iframe').each(function () {
             $(this).attr('src', $(this).data('src'));
         });
+    },
+    getCookie: function(name) {
+        if (document.cookie.length>0)
+        {
+            var start=document.cookie.indexOf(name + "=")//返回某指定值在字符串中首次出现的位置。
+            if (start!=-1)
+            {
+                start = start + name.length+1;
+                var end=document.cookie.indexOf(";",start)//返回';'在字符串中首次出现的位置。
+                if (end ==-1)
+                    end = document.cookie.length;
+                return unescape(document.cookie.substring(start,end));
+            }
+        }
+        return ""
+    },
+    setCookie: function (cname,cvalue,exdays) {
+        var date = new Date();
+        date.setDate(date.getDate()+exdays);//getDate返回一个月中的某一天
+        var expires = "expires="+date.toUTCString();//根据世界时 (UTC) 把 Date 对象转换为字符串
+        document.cookie = cname + "=" + cvalue + "; " + expires;
+    },
+    delCookie: function (cname) {
+        document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT"; //设置 expires 参数为以前的时间即可
     }
 };

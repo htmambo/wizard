@@ -93,7 +93,7 @@
                         themeIndicator.text('wb_sunny');
                         $('body').removeClass('wz-dark-theme');
                     }
-
+                    $.wz.setCookie('wizard-theme', currentTheme);
                     store.set('wizard-theme', currentTheme);
                 });
             })();
