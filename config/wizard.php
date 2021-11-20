@@ -148,5 +148,46 @@ return [
          */
         'support_extensions' => env('WIZARD_ATTACHMENTS_SUPPORT_EXTENSIONS',
             'jpg,jpeg,gif,png,bmp,zip,rar,war,mwb,xmind,itmz,mindnode,svg,md,vsd,vsdx,txt,doc,docx,xls,xlsx,ppt,pptx,pdf,sql'),
-    ]
+    ],
+    /**
+     * 图片文件的水印
+     */
+    'watermark' => [
+        /**
+         * 是否启用图片水印，默认为不启用
+         */
+        'enabled' => env('WIZARD_WATERMARK_ENABLED', true),
+        /**
+         * 水印类型，text或者logo，默认为logo
+         */
+        'type' => env('WIZARD_WATERMARK_TYPE', 'text'),
+        /**
+         * 水印图片
+         */
+        'pic' => env('WIZARD_WATERMARK_LOGO', '/assets/watermark.png'),
+        /**
+         * 水印文字，留空的话默认为站点名称
+         */
+        'text' => env('WIZARD_WATERMARK_TEXT', ''),
+        /**
+         * 文字颜色
+         */
+        'color' => env('WIZARD_WATERMARK_TEXT_COLOR', 'FF0000'),
+        /**
+         * 文字背景颜色
+         */
+        'background' => env('WIZARD_WATERMARK_TEXT_BACKGROUND', 'FFFFFF'),
+        /**
+         * 水印位置，可选值为：top-left(左上)，top-right(右上)，bottom-left(左下)，bottom-right(右下)
+         */
+        'position' => env('WIZARD_WATERMARK_POSITION', 'bottom-right'),
+        /**
+         * 文字水印所使用的字体文件
+         */
+        'font' => env('WIZARD_WATERMARK_FONT', '/assets/font.ttf'),
+        /**
+         * 文字水印所使用的字号
+         */
+        'size' => env('WIZARD_WATERMARK_FONT_SIZE', 48),
+    ],
 ];

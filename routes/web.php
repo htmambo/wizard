@@ -50,6 +50,8 @@ Route::group(['middleware' => 'locale'], function () {
         Route::post('/doc/compare', 'CompareController@compare')->name('doc:compare');
         // 阅读模式
         Route::get('/project/{id}/doc/{page_id}/read', 'DocumentController@readMode')->name('project:doc:read');
+        // 检测水印配置
+        Route::get('/water', 'HomeController@water')->name('water');
 
         // 小工具
         Route::group(['prefix' => 'tools', 'as' => 'tools:'], function () {

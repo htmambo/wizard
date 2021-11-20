@@ -14,9 +14,23 @@ use App\Repositories\Tag;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Intervention\Image\Facades\Image;
 
 class HomeController extends Controller
 {
+    public function water()
+    {
+        $cfg = config('wizard.watermark');
+        print_r($cfg);
+        $source = public_path('test.jpg');
+        $file1  = public_path('tt.jpg');
+        unlink($file1);
+        copy($source, $file1);
+        watermark($file1);
+        return '<img src="/tt.jpg?t=' . time() . '">';
+
+    }
+
     /**
      * 空白页，用于前端兼容
      *
@@ -36,7 +50,7 @@ class HomeController extends Controller
      * - 管理员：显示所有项目
      *
      * @param Request $request
-     * @param int     $catalog
+     * @param int $catalog
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -60,10 +74,11 @@ class HomeController extends Controller
         $projectModel->withCount('pages');
         if (!empty($name)) {
             $projectModel->where('name', 'like', "%{$name}%");
-        } else {
+        }
+        else {
             if (empty($catalogId)) {
                 // 首页默认只查询不属于任何目录的项目
-                $projectModel->where(function($query) {
+                $projectModel->where(function ($query) {
                     $query->whereNull('catalog_id')->orWhere('catalog_id', 0);
                 });
 
@@ -73,7 +88,8 @@ class HomeController extends Controller
                     /** @var Collection $catalogs */
                     $catalogs = Catalog::withCount('projects')->where('show_in_home', Catalog::SHOW_IN_HOME)->orderBy('sort_level', 'ASC')->get();
                 }
-            } else {
+            }
+            else {
                 $catalog = Catalog::where('id', $catalogId)->firstOrFail();
                 $projectModel->where('catalog_id', intval($catalogId));
             }
@@ -83,7 +99,8 @@ class HomeController extends Controller
         if (!empty($user) && $user->isAdmin() && config('wizard.admin_see_all')) {
             /** @var LengthAwarePaginator $projects */
             $projects = $projectModel->orderBy('sort_level', 'ASC')->paginate($perPage);
-        } else {
+        }
+        else {
             $userGroups = empty($user) ? null : $user->groups->pluck('id')->toArray();
             $projectModel->where(function ($query) use ($user, $userGroups) {
                 $query->where('visibility', Project::VISIBILITY_PUBLIC);
@@ -112,7 +129,8 @@ class HomeController extends Controller
                     $user->favoriteProjects()->where('catalog_id', $catalogId)->withCount('pages')
                         ->with('catalog')
                         ->get();
-            } else {
+            }
+            else {
                 $favorites =
                     $user->favoriteProjects()->withCount('pages')->with('catalog')->get();
             }

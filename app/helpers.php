@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 /**
  * 生成路由url
@@ -1000,4 +1001,78 @@ function getThemeByCookie()
         $name = '';
     }
     return $name;
+}
+function to_unicode($string)
+{
+    $str = mb_convert_encoding($string, 'UCS-2', 'UTF-8');
+    $arrstr = str_split($str, 2);
+    $unistr = '';
+    foreach ($arrstr as $n) {
+        $dec = hexdec(bin2hex($n));
+        $unistr .= '&#' . $dec . ';';
+    }
+    return $unistr;
+}
+
+function watermark($file1) {
+    $cfg = config('wizard.watermark');
+    if ($cfg['enabled'] && (in_array($cfg['type'], ['logo', 'text']))) {
+        $img  = Image::make($file1);
+        $base = $cfg['position'];
+        if ($cfg['type'] == 'logo') {
+            $img->insert(public_path($cfg['pic']), $base, 0, 10);
+        }
+        else if ($cfg['font']) {
+            $fontpath = $cfg['font'];
+            $fontpath = public_path($fontpath);
+            if (file_exists($fontpath)) {
+                $text       = $cfg['text'] ?: config('app.name');
+                $fontsize   = $cfg['size'];
+                $color      = $cfg['color'] ?: 'FF0000';
+                $background = $cfg['background'] ?: 'FFFFFF';
+                //需要计算一下水印文字的展示位置
+                $fontclassname = sprintf('\Intervention\Image\%s\Font', $img->getDriver()->getDriverName());
+                $font          = new $fontclassname($text);
+                $font->file($fontpath);
+                $font->size($fontsize);
+                $size = $font->getBoxSize();
+
+                $base_x = $base_y = 0;
+                $width  = $img->width();
+                $height = $img->height();
+                // define base color position
+                $ar = explode('-', $base);
+                if (in_array('left', $ar)) {
+                    $base_x = 10;
+                }
+                if (in_array('right', $ar)) {
+                    $base_x = $width - 10 - $size['width'] - $size[6];
+                }
+                if (in_array('top', $ar)) {
+                    $base_y = 10 - $size[7];
+                }
+                if (in_array('bottom', $ar)) {
+                    $base_y = $height - 10 - $size['height'] - $size[7];
+                }
+                //位置计算完毕
+                for ($i = 0; $i < 5; $i++) {
+                    for ($j = 0; $j < 5; $j++) {
+                        $img->text($text, $base_x + $i, $base_y + $j, function ($font) use ($fontpath, $fontsize, $background) {
+                            $font->file($fontpath);
+                            $font->size($fontsize);
+                            $font->color($background);
+                        });
+                    }
+                }
+                $img->text($text, $base_x + 2, $base_y + 2, function ($font) use ($fontpath, $fontsize, $color) {
+                    $font->file($fontpath);
+                    $font->size($fontsize);
+                    $font->color($color);
+                });
+
+            }
+        }
+        $img->save();
+    }
+
 }
