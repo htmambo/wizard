@@ -3378,7 +3378,9 @@
             var hosturl = window.location.protocol+'//'+window.location.hostname+'/';
             var host = window.location.hostname.split('.');
             if(host.length>2 && host[host.length-2].length>3) {
-                host = host.slice(host.length - 2).join('.')
+                host = host.slice(host.length - 2).join('.');
+            } else {
+                host = host.join('.');
             }
             var ud = new URL(href, hosturl);
             var out = "<a href=\"" + href + "\"";
