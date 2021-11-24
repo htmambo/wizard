@@ -1398,13 +1398,13 @@ pre.prettyprint *,
     margin: 0;
     height: 90%;
     top: 58px;
-    border-radius: 0 0 2em 0;
+    border-radius: 0 2em 2em 0;
 }
 
 .wz-panel-separator:hover {
     box-shadow: 12px 7px 9px 0px rgba(0, 0, 0, 0.15);
     z-index: 99;
-    background: #f7f7f7;
+    background: #ccc;
     transform: none;
 }
 
