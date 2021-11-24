@@ -1392,8 +1392,7 @@ pre.prettyprint *,
 
 .wz-panel-separator {
     width: 15px;
-    position: absolute;
-    left: 0;
+    position: fixed;
     padding: 0;
     margin: 0;
     height: 80%;
@@ -1517,7 +1516,6 @@ pre.prettyprint *,
  内阴影+圆角*/
 ::-webkit-scrollbar-track
 {
-    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);
     border-radius:4px;
 }
 /*定义滑块
