@@ -1526,3 +1526,10 @@ pre.prettyprint *,
     -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,.3);
     background-color:#aaa;
 }
+
+.editormd-preview-container .sequence-diagram, .editormd-preview-container .flowchart, .editormd-html-preview .sequence-diagram, .editormd-html-preview .flowchart {
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;
+    overflow: auto;
+}
