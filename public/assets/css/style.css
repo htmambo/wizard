@@ -1528,8 +1528,5 @@ pre.prettyprint *,
 }
 
 .editormd-preview-container .sequence-diagram, .editormd-preview-container .flowchart, .editormd-html-preview .sequence-diagram, .editormd-html-preview .flowchart {
-    margin: 0 auto;
-    text-align: center;
-    width: 100%;
     overflow: auto;
 }
