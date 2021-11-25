@@ -203,10 +203,10 @@ body.wz-dark-theme {
 .wz-dark-theme .card.card-white,
 .wz-dark-theme .wz-diff-control,
 .wz-dark-theme .wz-diff-result {
-  background: #ffffff;
+  background: #4e4e4e;
 }
 .wz-dark-theme .wz-white-panel .card {
-  background: #ffffff;
+  background: #4e4e4e;
 }
 .wz-dark-theme .wz-white-panel .card a {
   color: rgba(0, 0, 0, 0.54);
@@ -222,7 +222,7 @@ body.wz-dark-theme {
 }
 .wz-dark-theme .wz-project-main img,
 .wz-dark-theme .wz-project-main svg {
-  background: #ffffff;
+  background: #4e4e4e;
 }
 .wz-dark-theme .wz-project-main .wz-project-description {
   color: #ffffff;
@@ -493,3 +493,24 @@ body.wz-dark-theme {
 .wz-dark-theme .wz-markdown-comment pre code {
   background: none;
 }
+.wz-dark-theme .editormd-toolbar {
+  background:#4e4e4e;
+}
+.editormd-menu>li>a {
+  color:#fff;
+}
+.editormd-mask,
+.editormd-html-preview, .editormd-preview-container,
+.CodeMirror {
+  background: #ccc !important;
+}
+/*.CodeMirror-activeline-background,
+.CodeMirror-gutters {
+  background: #343a40 !important;
+}
+.cm-s-default .cm-header {
+  color: yellow !important;
+}
+.cm-s-default .cm-comment {
+  color: green !important;
+}*/
