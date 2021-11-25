@@ -499,9 +499,9 @@ body.wz-dark-theme {
 .editormd-menu>li>a {
   color:#fff;
 }
-.editormd-mask,
-.editormd-html-preview, .editormd-preview-container,
-.CodeMirror {
+.wz-dark-theme .editormd-mask,
+.wz-dark-theme .editormd-html-preview, .editormd-preview-container,
+.wz-dark-theme .CodeMirror {
   background: #ccc !important;
 }
 /*.CodeMirror-activeline-background,
