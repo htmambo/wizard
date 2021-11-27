@@ -236,4 +236,14 @@ class Document extends Repository
         return (int)$this->type === self::TYPE_TABLE;
     }
 
+
+    /**
+     * 判断当前文档是否为 Html 文档
+     *
+     * @return bool
+     */
+    public function isHtml()
+    {
+        return (int)$this->type === self::TYPE_HTML;
+    }
 }

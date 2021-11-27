@@ -27,13 +27,16 @@
 
 @push('script')
     <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/wangEditor.min.js') }}?{{ resourceVersion() }}"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/beautify/beautify.js') }}?{{ resourceVersion() }}"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/beautify/beautify-css.js') }}?{{ resourceVersion() }}"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/beautify/beautify-html.js') }}?{{ resourceVersion() }}"></script>
     <script type="text/javascript">
         $(function () {
             const E = window.wangEditor;
             const editor = new E('#editormd');
             const $text1 = $('#content');
             editor.config.onchange = function (html) {
-                $text1.val(html);
+                $text1.val(html_beautify(html));
             }
             // 编辑器工具栏高度：42，底部：35
             editor.config.height = window.innerHeight - 77;

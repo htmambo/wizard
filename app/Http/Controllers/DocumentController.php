@@ -243,6 +243,29 @@ class DocumentController extends Controller
             if($content_html) {
                 $pageItem->description = mb_substr(strip_tags($content_html), 0, 300);
             }
+        } else if ($pageItem->isHtml()) {
+            //简介信息
+            $pageItem->description = mb_substr(strip_tags($content), 0, 300);
+            //格式化一下以方便前端进行差异对比
+            $content = preg_replace('@<\s+@i', '<', $content);
+            $content = preg_replace('@\s+>@i', '>', $content);
+            $content = preg_replace('@\s+/>@i', ' />', $content);
+
+            $content = preg_replace('@<p([^>]*)>(\s|&nbsp;)+@i', '<p\\1>', $content);
+            $content = preg_replace('@<p>(\s|&nbsp;)+@i', '<p>', $content);
+            $content = preg_replace('@<br([^>]*)>(\s|&nbsp;)+@i', '<br\\1>' . PHP_EOL, $content);
+            $content = preg_replace('@<br([^>]*)>\s*</p>@i', '</p>' . PHP_EOL, $content);
+
+            $content = preg_replace('@<p>\s*<br([^>]*)>\s*@i', '<p>', $content);
+
+            $content = preg_replace('@<p([^>]*)>\s*</p>@i', '' . PHP_EOL, $content);
+
+            $content = preg_replace('@\s*<pre([^>]*)>@i', "\n<pre\\1>", $content);
+            $content = preg_replace('@</pre>\s*@i', "</pre>\n", $content);
+
+            $content = preg_replace('@\s*<p>@i', "\n<p>", $content);
+            $content = preg_replace('@</p>\s*@i', "</p>\n", $content);
+            $content = preg_replace('@</p>\s+<p>@i', "</p>\n<p>", $content);
         }
 
         $this->authorize('page-edit', $pageItem);
