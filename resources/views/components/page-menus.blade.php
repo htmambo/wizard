@@ -50,6 +50,9 @@
 
         </div>
     </li>
+@endif
+
+@push('bottom')
     @can('page-edit', $pageItem)
         <div class="modal fade" id="wz-move-model" tabindex="-1" role="dialog" aria-labelledby="wz-move-model">
             <div class="modal-dialog" role="document">
@@ -78,7 +81,7 @@
             </div>
         </div>
     @endif
-@endif
+@endpush
 
 @push('script')
     <script>

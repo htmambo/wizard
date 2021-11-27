@@ -1,7 +1,6 @@
 @extends('layouts.project')
 @section('page-content')
     @if($pageID !== 0)
-        @include('components.page-menus-export', ['project' => $project, 'pageItem' => $pageItem])
         <div class="wz-panel-breadcrumb">
             <ol class="breadcrumb pull-left">
                 <li class="breadcrumb-item"><a href="{{ wzRoute('home') }}">首页</a></li>
@@ -35,16 +34,13 @@
                         </button>
                     </li>
                 @endif
+
                 <li role="presentation" class="mr-2">
                     <button type="button" data-href="{{ wzRoute('project:doc:read', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}" data-toggle="tooltip" title="阅读模式" class="btn btn-primary bmd-btn-icon">
                         <span class="fa fa-laptop"></span>
                     </button>
                 </li>
-                <li role="presentation" class="mr-2">
-                    <button type="button" data-toggle="modal" data-target="#wz-export" title="导出文件" class="btn btn-primary bmd-btn-icon" id="wz-export-trigger">
-                        <span class="fa fa-download" data-toggle="tooltip" title="导出为"></span>
-                    </button>
-                </li>
+                @include('components.page-menus-export', ['project' => $project, 'pageItem' => $pageItem])
                 @include('components.page-menus', ['project' => $project, 'pageItem' => $pageItem])
             </ul>
             <div class="clearfix"></div>

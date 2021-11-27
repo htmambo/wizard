@@ -1,45 +1,51 @@
+<li role="presentation" class="mr-2">
+    <button type="button" data-toggle="modal" data-target="#wz-export" title="导出文件" class="btn btn-primary bmd-btn-icon" id="wz-export-trigger">
+        <span class="fa fa-download" data-toggle="tooltip" title="导出为"></span>
+    </button>
+</li>
 
-<div class="modal fade" id="wz-export" tabindex="-1" role="dialog" aria-labelledby="wz-export">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">导出为</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                @if($pageItem->type == \App\Repositories\Document::TYPE_DOC)
-                <a href="#" class="dropdown-item wz-export-pdf">
-                    <span class="fa fa-download mr-2"></span>
-                    PDF
-                </a>
-                <a href="#" class="dropdown-item wz-export-markdown">
-                    <span class="fa fa-download mr-2"></span>
-                    Markdown
-                </a>
-                @endif
+@push('bottom')
+    <div class="modal fade" id="wz-export" tabindex="-1" role="dialog" aria-labelledby="wz-export">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">导出为</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if($pageItem->type == \App\Repositories\Document::TYPE_DOC)
+                    <a href="#" class="dropdown-item wz-export-pdf">
+                        <span class="fa fa-download mr-2"></span>
+                        PDF
+                    </a>
+                    <a href="#" class="dropdown-item wz-export-markdown">
+                        <span class="fa fa-download mr-2"></span>
+                        Markdown
+                    </a>
+                    @endif
 
-                @if($pageItem->type == \App\Repositories\Document::TYPE_SWAGGER)
-                <a href="#" class="dropdown-item wz-export-swagger"
-                   data-data-url="{!! wzRoute('swagger:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id, 'ts' => microtime(true)])  !!}"
-                   data-download-url="{!! wzRoute('export:download', ['filename' => "{$pageItem->title}.json"]) !!}">
-                    <span class="fa fa-download mr-2"></span>
-                    JSON
-                </a>
-                <a href="#" class="dropdown-item wz-export-swagger"
-                   data-data-url="{!! wzRoute('swagger:doc:yml', ['id' => $project->id, 'page_id' => $pageItem->id, 'ts' => microtime(true)])  !!}"
-                   data-download-url="{!! wzRoute('export:download', ['filename' => "{$pageItem->title}.yml"]) !!}">
-                    <span class="fa fa-download mr-2"></span>
-                    YAML
-                </a>
-                @endif
+                    @if($pageItem->type == \App\Repositories\Document::TYPE_SWAGGER)
+                    <a href="#" class="dropdown-item wz-export-swagger"
+                       data-data-url="{!! wzRoute('swagger:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id, 'ts' => microtime(true)])  !!}"
+                       data-download-url="{!! wzRoute('export:download', ['filename' => "{$pageItem->title}.json"]) !!}">
+                        <span class="fa fa-download mr-2"></span>
+                        JSON
+                    </a>
+                    <a href="#" class="dropdown-item wz-export-swagger"
+                       data-data-url="{!! wzRoute('swagger:doc:yml', ['id' => $project->id, 'page_id' => $pageItem->id, 'ts' => microtime(true)])  !!}"
+                       data-download-url="{!! wzRoute('export:download', ['filename' => "{$pageItem->title}.yml"]) !!}">
+                        <span class="fa fa-download mr-2"></span>
+                        YAML
+                    </a>
+                    @endif
 
+                </div>
             </div>
         </div>
     </div>
-</div>
-
+@endpush
 
 @push('script')
 <script src="/assets/vendor/html2canvas.min.js"></script>
