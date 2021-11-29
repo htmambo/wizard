@@ -296,8 +296,11 @@ class DocumentController extends Controller
         $pageItem->sort_level = $sortLevel;
         $pageItem->sync_url   = $syncUrl;
         $changed              = $pageItem->getDirty();
-        if ($changed && isset($changed['html_code'])) {
-            unset($changed['html_code']);
+        if ($changed) {
+            if (isset($changed['html_code']))
+                unset($changed['html_code']);
+            if (isset($changed['description']))
+                unset($changed['description']);
         }
         // 只有文档内容发生修改才进行保存
         if ($pageItem->isDirty()) {
@@ -307,9 +310,8 @@ class DocumentController extends Controller
             // 记录文档变更历史
             if ($changed) {
                 DocumentHistory::write($pageItem);
+                event(new DocumentModified($pageItem));
             }
-
-            event(new DocumentModified($pageItem));
         }
 
         return [
