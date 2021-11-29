@@ -223,6 +223,7 @@ class DocumentController extends Controller
         $forceSave = $request->input('force', false);
         $sortLevel = $request->input('sort_level', 1000);
         $syncUrl = $request->input('sync_url');
+        $content_html = '';
 
         /** @var Document $pageItem */
         $pageItem = Document::where('id', $page_id)->firstOrFail();
@@ -241,9 +242,6 @@ class DocumentController extends Controller
             //简介信息
             $content_html = $request->input('editormd-html-code', '');
             if($content_html) {
-                if (config('wizard.markdown.direct_save_html')) {
-                    $pageItem->html_code = $content_html;
-                }
                 $pageItem->description = mb_substr(strip_tags($content_html), 0, 300);
             }
         } else if ($pageItem->isHtml()) {
@@ -297,6 +295,9 @@ class DocumentController extends Controller
 
         // 只有文档内容发生修改才进行保存
         if ($pageItem->isDirty()) {
+            if($pageItem->isMarkdown() && $content_html && config('wizard.markdown.direct_save_html')) {
+                $pageItem->html_code = $content_html;
+            }
             $pageItem->last_modified_uid = \Auth::user()->id;
             $pageItem->save();
 
