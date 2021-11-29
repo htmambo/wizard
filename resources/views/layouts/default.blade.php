@@ -213,20 +213,5 @@
     </script>
 @show
 
-@if(config('wizard.version-check'))
-    <script>
-        $(function () {
-            var version = '{{ config('wizard.version', '1') }}';
-            $.getJSON('https://aicode.cc/wizard-update/version?callback=?', function (data) {
-                if (data === undefined || data.tag_name === version) {
-                    return;
-                }
-
-                $('.wz-version').append('<a href="' + data.html_url + '" target="_blank"><sup style="padding-left: 5px; color: red; font-weight: bold;" title="有新版本，请及时更新！' + data.body + '" >✱</sup></a>');
-            });
-        });
-    </script>
-@endif
-
 </body>
 </html>

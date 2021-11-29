@@ -172,7 +172,7 @@ class ProjectController extends Controller
         if (!$policy->view(\Auth::user(), $project)) {
             abort(403, '您没有访问该项目的权限');
         }
-
+print_r(config('wizard.markdown'));
         $page = $type = null;
         if ($pageID !== 0) {
             $queryBuilder = Document::query();

@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string                                                                       $title
  * @property string                                                                       $description
  * @property string                                                                       $content
+ * @property string                                                                       $html_code
  * @property integer                                                                      $project_id
  * @property integer                                                                      $user_id
  * @property integer                                                                      $last_modified_uid
@@ -87,6 +88,7 @@ class Document extends Repository
             'title',
             'description',
             'content',
+            'html_code',                //添加一个直接存放渲染过的HTML的字段
             'project_id',
             'user_id',
             'last_modified_uid',
