@@ -29,10 +29,10 @@ class DocumentController extends Controller
 {
 
     protected $types = [
-        Document::TYPE_HTML    => 'html',
-        Document::TYPE_DOC     => 'markdown',
+        Document::TYPE_HTML => 'html',
+        Document::TYPE_DOC => 'markdown',
         Document::TYPE_SWAGGER => 'swagger',
-        Document::TYPE_TABLE   => 'table',
+        Document::TYPE_TABLE => 'table',
     ];
 
     /**
@@ -58,12 +58,12 @@ class DocumentController extends Controller
         $this->authorize('page-add', $project);
 
         $type = $request->input('type', 'markdown');
-        $pid = $request->input('pid', 0);
+        $pid  = $request->input('pid', 0);
         return view("doc.{$type}", [
-            'newPage'   => true,
-            'project'   => $project,
-            'type'      => $type,
-            'pid'       => $pid,
+            'newPage' => true,
+            'project' => $project,
+            'type' => $type,
+            'pid' => $pid,
             'navigator' => navigator((int)$id, $pid),
         ]);
     }
@@ -86,11 +86,11 @@ class DocumentController extends Controller
 
         $type = $this->types[$pageItem->type];
         return view("doc.{$type}", [
-            'pageItem'  => $pageItem,
-            'project'   => $pageItem->project,
-            'newPage'   => false,
-            'type'      => $type,
-            'pid'       => $pageItem->pid,
+            'pageItem' => $pageItem,
+            'project' => $pageItem->project,
+            'newPage' => false,
+            'type' => $type,
+            'pid' => $pageItem->pid,
             'navigator' => navigator((int)$id, (int)$pageItem->pid, [$pageItem->id]),
         ]);
     }
@@ -112,28 +112,28 @@ class DocumentController extends Controller
             $request,
             [
                 'project_id' => "required|integer|min:1|in:{$id}|project_exist",
-                'title'      => 'required|between:1,255',
-                'type'       => 'required|in:markdown,swagger,table,html',
-                'pid'        => 'integer|min:0',
+                'title' => 'required|between:1,255',
+                'type' => 'required|in:markdown,swagger,table,html',
+                'pid' => 'integer|min:0',
                 'sort_level' => 'integer',
-                'sync_url'   => 'nullable|url',
+                'sync_url' => 'nullable|url',
             ],
             [
                 'title.required' => __('document.validation.title_required'),
-                'title.between'  => __('document.validation.title_between'),
-                'sync_url.url'   => '文档同步地址必须为合法的URL地址',
+                'title.between' => __('document.validation.title_between'),
+                'sync_url.url' => '文档同步地址必须为合法的URL地址',
             ]
         );
 
         $this->authorize('page-add', $id);
 
-        $pid = $request->input('pid', 0);
+        $pid       = $request->input('pid', 0);
         $projectID = $request->input('project_id');
-        $title = $request->input('title');
-        $content = $request->input('content');
-        $type = $request->input('type', 'markdown');
+        $title     = $request->input('title');
+        $content   = $request->input('content');
+        $type      = $request->input('type', 'markdown');
         $sortLevel = $request->input('sort_level', 1000);
-        $syncUrl = $request->input('sync_url');
+        $syncUrl   = $request->input('sync_url');
 
         // 类型如果是表格，则需要检验表格内容是否合法
         if ($type === 'table') {
@@ -148,17 +148,17 @@ class DocumentController extends Controller
         }
 
         $pageItem = Document::create([
-            'pid'               => $pid,
-            'title'             => $title,
-            'description'       => '',
-            'content'           => $content,
-            'project_id'        => $projectID,
-            'user_id'           => \Auth::user()->id,
+            'pid' => $pid,
+            'title' => $title,
+            'description' => '',
+            'content' => $content,
+            'project_id' => $projectID,
+            'user_id' => \Auth::user()->id,
             'last_modified_uid' => \Auth::user()->id,
-            'type'              => array_flip($this->types)[$type],
-            'status'            => Document::STATUS_NORMAL,
-            'sort_level'        => $sortLevel,
-            'sync_url'          => $syncUrl,
+            'type' => array_flip($this->types)[$type],
+            'status' => Document::STATUS_NORMAL,
+            'sort_level' => $sortLevel,
+            'sync_url' => $syncUrl,
         ]);
 
         // 记录文档变更历史
@@ -177,7 +177,7 @@ class DocumentController extends Controller
                     ['id' => $projectID, 'p' => $pageItem->id]
                 )
             ],
-            'message'  => __('common.operation_success'),
+            'message' => __('common.operation_success'),
         ];
     }
 
@@ -197,33 +197,33 @@ class DocumentController extends Controller
         $this->validate(
             $request,
             [
-                'project_id'       => "required|integer|min:1|in:{$id}|project_exist",
-                'page_id'          => "required|integer|min:1|in:{$page_id}|page_exist:{$id}",
-                'pid'              => "required|integer|min:0|page_exist:{$id},false",
-                'title'            => 'required|between:1,255',
+                'project_id' => "required|integer|min:1|in:{$id}|project_exist",
+                'page_id' => "required|integer|min:1|in:{$page_id}|page_exist:{$id}",
+                'pid' => "required|integer|min:0|page_exist:{$id},false",
+                'title' => 'required|between:1,255',
                 'last_modified_at' => 'required|date',
-                'force'            => 'bool',
-                'history_id'       => 'required|integer',
-                'sort_level'       => 'integer',
-                'sync_url'         => 'nullable|url',
+                'force' => 'bool',
+                'history_id' => 'required|integer',
+                'sort_level' => 'integer',
+                'sync_url' => 'nullable|url',
             ],
             [
                 'title.required' => __('document.validation.title_required'),
-                'title.between'  => __('document.validation.title_between'),
-                'sync_url.url'   => '文档同步地址必须为合法的URL地址',
+                'title.between' => __('document.validation.title_between'),
+                'sync_url.url' => '文档同步地址必须为合法的URL地址',
             ]
         );
 
-        $pid = $request->input('pid', 0);
-        $projectID = $request->input('project_id');
-        $title = $request->input('title');
-        $content = $request->input('content');
+        $pid            = $request->input('pid', 0);
+        $projectID      = $request->input('project_id');
+        $title          = $request->input('title');
+        $content        = $request->input('content');
         $lastModifiedAt = Carbon::parse($request->input('last_modified_at'));
-        $history_id = $request->input('history_id');
-        $forceSave = $request->input('force', false);
-        $sortLevel = $request->input('sort_level', 1000);
-        $syncUrl = $request->input('sync_url');
-        $content_html = '';
+        $history_id     = $request->input('history_id');
+        $forceSave      = $request->input('force', false);
+        $sortLevel      = $request->input('sort_level', 1000);
+        $syncUrl        = $request->input('sync_url');
+        $content_html   = '';
 
         /** @var Document $pageItem */
         $pageItem = Document::where('id', $page_id)->firstOrFail();
@@ -238,13 +238,16 @@ class DocumentController extends Controller
             }
 
             $content = $this->processTableRequest($content);
-        } else if ($pageItem->isMarkdown()) {
+        }
+        else if ($pageItem->isMarkdown()) {
             //简介信息
             $content_html = $request->input('editormd-html-code', '');
-            if($content_html) {
+            if ($content_html) {
+                $pageItem->html_code   = $content_html;
                 $pageItem->description = mb_substr(strip_tags($content_html), 0, 300);
             }
-        } else if ($pageItem->isHtml()) {
+        }
+        else if ($pageItem->isHtml()) {
             //简介信息
             $pageItem->description = mb_substr(strip_tags($content), 0, 300);
             //格式化一下以方便前端进行差异对比
@@ -280,35 +283,37 @@ class DocumentController extends Controller
                 'last_modified_at' => [
                     __('document.validation.doc_modified_by_user', [
                         'username' => $pageItem->lastModifiedUser->name,
-                        'time'     => $pageItem->updated_at
+                        'time' => $pageItem->updated_at
                     ])
                 ]
             ]);
         }
 
-        $pageItem->pid = $pid;
+        $pageItem->pid        = $pid;
         $pageItem->project_id = $projectID;
-        $pageItem->title = $title;
-        $pageItem->content = $content;
+        $pageItem->title      = $title;
+        $pageItem->content    = $content;
         $pageItem->sort_level = $sortLevel;
-        $pageItem->sync_url = $syncUrl;
-
+        $pageItem->sync_url   = $syncUrl;
+        $changed              = $pageItem->getDirty();
+        if ($changed && isset($changed['html_code'])) {
+            unset($changed['html_code']);
+        }
         // 只有文档内容发生修改才进行保存
         if ($pageItem->isDirty()) {
-            if($pageItem->isMarkdown() && $content_html && config('wizard.markdown.direct_save_html')) {
-                $pageItem->html_code = $content_html;
-            }
             $pageItem->last_modified_uid = \Auth::user()->id;
             $pageItem->save();
 
             // 记录文档变更历史
-            DocumentHistory::write($pageItem);
+            if ($changed) {
+                DocumentHistory::write($pageItem);
+            }
 
             event(new DocumentModified($pageItem));
         }
 
         return [
-            'message'  => __('common.operation_success'),
+            'message' => __('common.operation_success'),
             'redirect' => [
                 'edit' => wzRoute(
                     'project:doc:edit:show',
@@ -387,7 +392,7 @@ class DocumentController extends Controller
             return [
                 'message' => __('document.validation.doc_modified_by_user', [
                     'username' => $pageItem->lastModifiedUser->name,
-                    'time'     => $pageItem->updated_at
+                    'time' => $pageItem->updated_at
                 ]),
                 'expired' => true,
             ];
@@ -450,19 +455,19 @@ class DocumentController extends Controller
         }
 
         return [
-            'id'                     => $pageItem->id,
-            'pid'                    => $pageItem->pid,
-            'title'                  => $pageItem->title,
-            'description'            => $pageItem->description,
-            'content'                => $pageItem->content,
-            'type'                   => $pageItem->type,
-            'user_id'                => $pageItem->user_id,
-            'username'               => $pageItem->user->name,
-            'sort_level'             => $pageItem->sort_level,
-            'last_modified_user_id'  => $pageItem->lastModifiedUser->id,
+            'id' => $pageItem->id,
+            'pid' => $pageItem->pid,
+            'title' => $pageItem->title,
+            'description' => $pageItem->description,
+            'content' => $pageItem->content,
+            'type' => $pageItem->type,
+            'user_id' => $pageItem->user_id,
+            'username' => $pageItem->user->name,
+            'sort_level' => $pageItem->sort_level,
+            'last_modified_user_id' => $pageItem->lastModifiedUser->id,
             'last_modified_username' => $pageItem->lastModifiedUser->name,
-            'created_at'             => $pageItem->created_at->format('Y-m-d H:i:s'),
-            'updated_at'             => $pageItem->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $pageItem->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $pageItem->updated_at->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -498,8 +503,9 @@ class DocumentController extends Controller
         $yaml = $this->getSwaggerContent($id, $page_id);
         if (isJson($yaml)) {
             $jsonContent = $yaml;
-        } else {
-            $formatter = Formatter::make($yaml, Formatter::YAML);
+        }
+        else {
+            $formatter   = Formatter::make($yaml, Formatter::YAML);
             $jsonContent = $formatter->toJson();
         }
 
@@ -526,8 +532,8 @@ class DocumentController extends Controller
         }
 
         $page = Document::where('project_id', $id)
-                        ->where('id', $page_id)
-                        ->firstOrFail();
+            ->where('id', $page_id)
+            ->firstOrFail();
         if ($page->type != Document::TYPE_SWAGGER) {
             abort(422, '该文档不是Swagger文档');
         }
@@ -547,7 +553,7 @@ class DocumentController extends Controller
     {
         /** @var Project $project */
         $project = Project::query()->findOrFail($id);
-        $policy = new ProjectPolicy();
+        $policy  = new ProjectPolicy();
         if (!$policy->view(\Auth::user(), $project)) {
             abort(403, '您没有访问该项目的权限');
         }
@@ -556,9 +562,9 @@ class DocumentController extends Controller
         $type = $this->types[$page->type];
 
         return view('share-show', [
-            'project'  => $project,
+            'project' => $project,
             'pageItem' => $page,
-            'type'     => $type,
+            'type' => $type,
             'noheader' => true,
         ]);
     }
@@ -577,24 +583,24 @@ class DocumentController extends Controller
     {
         /** @var Document $pageItem */
         $pageItem = Document::where('id', $page_id)
-                            ->where('project_id', $id)
-                            ->firstOrFail();
+            ->where('project_id', $id)
+            ->firstOrFail();
 
         $this->authorize('page-edit', $pageItem);
 
         $synced = false;
         if (!empty($pageItem->sync_url)) {
-            $client = new \GuzzleHttp\Client();
-            $resp = $client->get($pageItem->sync_url);
+            $client   = new \GuzzleHttp\Client();
+            $resp     = $client->get($pageItem->sync_url);
             $respCode = $resp->getStatusCode();
             $respBody = $resp->getBody()->getContents();
 
             if ($respCode !== 200) {
                 \Log::error('document_sync_failed', [
                     'status_code' => $respCode,
-                    'resp_body'   => $respBody,
-                    'project_id'  => $id,
-                    'page_id'     => $page_id,
+                    'resp_body' => $respBody,
+                    'project_id' => $id,
+                    'page_id' => $page_id,
                     'operator_id' => \Auth::user()->id,
                 ]);
                 throw new \Exception('文档同步失败');
@@ -605,7 +611,7 @@ class DocumentController extends Controller
             // 只有文档内容发生修改才进行保存
             if ($pageItem->isDirty()) {
                 $pageItem->last_modified_uid = \Auth::user()->id;
-                $pageItem->last_sync_at = Carbon::now();
+                $pageItem->last_sync_at      = Carbon::now();
 
                 $pageItem->save();
 
@@ -620,7 +626,8 @@ class DocumentController extends Controller
 
         if ($synced) {
             $this->alertSuccess('文档同步成功');
-        } else {
+        }
+        else {
             $this->alertSuccess('文档同步完成，没有新的内容');
         }
 
@@ -643,7 +650,7 @@ class DocumentController extends Controller
             $request,
             [
                 'target_project_id' => 'required|integer',
-                'target_page_id'    => 'integer',
+                'target_page_id' => 'integer',
             ]
         );
 
@@ -654,7 +661,7 @@ class DocumentController extends Controller
 
         // 检查目标项目权限
         $targetProjectId = $request->input('target_project_id', 0);
-        $targetPageId = $request->input('target_page_id', 0);
+        $targetPageId    = $request->input('target_page_id', 0);
 
         /** @var Project $targetProject */
         $targetProject = Project::where('id', $targetProjectId)->firstOrFail();
@@ -675,14 +682,14 @@ class DocumentController extends Controller
         DB::transaction(function () use ($pageItem, $targetProject, $targetPage, $navigators) {
             // 修改当前页面的pid和project_id
             $pageItem->project_id = $targetProject->id;
-            $pageItem->pid = $targetPage->id ?? 0;
+            $pageItem->pid        = $targetPage->id ?? 0;
 
             $pageItem->save();
 
             // 历史
             DocumentHistory::where('page_id', $pageItem->id)->update([
                 'project_id' => $targetProject->id,
-                'pid'        => $targetPage->id ?? 0,
+                'pid' => $targetPage->id ?? 0,
             ]);
 
             // 修改文档分享信息
@@ -729,7 +736,7 @@ class DocumentController extends Controller
         }
 
         /** @var Document $pageItem */
-        $pageItem = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
+        $pageItem  = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
         $scoreType = (int)$request->input('score_type');
 
         /** @var DocumentScore $existedScore */
@@ -737,14 +744,16 @@ class DocumentController extends Controller
         if ($existedScore) {
             if ($existedScore->score_type == $scoreType) {
                 $existedScore->delete();
-            } else {
+            }
+            else {
                 $existedScore->score_type = $scoreType;
                 $existedScore->save();
             }
-        } else {
+        }
+        else {
             DocumentScore::create([
-                'user_id'    => Auth::user()->id,
-                'page_id'    => $pageItem->id,
+                'user_id' => Auth::user()->id,
+                'page_id' => $pageItem->id,
                 'score_type' => $scoreType,
             ]);
         }
