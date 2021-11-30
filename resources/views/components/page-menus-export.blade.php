@@ -56,7 +56,11 @@
         // PDF 导出
         $('.wz-export-pdf').on('click', function (e) {
             e.preventDefault();
-
+            var convertToImg = '.editormd-tex, pre.prettyprint, .flowchart, .sequence-diagram, .mermaid';
+            convertToImg = '.editormd-tex, .flowchart, .sequence-diagram, .mermaid';
+            var sec = 0;
+            var maxlen = {!! intval(ini_get('pcre.backtrack_limit')) !!};
+            var total = $(convertToImg).length;
             var index = layer.msg('预处理中...', {
                 icon: 16, shade: 0.01, time: 30000
             });
@@ -70,13 +74,14 @@
                     body.removeClass('wz-dark-theme');
                     isDarkTheme = true;
                 }
-
-                Promise.all($('#markdown-body').find('.editormd-tex, pre.prettyprint, .flowchart, .sequence-diagram, .mermaid').map(function() {
+                Promise.all($('#markdown-body').find(convertToImg).map(function() {
                     var self = $(this);
                     return html2canvas(self[0]).then(function(canvas) {
                         var image = new Image();
                         image.src = canvas.toDataURL("image/png");
                         self.replaceWith(image);
+                        sec++;
+                        $('.layui-layer-content').text('预处理中' + sec + '/' + total + '...');
                     });
                 })).then(function() {
                     layer.close(index);
@@ -92,8 +97,10 @@
                     contentBody.find('textarea').remove();
                     contentBody.find('.bmd-form-group').remove();
                     //移除可能配置了的目录
-                    contentBody.find('.editormd-toc-menu').remove();
-                    contentBody.find('br').first().remove();
+                    if(contentBody.find('.editormd-toc-menu').length) {
+                        contentBody.find('.editormd-toc-menu').remove();
+                        contentBody.find('br').first().remove();
+                    }
                     //移除可能存在的SQL_CREATE的多余部分
                     if($('.wz-sql-create').length) {
                         contentBody.find('nav').remove();
@@ -110,15 +117,20 @@
                     //标题
                     var title = $('h1.wz-page-title').clone();
                     contentBody.prepend(title);
-                    $.wz.dynamicFormSubmit(
-                        'generate-pdf-{{ $pageItem->id }}',
-                        'POST',
-                        '{{ wzRoute('export:pdf', ['type' => documentType($pageItem->type)]) }}',
-                        {
-                            "html": contentBody.html(),
-                            "title": "{{ $pageItem->title }}"
-                        }
-                    );
+                    if(maxlen && contentBody.html().length>maxlen) {
+                        //太长，不允许
+                        $.wz.alert('渲染后内容太长了(当前渲染内容长度：'+contentBody.html().length+'，最大支持长度：'+maxlen+')，暂不支持导出');
+                    } else {
+                        $.wz.dynamicFormSubmit(
+                            'generate-pdf-{{ $pageItem->id }}',
+                            'POST',
+                            '{{ wzRoute('export:pdf', ['type' => documentType($pageItem->type)]) }}',
+                            {
+                                "html": contentBody.html(),
+                                "title": "{{ $pageItem->title }}"
+                            }
+                        );
+                    }
                 });
             }, 100);
         });

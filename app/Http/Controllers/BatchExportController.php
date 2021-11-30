@@ -249,7 +249,7 @@ class BatchExportController extends Controller
                         ]
                     ]);
 
-                    $mpdf->WriteHTML('<p class="pdf-error">部分文档生成失败</p>');
+                    $mpdf->WriteHTML('<p class="pdf-error">部分文档生成失败:' . $ex->getMessage() . '</p>');
                 }
 
                 $pageNo++;
