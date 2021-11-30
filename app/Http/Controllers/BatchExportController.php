@@ -248,8 +248,11 @@ class BatchExportController extends Controller
                             'content' => $html,
                         ]
                     ]);
-
-                    $mpdf->WriteHTML('<p class="pdf-error">部分文档生成失败:' . $ex->getMessage() . '</p>');
+                    $str = '';
+                    if(config('app.debug')) {
+                        $str = '<p>' . $ex->getTraceAsString() . '</p>';
+                    }
+                    $mpdf->WriteHTML('<p class="pdf-error">部分文档生成失败：' . $ex->getMessage() . '</p>' . $str);
                 }
 
                 $pageNo++;
