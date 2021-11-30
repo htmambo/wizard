@@ -27,20 +27,28 @@
 
 @push('script')
     <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/wangEditor.min.js') }}?{{ resourceVersion() }}"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/js/wangEditor.ext.js') }}?{{ resourceVersion() }}"></script>
     <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/beautify/beautify.js') }}?{{ resourceVersion() }}"></script>
     <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/beautify/beautify-css.js') }}?{{ resourceVersion() }}"></script>
     <script type="text/javascript" charset="utf-8" src="{{ cdn_resource('/assets/vendor/beautify/beautify-html.js') }}?{{ resourceVersion() }}"></script>
     <script type="text/javascript">
         $(function () {
             const E = window.wangEditor;
+
             const editor = new E('#editormd');
+
+            const menuKey = 'SplitPageMenuKey'
+            editor.menus.extend(menuKey, SplitPageMenu)
+            editor.config.menus = editor.config.menus.concat(menuKey)
+
+
             const $text1 = $('#content');
             editor.config.onchange = function (html) {
                 $text1.val(html_beautify(html));
             }
             // 编辑器工具栏高度：42，底部：35
             editor.config.height = window.innerHeight - 77;
-	    editor.config.uploadImgServer = '/upload';
+            editor.config.uploadImgServer = '/upload';
             editor.config.uploadFileName = 'editormd-image-file';
             editor.config.uploadImgMaxLength = 1;
             editor.config.uploadImgParams = {
