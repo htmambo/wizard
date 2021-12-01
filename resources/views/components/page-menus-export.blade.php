@@ -15,7 +15,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    @if($pageItem->type == \App\Repositories\Document::TYPE_DOC)
+                    @if($pageItem->type == \App\Repositories\Document::TYPE_DOC || $pageItem->type == \App\Repositories\Document::TYPE_HTML)
                     <a href="#" class="dropdown-item wz-export-pdf">
                         <span class="fa fa-download mr-2"></span>
                         PDF
@@ -52,7 +52,7 @@
 <script>
     $(function () {
 
-    @if($pageItem->type == \App\Repositories\Document::TYPE_DOC)
+    @if($pageItem->type == \App\Repositories\Document::TYPE_DOC || $pageItem->type == \App\Repositories\Document::TYPE_HTML)
         // PDF 导出
         $('.wz-export-pdf').on('click', function (e) {
             e.preventDefault();

@@ -40,7 +40,9 @@
                         <span class="fa fa-laptop"></span>
                     </button>
                 </li>
+                @if($pageItem->type == \App\Repositories\Document::TYPE_DOC || $pageItem->type == \App\Repositories\Document::TYPE_HTML || $pageItem->type == \App\Repositories\Document::TYPE_SWAGGER)
                 @include('components.page-menus-export', ['project' => $project, 'pageItem' => $pageItem])
+                @endif
                 @include('components.page-menus', ['project' => $project, 'pageItem' => $pageItem])
             </ul>
             <div class="clearfix"></div>

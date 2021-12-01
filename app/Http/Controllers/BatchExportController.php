@@ -43,7 +43,7 @@ class BatchExportController extends Controller
         $this->validate(
             $request,
             [
-                'pid'  => 'integer',
+                'pid' => 'integer',
                 'type' => 'required|in:pdf,raw'
             ]
         );
@@ -175,11 +175,11 @@ class BatchExportController extends Controller
         set_time_limit(self::TIMEOUT);
 
         $mpdf = new Mpdf([
-            'mode'              => 'utf-8',
-            'tempDir'           => sys_get_temp_dir() . '/wizard/',
+            'mode' => 'utf-8',
+            'tempDir' => sys_get_temp_dir() . '/wizard/',
             'defaultfooterline' => false,
-            'useSubstitutions'  => true,
-            'backupSubsFont'    => ['dejavusanscondensed', 'arialunicodems', 'sun-exta'],
+            'useSubstitutions' => true,
+            'backupSubsFont' => ['dejavusanscondensed', 'arialunicodems', 'sun-exta'],
         ]);
 
         $mpdf->allow_charset_conversion = true;
@@ -210,26 +210,47 @@ class BatchExportController extends Controller
 
                 /** @var Document $doc */
                 $doc = $documents->where('id', $id)->first();
-
-                $title = "* {$doc->title}";
-
                 $author = $doc->user->name ?? '-';
                 $createdTime = $doc->created_at ?? '-';
                 $lastModifiedUser = $doc->lastModifiedUser->name ?? '-';
                 $updatedTime = $doc->updated_at ?? '-';
 
-                $intro =
-                    "该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。\n\n";
-
-                if ($doc->type != Document::TYPE_DOC) {
-                    $raw = "# {$title}\n\n{$intro}暂不支持该类型的文档。";
+                if ($doc->type == Document::TYPE_HTML) {
+                    $title = '<h1>* ' . $doc->title . '</h1>';
+                    $intro =
+                        "<p class='wz-document-header'>该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。</p>";
+                    $html = $title . $intro;
+                    $html .=
+                        "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$doc->content}</div>";
+                } else if ($doc->type == Document::TYPE_DOC) {
+                    if ($doc->html_code && config('wizard.markdown.direct_save_html')) {
+                        $title = '<h1>* ' . $doc->title . '</h1>';
+                        $intro =
+                            "<p class='wz-document-header'>该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。</p>";
+                        $html = $title . $intro;
+                        $html .=
+                            "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$doc->html_code}</div>";
+                    } else {
+                        $title = "* {$doc->title}";
+                        $intro =
+                            "该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。\n\n";
+                        $raw = "# {$title}\n\n{$intro}" . $doc->content;
+                        $html = (new \Parsedown())->text($raw);
+                        $html =
+                            "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$html}</div>";
+                    }
                 } else {
-                    $raw = "# {$title}\n\n{$intro}" . $doc->content;
+                    $title = "* {$doc->title}";
+                    $intro =
+                        "该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。\n\n";
+                    $raw = "# {$title}\n\n{$intro}暂不支持该类型的文档。";
+
+                    $html = (new \Parsedown())->text($raw);
+                    $html =
+                        "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$html}</div>";
                 }
 
-                $html = (new \Parsedown())->text($raw);
-                $html =
-                    "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$html}</div>";
+
 
                 // 修正 Docker 运行模式下，导出pdf图片无法展示的问题
                 $html = preg_replace('/src\s?=\s?"\/storage\/(.*?).(jpg|png|gif|jpeg)"/',
@@ -241,15 +262,15 @@ class BatchExportController extends Controller
                 } catch (\Exception $ex) {
                     Log::error('html_to_pdf_failed', [
                         'error' => $ex->getMessage(),
-                        'code'  => $ex->getCode(),
-                        'doc'   => [
-                            'id'      => $doc->id,
-                            'title'   => $doc->title,
+                        'code' => $ex->getCode(),
+                        'doc' => [
+                            'id' => $doc->id,
+                            'title' => $doc->title,
                             'content' => $html,
                         ]
                     ]);
                     $str = '';
-                    if(config('app.debug')) {
+                    if (config('app.debug')) {
                         $str = '<p>' . $ex->getTraceAsString() . '</p>';
                     }
                     $mpdf->WriteHTML('<p class="pdf-error">部分文档生成失败：' . $ex->getMessage() . '</p>' . $str);
