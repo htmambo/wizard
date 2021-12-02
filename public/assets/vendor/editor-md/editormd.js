@@ -3334,7 +3334,6 @@
         };
 
         markedRenderer.link = function (href, title, text) {
-
             if (this.options.sanitize) {
                 try {
                     var prot = decodeURIComponent(unescape(href)).replace(/[^\w:]/g, "").toLowerCase();
@@ -3372,8 +3371,24 @@
                     default:
                 }
             }
-
             // Wizard 功能增强 END
+
+            //简单的修复一下从内容中分析URL
+            var append = '';
+            if (
+                !title && typeof(title)!='undefined' && title!=0
+                &&
+                text == href
+            ) {
+                var urlRegx = new RegExp('(https?|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/%=~_|]');
+                var ret = urlRegx.exec(href);
+                if(ret && ret.length==2 && ret[0]!=href) {
+                    append = href.substr(ret[0].length)
+                    text = href=ret[0]
+                }
+            }
+
+
             // 检测到外部链接时使用新窗口打开
             var hosturl = window.location.protocol+'//'+window.location.hostname+'/';
             var host = window.location.hostname.split('.');
@@ -3392,7 +3407,6 @@
                 if (title) {
                     out += " title=\"" + title.replace(/@/g, "&#64;");
                 }
-
                 return out + "\">" + text.replace(/@/g, "&#64;") + "</a>";
             }
 
@@ -3400,8 +3414,7 @@
                 out += " title=\"" + title + "\"";
             }
 
-            out += ">" + text + "</a>";
-
+            out += ">" + text + "</a>" + append;
             return out;
         };
 

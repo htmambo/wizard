@@ -223,7 +223,7 @@ class DocumentController extends Controller
         $forceSave      = $request->input('force', false);
         $sortLevel      = $request->input('sort_level', 1000);
         $syncUrl        = $request->input('sync_url');
-        $content_html   = '';
+        $orig_content   = '';
 
         /** @var Document $pageItem */
         $pageItem = Document::where('id', $page_id)->firstOrFail();
@@ -236,10 +236,10 @@ class DocumentController extends Controller
                     'content' => ['页面内容不合法，表格页面必须为合法的json格式'],
                 ]);
             }
-
             $content = $this->processTableRequest($content);
         }
         else if ($pageItem->isMarkdown()) {
+            $orig_content = trim($pageItem->content);
             //简介信息
             $content_html = $request->input('editormd-html-code', '');
             if ($content_html) {
@@ -250,26 +250,7 @@ class DocumentController extends Controller
         else if ($pageItem->isHtml()) {
             //简介信息
             $pageItem->description = mb_substr(strip_tags($content), 0, 300);
-            //格式化一下以方便前端进行差异对比
-            $content = preg_replace('@<\s+@i', '<', $content);
-            $content = preg_replace('@\s+>@i', '>', $content);
-            $content = preg_replace('@\s+/>@i', ' />', $content);
-
-            $content = preg_replace('@<p([^>]*)>(\s|&nbsp;)+@i', '<p\\1>', $content);
-            $content = preg_replace('@<p>(\s|&nbsp;)+@i', '<p>', $content);
-            $content = preg_replace('@<br([^>]*)>(\s|&nbsp;)+@i', '<br\\1>' . PHP_EOL, $content);
-            $content = preg_replace('@<br([^>]*)>\s*</p>@i', '</p>' . PHP_EOL, $content);
-
-            $content = preg_replace('@<p>\s*<br([^>]*)>\s*@i', '<p>', $content);
-
-            $content = preg_replace('@<p([^>]*)>\s*</p>@i', '' . PHP_EOL, $content);
-
-            $content = preg_replace('@\s*<pre([^>]*)>@i', "\n<pre\\1>", $content);
-            $content = preg_replace('@</pre>\s*@i', "</pre>\n", $content);
-
-            $content = preg_replace('@\s*<p>@i', "\n<p>", $content);
-            $content = preg_replace('@</p>\s*@i', "</p>\n", $content);
-            $content = preg_replace('@</p>\s+<p>@i', "</p>\n<p>", $content);
+            $content = formatHtml($content);
         }
 
         $this->authorize('page-edit', $pageItem);
@@ -297,6 +278,10 @@ class DocumentController extends Controller
         $pageItem->sync_url   = $syncUrl;
         $changed              = $pageItem->getDirty();
         if ($changed) {
+            // 从LEANOTE迁移时有可能会在结尾添加了两个空格，这里忽略一下
+            if(isset($changed['content']) && $changed['content'] == $orig_content) {
+                unset($changed['content']);
+            }
             if (isset($changed['html_code']))
                 unset($changed['html_code']);
             if (isset($changed['description']))
