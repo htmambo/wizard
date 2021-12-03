@@ -69,7 +69,7 @@
             e.preventDefault();
             var scope = $(this).attr('data-scope');
             var convertToImg = '.editormd-tex, .flowchart, .sequence-diagram, .mermaid';
-            if(scope=='full') convertToImg += ' ,pre.prettyprint';
+            if(scope=='full') convertToImg += ', pre.prettyprint';
             var sec = 0;
             var maxlen = {!! intval(ini_get('pcre.backtrack_limit')) !!};
             var total = $(convertToImg).length;
@@ -86,6 +86,7 @@
                     body.removeClass('wz-dark-theme');
                     isDarkTheme = true;
                 }
+                var origHtml = $('#markdown-body').html();
                 Promise.all($('#markdown-body').find(convertToImg).map(function() {
                     var self = $(this);
                     return html2canvas(self[0]).then(function(canvas) {
@@ -104,7 +105,6 @@
                     layer.msg('努力渲染中...', {
                         icon: 16, shade: 0.01, time: 50000
                     });
-
                     var contentBody = $('#markdown-body').clone();
                     contentBody.find('textarea').remove();
                     contentBody.find('.bmd-form-group').remove();
@@ -131,7 +131,7 @@
                     contentBody.prepend(title);
                     if(maxlen && contentBody.html().length>maxlen) {
                         //太长，不允许
-                        $.wz.alert('渲染后内容太长了(当前渲染内容长度：'+contentBody.html().length+'，最大支持长度：'+maxlen+')，暂不支持导出');
+                        $.wz.alert('渲染后内容太长了(当前渲染内容长度：'+contentBody.html().length+'，最大支持长度：'+maxlen+')，暂不支持导出', function(){$('#markdown-body').html(origHtml);});
                     } else {
                         $.wz.dynamicFormSubmit(
                             'generate-pdf-{{ $pageItem->id }}',
