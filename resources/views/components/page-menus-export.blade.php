@@ -16,14 +16,25 @@
                 </div>
                 <div class="modal-body">
                     @if($pageItem->type == \App\Repositories\Document::TYPE_DOC || $pageItem->type == \App\Repositories\Document::TYPE_HTML)
-                    <a href="#" class="dropdown-item wz-export-pdf">
-                        <span class="fa fa-download mr-2"></span>
-                        PDF
-                    </a>
-                    <a href="#" class="dropdown-item wz-export-markdown">
-                        <span class="fa fa-download mr-2"></span>
-                        Markdown
-                    </a>
+                        <a href="#" class="dropdown-item wz-export-pdf" data-scope="">
+                            <span class="fa fa-download mr-2"></span>
+                            PDF
+                        </a>
+                        <a href="#" class="dropdown-item wz-export-pdf" data-scope="full">
+                            <span class="fa fa-download mr-2"></span>
+                            PDF (完全渲染)
+                        </a>
+                        <a href="#" class="dropdown-item wz-export-markdown">
+                            <span class="fa fa-download mr-2"></span>
+                            Markdown
+                        </a>
+                        <br />
+                        <div class="bmd-label-floating">
+                            <ol>
+                                <li>完全渲染会将文档中的代码段渲染为图片，如果代码段较多，受系统限制可能会导出失败。</li>
+                                <li>渲染后可能会因为分页的原因丢失内容，请手动在合适的位置添加“分页符”。</li>
+                            </ol>
+                        </div>
                     @endif
 
                     @if($pageItem->type == \App\Repositories\Document::TYPE_SWAGGER)
@@ -56,8 +67,9 @@
         // PDF 导出
         $('.wz-export-pdf').on('click', function (e) {
             e.preventDefault();
-            var convertToImg = '.editormd-tex, pre.prettyprint, .flowchart, .sequence-diagram, .mermaid';
-            convertToImg = '.editormd-tex, .flowchart, .sequence-diagram, .mermaid';
+            var scope = $(this).attr('data-scope');
+            var convertToImg = '.editormd-tex, .flowchart, .sequence-diagram, .mermaid';
+            if(scope=='full') convertToImg += ' ,pre.prettyprint';
             var sec = 0;
             var maxlen = {!! intval(ini_get('pcre.backtrack_limit')) !!};
             var total = $(convertToImg).length;
