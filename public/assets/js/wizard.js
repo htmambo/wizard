@@ -327,7 +327,7 @@ $.wz = {
         var date = new Date();
         date.setDate(date.getDate()+exdays);//getDate返回一个月中的某一天
         var expires = "expires="+date.toUTCString();//根据世界时 (UTC) 把 Date 对象转换为字符串
-        document.cookie = cname + "=" + cvalue + "; " + expires;
+        document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
     },
     delCookie: function (cname) {
         document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT"; //设置 expires 参数为以前的时间即可
