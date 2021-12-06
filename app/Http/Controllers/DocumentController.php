@@ -58,7 +58,7 @@ class DocumentController extends Controller
         $this->authorize('page-add', $project);
 
         $type = $request->input('type', 'markdown');
-        $pid  = $request->input('pid', 0);
+        $pid = $request->input('pid', 0);
         return view("doc.{$type}", [
             'newPage' => true,
             'project' => $project,
@@ -127,13 +127,15 @@ class DocumentController extends Controller
 
         $this->authorize('page-add', $id);
 
-        $pid       = $request->input('pid', 0);
+        $pid = $request->input('pid', 0);
         $projectID = $request->input('project_id');
-        $title     = $request->input('title');
-        $content   = $request->input('content');
-        $type      = $request->input('type', 'markdown');
+        $title = $request->input('title');
+        $content = $request->input('content');
+        $type = $request->input('type', 'markdown');
         $sortLevel = $request->input('sort_level', 1000);
-        $syncUrl   = $request->input('sync_url');
+        $syncUrl = $request->input('sync_url');
+
+        $html_code = $description = '';
 
         // 类型如果是表格，则需要检验表格内容是否合法
         if ($type === 'table') {
@@ -145,13 +147,24 @@ class DocumentController extends Controller
             }
 
             $content = $this->processTableRequest($content);
+        } else if ($type === 'markdown') {
+            $content_html = $request->input('editormd-html-code', '');
+            if ($content_html) {
+                $html_code = $content_html;
+                $description = mb_substr(strip_tags($content_html), 0, 300);
+            }
+        } else if ($type === 'html') {
+            //简介信息
+            $description = mb_substr(strip_tags($content), 0, 300);
+            $content = formatHtml($content);
         }
 
         $pageItem = Document::create([
             'pid' => $pid,
             'title' => $title,
-            'description' => '',
+            'description' => $description,
             'content' => $content,
+            'html_code' => $html_code,
             'project_id' => $projectID,
             'user_id' => \Auth::user()->id,
             'last_modified_uid' => \Auth::user()->id,
@@ -214,16 +227,16 @@ class DocumentController extends Controller
             ]
         );
 
-        $pid            = $request->input('pid', 0);
-        $projectID      = $request->input('project_id');
-        $title          = $request->input('title');
-        $content        = $request->input('content');
+        $pid = $request->input('pid', 0);
+        $projectID = $request->input('project_id');
+        $title = $request->input('title');
+        $content = $request->input('content');
         $lastModifiedAt = Carbon::parse($request->input('last_modified_at'));
-        $history_id     = $request->input('history_id');
-        $forceSave      = $request->input('force', false);
-        $sortLevel      = $request->input('sort_level', 1000);
-        $syncUrl        = $request->input('sync_url');
-        $orig_content   = '';
+        $history_id = $request->input('history_id');
+        $forceSave = $request->input('force', false);
+        $sortLevel = $request->input('sort_level', 1000);
+        $syncUrl = $request->input('sync_url');
+        $orig_content = '';
 
         /** @var Document $pageItem */
         $pageItem = Document::where('id', $page_id)->firstOrFail();
@@ -237,17 +250,15 @@ class DocumentController extends Controller
                 ]);
             }
             $content = $this->processTableRequest($content);
-        }
-        else if ($pageItem->isMarkdown()) {
+        } else if ($pageItem->isMarkdown()) {
             $orig_content = trim($pageItem->content);
             //简介信息
             $content_html = $request->input('editormd-html-code', '');
             if ($content_html) {
-                $pageItem->html_code   = $content_html;
+                $pageItem->html_code = $content_html;
                 $pageItem->description = mb_substr(strip_tags($content_html), 0, 300);
             }
-        }
-        else if ($pageItem->isHtml()) {
+        } else if ($pageItem->isHtml()) {
             //简介信息
             $pageItem->description = mb_substr(strip_tags($content), 0, 300);
             $content = formatHtml($content);
@@ -270,16 +281,16 @@ class DocumentController extends Controller
             ]);
         }
 
-        $pageItem->pid        = $pid;
+        $pageItem->pid = $pid;
         $pageItem->project_id = $projectID;
-        $pageItem->title      = $title;
-        $pageItem->content    = $content;
+        $pageItem->title = $title;
+        $pageItem->content = $content;
         $pageItem->sort_level = $sortLevel;
-        $pageItem->sync_url   = $syncUrl;
-        $changed              = $pageItem->getDirty();
+        $pageItem->sync_url = $syncUrl;
+        $changed = $pageItem->getDirty();
         if ($changed) {
             // 从LEANOTE迁移时有可能会在结尾添加了两个空格，这里忽略一下
-            if(isset($changed['content']) && $changed['content'] == $orig_content) {
+            if (isset($changed['content']) && $changed['content'] == $orig_content) {
                 unset($changed['content']);
             }
             if (isset($changed['html_code']))
@@ -490,9 +501,8 @@ class DocumentController extends Controller
         $yaml = $this->getSwaggerContent($id, $page_id);
         if (isJson($yaml)) {
             $jsonContent = $yaml;
-        }
-        else {
-            $formatter   = Formatter::make($yaml, Formatter::YAML);
+        } else {
+            $formatter = Formatter::make($yaml, Formatter::YAML);
             $jsonContent = $formatter->toJson();
         }
 
@@ -540,7 +550,7 @@ class DocumentController extends Controller
     {
         /** @var Project $project */
         $project = Project::query()->findOrFail($id);
-        $policy  = new ProjectPolicy();
+        $policy = new ProjectPolicy();
         if (!$policy->view(\Auth::user(), $project)) {
             abort(403, '您没有访问该项目的权限');
         }
@@ -577,8 +587,8 @@ class DocumentController extends Controller
 
         $synced = false;
         if (!empty($pageItem->sync_url)) {
-            $client   = new \GuzzleHttp\Client();
-            $resp     = $client->get($pageItem->sync_url);
+            $client = new \GuzzleHttp\Client();
+            $resp = $client->get($pageItem->sync_url);
             $respCode = $resp->getStatusCode();
             $respBody = $resp->getBody()->getContents();
 
@@ -598,7 +608,7 @@ class DocumentController extends Controller
             // 只有文档内容发生修改才进行保存
             if ($pageItem->isDirty()) {
                 $pageItem->last_modified_uid = \Auth::user()->id;
-                $pageItem->last_sync_at      = Carbon::now();
+                $pageItem->last_sync_at = Carbon::now();
 
                 $pageItem->save();
 
@@ -613,8 +623,7 @@ class DocumentController extends Controller
 
         if ($synced) {
             $this->alertSuccess('文档同步成功');
-        }
-        else {
+        } else {
             $this->alertSuccess('文档同步完成，没有新的内容');
         }
 
@@ -648,7 +657,7 @@ class DocumentController extends Controller
 
         // 检查目标项目权限
         $targetProjectId = $request->input('target_project_id', 0);
-        $targetPageId    = $request->input('target_page_id', 0);
+        $targetPageId = $request->input('target_page_id', 0);
 
         /** @var Project $targetProject */
         $targetProject = Project::where('id', $targetProjectId)->firstOrFail();
@@ -669,7 +678,7 @@ class DocumentController extends Controller
         DB::transaction(function () use ($pageItem, $targetProject, $targetPage, $navigators) {
             // 修改当前页面的pid和project_id
             $pageItem->project_id = $targetProject->id;
-            $pageItem->pid        = $targetPage->id ?? 0;
+            $pageItem->pid = $targetPage->id ?? 0;
 
             $pageItem->save();
 
@@ -723,7 +732,7 @@ class DocumentController extends Controller
         }
 
         /** @var Document $pageItem */
-        $pageItem  = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
+        $pageItem = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
         $scoreType = (int)$request->input('score_type');
 
         /** @var DocumentScore $existedScore */
@@ -731,13 +740,11 @@ class DocumentController extends Controller
         if ($existedScore) {
             if ($existedScore->score_type == $scoreType) {
                 $existedScore->delete();
-            }
-            else {
+            } else {
                 $existedScore->score_type = $scoreType;
                 $existedScore->save();
             }
-        }
-        else {
+        } else {
             DocumentScore::create([
                 'user_id' => Auth::user()->id,
                 'page_id' => $pageItem->id,
