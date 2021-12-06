@@ -52,7 +52,7 @@
                         $('body').append('<div class="alert alert-danger" role="alert" id="wz-error-box" style="display: none;position:fixed;top:0;width:100%;"></div>');
                         $('#wz-error-box').fadeIn('fast').html(data.message);
                     }, continueCheck);
-                }, 5000);
+                }, 60000);
 
                 return true;
             };
