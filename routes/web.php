@@ -41,6 +41,8 @@ Route::group(['middleware' => 'locale'], function () {
         // 分享页面
         Route::get('/s/{hash}', 'ShareController@page')->name('share:show');
         Route::post('/s/{hash}', 'ShareController@page')->name('share:show');
+        // ajax获取文档是否过期
+        Route::get('/se/{hash}', 'ShareController@checkPageExpired')->name('share:expired');
         // 用户账号激活
         Route::get('/user/activate', 'UserController@activate')->name('user:activate');
 

@@ -12,11 +12,56 @@ namespace App\Http\Controllers;
 use App\Repositories\Document;
 use App\Repositories\PageShare;
 use App\Repositories\Project;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 
 class ShareController extends Controller
 {
+
+    /**
+     * 检查页面是否已经过期
+     *
+     * @param Request $request
+     * @param         $hash
+     *
+     * @return array
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function checkPageExpired(Request $request, $hash)
+    {
+        /** @var PageShare $share */
+        $share = PageShare::where('code', $hash)->firstOrFail();
+
+        $this->validate(
+            $request,
+            [
+                'l' => 'required|date',
+            ]
+        );
+
+        $lastModifiedAt = Carbon::parse($request->input('l'));
+
+        /** @var Document $pageItem */
+        $pageItem = Document::where('id', $share->page_id)->firstOrFail();
+
+        // 检查文档是否已经被别人修改过了，避免修改覆盖
+        if (!$pageItem->updated_at->equalTo($lastModifiedAt)) {
+            return [
+                'message' => __('document.validation.doc_modified_by_user', [
+                    'username' => $pageItem->lastModifiedUser->name,
+                    'time'     => $pageItem->updated_at
+                ]),
+                'expired' => true,
+            ];
+        }
+
+        return [
+            'message' => 'ok',
+            'expired' => false,
+        ];
+    }
+
     /**
      * 分享链接访问
      *
@@ -64,6 +109,7 @@ class ShareController extends Controller
         }
 
         return view('share-show', [
+            'hash'     => $hash,
             'project'  => $project,
             'pageItem' => $page,
             'type'     => $type,

@@ -36,5 +36,28 @@
             $('.wz-panel-limit').css('max-width', '100%');
         });
         @endif
+
+        // 自动检查文档是否过期
+        (function () {
+            var lastModifiedAt = '{{ $pageItem->updated_at }}';
+            var checkExpiredURL = '{{ wzRoute('share:expired', ['hash' => $hash]) }}';
+            var continueCheck = function () {
+                window.document_check_task = window.setTimeout(function () {
+                    $.wz.request('get', checkExpiredURL, {l: lastModifiedAt}, function (data) {
+                        // 没有过期则继续检查
+                        if (!data.expired) {
+                            continueCheck();
+                            return false;
+                        }
+                        $('body').append('<div class="alert alert-danger" role="alert" id="wz-error-box" style="display: none;position:fixed;top:0;width:100%;"></div>');
+                        $('#wz-error-box').fadeIn('fast').html(data.message);
+                    }, continueCheck);
+                }, 5000);
+
+                return true;
+            };
+
+            continueCheck();
+        })();
     </script>
 @endpush
