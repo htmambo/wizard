@@ -50,7 +50,38 @@
                             //cm.replaceSelection("![](" + ret.url  + ")");
                         }
                         console.log(ret.message);
-                    })
+                    });
+                }
+                else if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) != -1) {
+                    var htmlText = (e.clipboardData || e.originalEvent.clipboardData).getData("text/html");
+                    if (htmlText !== "") {
+                        var referencelinkRegEx = /reference-link/;
+                        _this.insertValue(toMarkdown(htmlText, {
+                            gfm: true,
+                            converters:[
+                                {
+                                    filter: 'div',
+                                    replacement: function(content) {
+                                        return content + '\n';
+                                    }
+                                },
+                                {
+                                    filter: 'span',
+                                    replacement: function(content) {
+                                        return content;
+                                    }
+                                },
+                                {
+                                    filter: function (node) {
+                                        return (node.nodeName === 'A' && referencelinkRegEx.test(node.className));
+                                    },
+                                    replacement: function(content) {
+                                        return "";
+                                    }
+                                }]})
+                        );
+                        e.preventDefault();
+                    }
                 }
             })
         };
