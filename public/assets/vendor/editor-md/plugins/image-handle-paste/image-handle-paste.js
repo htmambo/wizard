@@ -72,6 +72,12 @@
                                     }
                                 },
                                 {
+                                    filter: 'pre',
+                                    replacement: function(content) {
+                                        return "\n```\n" + content + "\n```\n";
+                                    }
+                                },
+                                {
                                     filter: 'div',
                                     replacement: function(content) {
                                         return content + '\n';

@@ -15,6 +15,7 @@ use App\Repositories\Project;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class ShareController extends Controller
 {
@@ -89,22 +90,28 @@ class ShareController extends Controller
         $type = $page->type == Document::TYPE_DOC ? 'markdown' : 'swagger';
         /**
          * 检查一下当前分享是否需要使用密码打开
+         * 如果有权限处理文档的话，就不需要输入密码了
          */
         if ($share->password) {
-            $inppwd = $request->input('password');
-            if (!$inppwd) {
-                $inppwd = cookie('share-page-' . $share->id);
+            try{
+                $this->authorize('page-edit', $page);
             }
-            if (!$inppwd || $share->password != $inppwd) {
-                return view('share-password', [
-                    'project'  => $project,
-                    'pageItem' => $page,
-                    'type'     => $type,
-                    'code'     => $hash,
-                    'noheader' => true,
-                ]);
-            } else {
-                cookie('share-page-' . $share->id, $inppwd);
+            catch (\Exception $e) {
+                $inppwd = $request->input('password');
+                if (!$inppwd) {
+                    $inppwd = Cookie::get('share-page-' . $share->id);
+                }
+                if (!$inppwd || $share->password != $inppwd) {
+                    return view('share-password', [
+                        'project'  => $project,
+                        'pageItem' => $page,
+                        'type'     => $type,
+                        'code'     => $hash,
+                        'noheader' => true,
+                    ]);
+                } else {
+                    Cookie::queue('share-page-' . $share->id, $inppwd, 24*60);
+                }
             }
         }
 
