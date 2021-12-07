@@ -1,4 +1,5 @@
 @extends('layouts.project')
+@section('container-style', 'px-md-4')
 @section('page-content')
     @if($pageID !== 0)
         <div class="wz-panel-breadcrumb">
