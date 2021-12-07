@@ -13,6 +13,7 @@
  * @returns {*}
  */
 $.wz.mdEditor = function (editor_id, params) {
+    var plainPasteMode = false;             // 纯文本粘贴模式
     var editor_table_id = 0;
     var config = {
         // 模板数据源
@@ -262,6 +263,25 @@ $.wz.mdEditor = function (editor_id, params) {
             $.wz.imageClick('.editormd-preview-container');
             $.wz.sqlCreateSyntaxParser('.editormd-preview-container .wz-sql-create');
             $.wz.loadIframe();
+            showPlainPasteMode();
+
+            // 监听粘贴事件
+            this.cm.on("paste", function (_cm, e) {
+                var clipboardData = event.clipboardData || window.clipboardData;
+                if (clipboardData) {
+                    if (clipboardData.types == "Files") {
+                        clipboardToImage();
+                    }
+                    else if ($.inArray("text/html", clipboardData.types) != -1) {
+                        if (!plainPasteMode && clipboardHTMLToMd(clipboardData.getData("text/html"))) {
+                            e.preventDefault();
+                        }
+                    }
+                    else {
+                        //类型为"text/plain"，快捷键Ctrl+Shift+V
+                    }
+                }
+            });
         },
         onchange: function () {
             // 图片点击支持
@@ -279,6 +299,15 @@ $.wz.mdEditor = function (editor_id, params) {
             $.wz.loadIframe();
         }
     });
+    ////////////////////////////////////////////////
+    // 显示纯文本粘贴模式
+    showPlainPasteMode = function () {
+        if (plainPasteMode) {
+            $(".fa-clipboard").addClass("menu-selected");
+        } else{
+            $(".fa-clipboard").removeClass("menu-selected");
+        };
+    };
 
     return mdEditor;
 };

@@ -28,6 +28,7 @@
     <script src="{{ cdn_resource('/assets/vendor/base64.min.js') }}"></script>
     <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/raphael.min.js') }}"></script>
     <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/underscore.min.js') }}"></script>
+    <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/to-markdown.js') }}"></script>
     <script src="{{ cdn_resource('/assets/vendor/editor-md/editormd.js') }}?{{ resourceVersion() }}"></script>
     <script src="{{ cdn_resource('/assets/js/markdown-editor.js') }}?{{ resourceVersion() }}"></script>
     <script type="text/javascript">
