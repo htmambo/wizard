@@ -55,6 +55,17 @@
                 from: 'wangEditor'
             };
             editor.create();
+            if(typeof currentTheme == 'undefined') {
+                var currentTheme = store.get('wizard-theme');
+                if (currentTheme === undefined) {
+                    currentTheme = '{{ config('wizard.theme') }}';
+                }
+            }
+            if (currentTheme === 'dark') {
+                $('#editormd').children().css({'background-color':'#000'});
+                $('#editormd').children().css({'color':'#fff'});
+            }
+
             $text1.val(editor.txt.html());
             $.global.markdownEditor = editor;
 

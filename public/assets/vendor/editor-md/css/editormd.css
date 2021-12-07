@@ -4431,7 +4431,7 @@ hr.editormd-page-break {
   border-color: #1a1a17;
 }
 .editormd-theme-dark .editormd-toolbar {
-  background: #1A1A17;
+  background: #1A1A17 !important;
   border-color: #1a1a17;
 }
 .editormd-theme-dark .editormd-menu > li > a {
@@ -4496,7 +4496,7 @@ hr.editormd-page-break {
 .wz-dark-theme .editormd-html-preview
 .wz-dark-theme .CodeMirror,
 .wz-dark-theme .CodeMirror-gutters {
-  background: #343a40;
+  background: #2C2827;
 }
 .wz-dark-theme .markdown-body.editormd-preview-container a,
 .wz-dark-theme .cm-s-default .cm-link {
