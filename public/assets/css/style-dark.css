@@ -120,7 +120,7 @@ body.wz-dark-theme {
   color: #b1b1b1;
 }
 .wz-dark-theme .card:not(.card-white) {
-  background: #d8d8d8;
+  background: #4e4e4e !important;
 }
 .wz-dark-theme .card:not(.card-white) .card-header a {
   color: #aeb0b2;
@@ -135,7 +135,7 @@ body.wz-dark-theme {
   color: #ffffff;
 }
 .wz-dark-theme .card:not(.card-white) .wz-box-catalog {
-  background-color: #4a4a4a;
+  background-color: #404040;
   border: none;
 }
 .wz-dark-theme .card:not(.card-white) .wz-box-catalog:hover {
@@ -155,14 +155,14 @@ body.wz-dark-theme {
   color: #ffffff;
 }
 .wz-dark-theme .card:not(.card-white) .wz-main-container-full .alert-info {
-  color: #4a4a4a;
-  background-color: #cecece;
+  color: #9e9e9e;
+  background-color: #4a4a4a;
 }
 .wz-dark-theme .card:not(.card-white) .wz-main-container-full .alert-info a {
-  color: #2d3a9a;
+  color: #ccc;
 }
 .wz-dark-theme .card:not(.card-white) .wz-main-container-full .alert-info a:hover {
-  color: #3F51D7;
+  color: #fff;
 }
 .wz-dark-theme .card:not(.card-white) .tm-tag {
   background: #343a40;
@@ -174,13 +174,13 @@ body.wz-dark-theme {
   color: #ffffff;
 }
 .wz-dark-theme .card:not(.card-white) .media .media-body .wz-text-dashed {
-  color: #484848;
+  color: #aaa;
 }
 .wz-dark-theme .card:not(.card-white) .media .media-body a {
-  color: #585858;
+  color: #ccc;
 }
 .wz-dark-theme .card:not(.card-white) .media .media-body a:hover {
-  color: #000000;
+  color: #fff;
 }
 .wz-dark-theme .card:not(.card-white) .media .border-bottom {
   border-bottom: 1px solid #848484 !important;
