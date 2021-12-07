@@ -19,7 +19,7 @@
                 @endif
             </ol>
             <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="mr-2">
+                <li role="presentation" class="">
                     <button type="button"
                             data-href="{{ wzRoute('project:home', ['id' => $project->id] + (empty($pageItem) ? [] : ['p' => $pageItem->id])) }}"
                             class="btn btn-default bmd-btn-icon" id="wz-document-goback">

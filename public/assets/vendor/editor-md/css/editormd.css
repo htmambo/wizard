@@ -688,7 +688,7 @@
 }
 .editormd .CodeMirror pre {
   font-size: 14px;
-  padding: 0 12px;
+  padding: 0 4px;
 }
 .editormd .CodeMirror-linenumbers {
   padding: 0 5px;
@@ -4469,7 +4469,7 @@ hr.editormd-page-break {
 
 .editormd-theme-dark .CodeMirror-activeline .CodeMirror-gutter-wrapper {
   background: #4D344A;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid #2c2c2c;
 }
 .editormd-theme-dark .editormd-html-preview pre,
 .editormd-theme-dark .editormd-preview-container pre {

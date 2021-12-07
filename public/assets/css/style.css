@@ -744,7 +744,7 @@ a:hover {
 }
 
 .wz-panel-breadcrumb {
-    padding: 0 15px;
+    /*padding: 0 15px;*/
     background: #f7f7f7;
 }
 
@@ -1409,7 +1409,7 @@ pre.prettyprint *,
 
 .wz-editor-header .wz-editor-header-toolbar {
     padding: 0;
-    margin-left: -14px;
+    /*margin-left: -14px;*/
     margin-top: -17px;
     line-height: 1;
     margin-bottom: 7px;
