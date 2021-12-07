@@ -112,14 +112,14 @@
                     contentBody.find('textarea').remove();
                     contentBody.find('.bmd-form-group').remove();
                     //移除可能配置了的目录
-                    if(contentBody.find('.markdown-toc-list').length) {
-                        contentBody.find('.markdown-toc-list').prepend('<li><h1>目录</h1></li>')
-                    }
                     if(contentBody.find('.editormd-toc-menu').length) {
                         contentBody.find('.toc-menu-btn').remove();
                         contentBody.find('.markdown-toc-list').show();
                         contentBody.find('.markdown-toc-list').find('h1').show();
+                    } else if(contentBody.find('.markdown-toc-list').length) {
+                        contentBody.find('.markdown-toc-list').prepend('<li><h1>目录</h1></li>')
                     }
+
                     //移除可能存在的SQL_CREATE的多余部分
                     if($('.wz-sql-create').length) {
                         contentBody.find('nav').remove();
