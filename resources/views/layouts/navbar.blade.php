@@ -88,7 +88,7 @@
                         currentTheme = 'dark';
                         themeIndicator.text('brightness_3');
                         $('body').addClass('wz-dark-theme');
-                        if(typeof($.global.markdownEditor)!='undefined') {
+                        if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
                                 $($.global.markdownEditor.toolbarSelector).children().css({'background-color':'#000'});
                                 $($.global.markdownEditor.toolbarSelector).children().css({'color':'#fff'});
@@ -102,7 +102,7 @@
                         currentTheme = 'default';
                         themeIndicator.text('wb_sunny');
                         $('body').removeClass('wz-dark-theme');
-                        if(typeof($.global.markdownEditor)!='undefined') {
+                        if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
                                 $($.global.markdownEditor.toolbarSelector).children().css({'background-color':'#fff'});
                                 $($.global.markdownEditor.toolbarSelector).children().css({'color':'#000'});
