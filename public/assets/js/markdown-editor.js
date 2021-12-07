@@ -106,7 +106,7 @@ $.wz.mdEditor = function (editor_id, params) {
                 "template", "mindMapping", "jsonToTable", "sqlToTable", "sqlCreateBox", "|",
                 "||",
                 "watch", "preview", "fullscreen",
-                "plainPasteIcon", "outlineIcon", "help"
+                "plainPasteIcon", "help"
             ];
         },
         toolbarIconTexts: {
@@ -120,9 +120,6 @@ $.wz.mdEditor = function (editor_id, params) {
             plainPasteIcon : function() {
                 plainPasteMode = !plainPasteMode;
                 showPlainPasteMode();
-            },
-            outlineIcon : function() {
-                this.executePlugin("outlineDialog", "outline-dialog/outline-dialog");
             },
             template: function (cm, icon, cursor, selection) {
                 this.createDialog({
@@ -255,10 +252,8 @@ $.wz.mdEditor = function (editor_id, params) {
             }
         },
         lang: {
-            description : "为知笔记Markdown编辑器，基于 Editor.md 构建。",
             toolbar: {
                 plainPasteIcon : "纯文本粘贴模式",
-                outlineIcon : "内容目录",
                 template: config.lang.chooseTemplate,
                 jsonToTable: config.lang.jsonToTable,
                 sqlToTable: config.lang.sqlToTable,
@@ -293,13 +288,7 @@ $.wz.mdEditor = function (editor_id, params) {
             // sql 建表语句解析
             $.wz.sqlCreateSyntaxParser('.editormd-preview-container .wz-sql-create');
             $.wz.loadIframe();
-        },
-        onsaveOptions : function(optionsValue) {
-            setOptionSettings(optionsValue);
-        },
-        ongetOptions : function() {
-            return optionSettings;
-        },
+        }
     });
     showPlainPasteMode();
 
