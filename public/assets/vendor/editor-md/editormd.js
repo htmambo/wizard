@@ -610,8 +610,10 @@
             if (theme !== "default") {
                 editormd.loadCSS(settings.path + "codemirror/theme/" + settings.editorTheme);
             }
-
-            this.cm.setOption("theme", theme);
+            // 有可能编辑器还没有初始化
+            if (typeof (this.cm) !== 'undefined') {
+                this.cm.setOption("theme", theme);
+            }
 
             return this;
         },
@@ -3311,8 +3313,8 @@
         var editormdLogoReg = regexs.editormdLogo;
         var pageBreakReg = regexs.pageBreak;
 
-        markedRenderer.image = function(href, title, text){
-            var out='<img src="' + href + '" alt="' + text + '"';
+        markedRenderer.image = function (href, title, text) {
+            var out = '<img src="' + href + '" alt="' + text + '"';
             out += ' title="' + (title ? title : '点击查看大图') + '"';
 
             var cssStyle = '';
@@ -3465,30 +3467,30 @@
             //简单的修复一下从内容中分析URL
             var append = '';
             if (
-                !title && typeof(title)!='undefined' && title!=0
+                !title && typeof (title) != 'undefined' && title != 0
                 &&
                 text == href
             ) {
                 var urlRegx = new RegExp('(https?|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/%=~_|]');
                 var ret = urlRegx.exec(href);
-                if(ret && ret.length==2 && ret[0]!=href) {
+                if (ret && ret.length == 2 && ret[0] != href) {
                     append = href.substr(ret[0].length)
-                    text = href=ret[0]
+                    text = href = ret[0]
                 }
             }
 
 
             // 检测到外部链接时使用新窗口打开
-            var hosturl = window.location.protocol+'//'+window.location.hostname+'/';
+            var hosturl = window.location.protocol + '//' + window.location.hostname + '/';
             var host = window.location.hostname.split('.');
-            if(host.length>2 && host[host.length-2].length>3) {
+            if (host.length > 2 && host[host.length - 2].length > 3) {
                 host = host.slice(host.length - 2).join('.');
             } else {
                 host = host.join('.');
             }
             var ud = new URL(href, hosturl);
             var out = "<a href=\"" + href + "\"";
-            if(ud.hostname.indexOf(host)==-1){
+            if (ud.hostname.indexOf(host) == -1) {
                 out += " target=\"_blank\"";
             }
 
