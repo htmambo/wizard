@@ -60,7 +60,25 @@
                             gfm: true,
                             converters:[
                                 {
+                                    filter: 'br',
+                                    replacement: function(content) {
+                                        return "  \n";
+                                    }
+                                },
+                                {
+                                    filter: 'code',
+                                    replacement: function(content) {
+                                        return "\n```\n" + content + "\n```\n";
+                                    }
+                                },
+                                {
                                     filter: 'div',
+                                    replacement: function(content) {
+                                        return content + '\n';
+                                    }
+                                },
+                                {
+                                    filter: 'section',
                                     replacement: function(content) {
                                         return content + '\n';
                                     }
@@ -69,6 +87,18 @@
                                     filter: 'span',
                                     replacement: function(content) {
                                         return content;
+                                    }
+                                },
+                                {
+                                    filter:'var',
+                                    replacement:function(content){
+                                        return '`' + content + '`';
+                                    }
+                                },
+                                {
+                                    filter:'caption',
+                                    replacement:function(content){
+                                        return content + '  \n';
                                     }
                                 },
                                 {
