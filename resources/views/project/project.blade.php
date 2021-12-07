@@ -106,11 +106,11 @@
                     {!! $pageItem->content !!}
                 @endif
                 @if($type === 'markdown')
-                    @if($pageItem->html_code && config('wizard.markdown.direct_save_html'))
-                        {!! $pageItem->html_code !!}
-                    @else
+{{--                    @if($pageItem->html_code && config('wizard.markdown.direct_save_html'))--}}
+{{--                        {!! $pageItem->html_code !!}--}}
+{{--                    @else--}}
                         <textarea class="d-none wz-markdown-content">{{ processMarkdown($pageItem->content ?? '') }}</textarea>
-                    @endif
+{{--                    @endif--}}
                 @endif
                 @if($type === 'table')
                     <textarea id="x-spreadsheet-content" class="d-none">{{ processSpreedSheet($pageItem->content) }}</textarea>
