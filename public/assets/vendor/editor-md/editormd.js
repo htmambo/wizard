@@ -3443,14 +3443,19 @@
             text = trim(text);
 
             var escapedText = text.toLowerCase().replace(/[^\w]+/g, "-");
+            var id = "";
+            while(true) {
+                id = Math.random().toString(36).slice(-8);
+                if($('#h' + level + "-" + this.options.headerPrefix + id).length == 0) {
+                    break;
+                }
+            }
             var toc = {
                 text: text,
                 level: level,
-                slug: escapedText
+                slug: escapedText,
+                gotoid: 'h' + level + "-" + this.options.headerPrefix + id
             };
-
-            var isChinese = /^[\u4e00-\u9fa5]+$/.test(text);
-            var id = (isChinese) ? escape(text).replace(/\%/g, "") : text.toLowerCase().replace(/[^\w]+/g, "-");
 
             markdownToC.push(toc);
 
@@ -3547,7 +3552,6 @@
                 return marked.Renderer.prototype.code.apply(this, arguments);
             }
         };
-
         // 代码转换为 alert box
         markedRenderer.codeToAlertBox = function (style, code) {
             try {
@@ -3632,7 +3636,7 @@
                 html += "</ul></li>";
             }
 
-            html += "<li><a class=\"toc-level-" + level + "\" href=\"#" + text + "\" level=\"" + level + "\">" + text + "</a><ul>";
+            html += "<li><a class=\"toc-level-" + level + "\" href=\"#" + text + "\" level=\"" + level + "\" gotoid='" + toc[i].gotoid + "'>" + text + "</a><ul>";
             lastLevel = level;
         }
 
@@ -3684,7 +3688,7 @@
 
             toc.prepend(btn);
 
-            list.first().before("<li><h1 style='display: none;'>" + tocTitle + " " + icon + "</h1></li>");
+            list.first().before("<li><h1>" + tocTitle + "</h1></li>");
 
             $this.mouseover(function () {
                 menu.show();

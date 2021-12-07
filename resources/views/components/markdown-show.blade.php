@@ -125,6 +125,24 @@
 
             // 图片放大查看
             new Viewer(document.getElementById('markdown-body'));
+            $('.markdown-toc').find('a').on('click', function () {
+                var $el = $(this);
+                var id = $el.attr('href');
+                var lev = $el.attr('level');
+                var hdId = $el.attr('gotoid');
+                var preview = $('.panel-body');
+                var previewContainer = $('.wz-panel-right');
+                var topOrg = preview.offset().top + $('.wz-panel-breadcrumb').height();
+                var hdName = id.substring(1);
+                var ref = $('h' + lev + '#' + hdId + '>a[name="' + hdName + '"]');
+                if(ref.length !== 1) {
+                    return true;
+                }
+                var topPos = ref.offset().top - topOrg - 15;
+                previewContainer.scrollTop(topPos);
+                return false;
+            });
+
         }, 0);
     });
 </script>
