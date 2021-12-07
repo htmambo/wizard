@@ -112,6 +112,9 @@
                     contentBody.find('textarea').remove();
                     contentBody.find('.bmd-form-group').remove();
                     //移除可能配置了的目录
+                    if(contentBody.find('.markdown-toc-list').length) {
+                        contentBody.find('.markdown-toc-list').prepend('<li><h1>目录</h1></li>')
+                    }
                     if(contentBody.find('.editormd-toc-menu').length) {
                         contentBody.find('.toc-menu-btn').remove();
                         contentBody.find('.markdown-toc-list').show();

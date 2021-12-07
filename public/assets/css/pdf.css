@@ -84,10 +84,13 @@ td {
 img {
     margin: 10px 0;
 }
+.markdown-body .markdown-toc-list,
+.markdown-body .markdown-toc-list ul,
 .markdown-body .editormd-toc-menu ul {
     padding-left: 20px;
     list-style: none;
 }
+.markdown-body .markdown-toc-list li h1,
 .markdown-body .editormd-toc-menu ul li h1{
     margin-left: -20px;
 }
