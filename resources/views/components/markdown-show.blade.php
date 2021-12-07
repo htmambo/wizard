@@ -132,13 +132,20 @@
                 var hdId = $el.attr('gotoid');
                 var preview = $('.panel-body');
                 var previewContainer = $('.wz-panel-right');
-                var topOrg = preview.offset().top + $('.wz-panel-breadcrumb').height();
+                var topOrg = 0;
+                if(preview.length==1) {
+                    topOrg = preview.offset().top + $('.wz-panel-breadcrumb').height();
+                } else {
+                    previewContainer = $(window);
+                }
                 var hdName = id.substring(1);
                 var ref = $('h' + lev + '#' + hdId + '>a[name="' + hdName + '"]');
+                console.log('h' + lev + '#' + hdId + '>a[name="' + hdName + '"]')
                 if(ref.length !== 1) {
                     return true;
                 }
                 var topPos = ref.offset().top - topOrg - 15;
+                console.log(topPos)
                 previewContainer.scrollTop(topPos);
                 return false;
             });
