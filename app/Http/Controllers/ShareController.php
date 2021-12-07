@@ -114,7 +114,9 @@ class ShareController extends Controller
                 }
             }
         }
-
+        if($page->isMarkdown()) {
+            $page->content = processMarkdown($page->content);
+        }
         return view('share-show', [
             'hash'     => $hash,
             'project'  => $project,
