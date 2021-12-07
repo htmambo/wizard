@@ -27,7 +27,7 @@ body.wz-dark-theme {
   background: #4e4e4e;
 }
 .wz-dark-theme a.dropdown-item {
-  color: #212529;
+  color: #ccc;
 }
 .wz-dark-theme a.dropdown-item:hover {
   color: #ffffff;
@@ -493,48 +493,16 @@ body.wz-dark-theme {
 .wz-dark-theme .wz-markdown-comment pre code {
   background: none;
 }
-.wz-dark-theme .editormd-toolbar {
-  background:#4e4e4e;
+.wz-dark-theme .dropdown-menu {
+  background: #2b2b2b !important;
 }
-.wz-dark-theme .editormd-menu>li>a {
-  color:#fff;
-}
-.wz-dark-theme .markdown-body table tr,
-.wz-dark-theme .editormd-mask,
-.wz-dark-theme .editormd-html-preview,
-.wz-dark-theme .editormd-preview-container,
-.wz-dark-theme .CodeMirror {
+.wz-dark-theme .wz-edit-control {
   background: #4e4e4e !important;
 }
-.wz-dark-theme .cm-s-default .cm-header,
-.wz-dark-theme .cm-s-default .cm-comment,
-.wz-dark-theme .cm-s-default .cm-variable-2,
-.wz-dark-theme .CodeMirror-code,
-.wz-dark-theme .markdown-body.editormd-preview-container {
+.wz-dark-theme .custom-file-control,
+.wz-dark-theme .form-control {
   color: #fff;
 }
-.wz-dark-theme .editormd-html-preview pre,
-.wz-dark-theme .editormd-preview-container pre {
-  background: #636363 !important;
-}
-.wz-dark-theme .clo,.wz-dark-theme .opn,.wz-dark-theme .pun {
-  color: #ff0;
-}
-.wz-dark-theme .str {
-    color: #f00;
-}
-.wz-dark-theme .CodeMirror .cm-comment,
-.wz-dark-theme .com {
-    color: #ccc;
-}
-.wz-dark-theme .pln {
-    color: #fff;
-}
-.wz-dark-theme .CodeMirror-activeline-background,
-.wz-dark-theme .CodeMirror-gutters {
-  background: #343a40 !important;
-}
-.wz-dark-theme .markdown-body.editormd-preview-container a,
-.wz-dark-theme .cm-s-default .cm-link {
-    color: #03a9f4;
+.wz-dark-theme .bmd-label-static {
+  color: #ccc;
 }

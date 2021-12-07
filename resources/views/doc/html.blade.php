@@ -22,7 +22,7 @@
 @endsection
 
 @push('stylesheet')
-    <link href="{{ cdn_resource('/assets/vendor/editor-md/css/editormd.min.css') }}" rel="stylesheet"/>
+    <link href="{{ cdn_resource('/assets/vendor/editor-md/css/editormd.css') }}" rel="stylesheet"/>
 @endpush
 
 @push('script')

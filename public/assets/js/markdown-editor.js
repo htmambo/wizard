@@ -12,6 +12,7 @@
  * @param params
  * @returns {*}
  */
+var plainPasteMode = false;             // 纯文本粘贴模式
 $.wz.mdEditor = function (editor_id, params) {
     var editor_table_id = 0;
     var config = {
@@ -92,6 +93,10 @@ $.wz.mdEditor = function (editor_id, params) {
         imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "svg"],
         imageUploadURL: "/upload",
         htmlDecode: true,
+        toolbarIconsClass: {
+            plainPasteIcon : "fa-clipboard",
+            outlineIcon : "fa-list",
+        },
         toolbarIcons: function () {
             return ["undo", "redo", "|",
                 "bold", "del", "italic", "quote", "|",
@@ -99,8 +104,9 @@ $.wz.mdEditor = function (editor_id, params) {
                 "list-ul", "list-ol", "hr", "|",
                 "link", "image", "code", "code-block", "table", "pagebreak", "|",
                 "template", "mindMapping", "jsonToTable", "sqlToTable", "sqlCreateBox", "|",
-                "watch", "preview", "fullscreen", "|",
-                "help"
+                "||",
+                "watch", "preview", "fullscreen",
+                "plainPasteIcon", "outlineIcon", "help"
             ];
         },
         toolbarIconTexts: {
@@ -111,6 +117,13 @@ $.wz.mdEditor = function (editor_id, params) {
             sqlCreateBox: 'SQL建表语句',
         },
         toolbarHandlers: {
+            plainPasteIcon : function() {
+                plainPasteMode = !plainPasteMode;
+                showPlainPasteMode();
+            },
+            outlineIcon : function() {
+                this.executePlugin("outlineDialog", "outline-dialog/outline-dialog");
+            },
             template: function (cm, icon, cursor, selection) {
                 this.createDialog({
                     title: config.lang.chooseTemplate,
@@ -242,7 +255,10 @@ $.wz.mdEditor = function (editor_id, params) {
             }
         },
         lang: {
+            description : "为知笔记Markdown编辑器，基于 Editor.md 构建。",
             toolbar: {
+                plainPasteIcon : "纯文本粘贴模式",
+                outlineIcon : "内容目录",
                 template: config.lang.chooseTemplate,
                 jsonToTable: config.lang.jsonToTable,
                 sqlToTable: config.lang.sqlToTable,
@@ -277,8 +293,25 @@ $.wz.mdEditor = function (editor_id, params) {
             // sql 建表语句解析
             $.wz.sqlCreateSyntaxParser('.editormd-preview-container .wz-sql-create');
             $.wz.loadIframe();
-        }
+        },
+        onsaveOptions : function(optionsValue) {
+            setOptionSettings(optionsValue);
+        },
+        ongetOptions : function() {
+            return optionSettings;
+        },
     });
+    showPlainPasteMode();
 
     return mdEditor;
+};
+
+////////////////////////////////////////////////
+// 显示纯文本粘贴模式
+showPlainPasteMode = function () {
+    if (plainPasteMode) {
+        $(".fa-clipboard").addClass("menu-selected");
+    } else{
+        $(".fa-clipboard").removeClass("menu-selected");
+    };
 };

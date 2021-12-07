@@ -74,6 +74,7 @@
 <script src="{{ cdn_resource('/assets/vendor/jquery.min.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/store.everything.min.js') }}"></script>
 <script>
+    var currentTheme = '{{ config('wizard.theme') }}';
     $(function () {
         var currentTheme = store.get('wizard-theme');
         if (currentTheme === undefined) {

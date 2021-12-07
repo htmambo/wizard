@@ -4448,3 +4448,57 @@ hr.editormd-page-break {
 .editormd-theme-dark .CodeMirror {
   border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
+
+.editormd-theme-dark .editormd-menu > li > a > .menu-selected {
+  border-color: #333;
+  background: #ccc;
+}
+
+.editormd-menu > li > a > .menu-selected {
+  background: #eee;
+}
+
+.editormd .CodeMirror pre,
+.editormd .CodeMirror .CodeMirror-gutter-elt {
+  line-height: 32px;
+}
+.CodeMirror-activeline .CodeMirror-gutter-wrapper {
+  background: #e8f2ff;
+  border-right: 1px solid #ccc;
+}
+
+.editormd-theme-dark .CodeMirror-activeline .CodeMirror-gutter-wrapper {
+  background: #4D344A;
+  border-right: 1px solid #ccc;
+}
+.editormd-theme-dark .editormd-html-preview pre,
+.editormd-theme-dark .editormd-preview-container pre {
+  background: #636363 !important;
+}
+.editormd-theme-dark .clo,
+.editormd-theme-dark .opn,
+.editormd-theme-dark .pun {
+  color: #ff0;
+}
+.editormd-theme-dark .str {
+  color: #f00;
+}
+.wz-dark-theme .CodeMirror .cm-comment,
+.wz-dark-theme .com {
+  color: #ccc;
+}
+.wz-dark-theme .pln {
+  color: #fff;
+}
+.wz-dark-theme .editormd,
+.wz-dark-theme .editormd > *,
+.wz-dark-theme .editormd-preview-container,
+.wz-dark-theme .editormd-html-preview
+.wz-dark-theme .CodeMirror,
+.wz-dark-theme .CodeMirror-gutters {
+  background: #343a40;
+}
+.wz-dark-theme .markdown-body.editormd-preview-container a,
+.wz-dark-theme .cm-s-default .cm-link {
+  color: #03a9f4;
+}

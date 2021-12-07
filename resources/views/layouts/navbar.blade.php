@@ -88,10 +88,16 @@
                         currentTheme = 'dark';
                         themeIndicator.text('brightness_3');
                         $('body').addClass('wz-dark-theme');
+                        $.global.markdownEditor.setPreviewTheme('dark');
+                        $.global.markdownEditor.setEditorTheme('paraiso-dark');
+                        $.global.markdownEditor.setTheme('dark');
                     } else {
                         currentTheme = 'default';
                         themeIndicator.text('wb_sunny');
                         $('body').removeClass('wz-dark-theme');
+                        $.global.markdownEditor.setPreviewTheme('default');
+                        $.global.markdownEditor.setEditorTheme('default');
+                        $.global.markdownEditor.setTheme('default');
                     }
                     $.wz.setCookie('wizard-theme', currentTheme, 365);
                     store.set('wizard-theme', currentTheme);

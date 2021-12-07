@@ -1530,12 +1530,3 @@ pre.prettyprint *,
 .editormd-preview-container .sequence-diagram, .editormd-preview-container .flowchart, .editormd-html-preview .sequence-diagram, .editormd-html-preview .flowchart {
     overflow: auto;
 }
-
-.editormd .CodeMirror pre,
-.editormd .CodeMirror .CodeMirror-gutter-elt {
-    line-height: 32px;
-}
-.CodeMirror-activeline .CodeMirror-gutter-wrapper {
-    background: #e8f2ff;
-    border-right: 1px solid #ccc;
-}

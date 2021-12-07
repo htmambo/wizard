@@ -687,7 +687,8 @@
                 styleSelectedText: settings.styleSelectedText,
                 autoCloseBrackets: settings.autoCloseBrackets,
                 showTrailingSpace: settings.showTrailingSpace,
-                highlightSelectionMatches: ((!settings.matchWordHighlight) ? false : {showToken: (settings.matchWordHighlight === "onselected") ? false : /\w/})
+                highlightSelectionMatches: ((!settings.matchWordHighlight) ? false : {showToken: (settings.matchWordHighlight === "onselected") ? false : /\w/}),
+                scrollPastEnd: true
             };
 
             this.codeEditor = this.cm = editormd.$CodeMirror.fromTextArea(this.markdownTextarea[0], codeMirrorConfig);
@@ -818,18 +819,7 @@
             cm.scrollTo(null, (coords.top + coords.bottom - clientHeight) / 2);
 
             if (settings.watch) {
-                var cmScroll = this.codeMirror.find(".CodeMirror-scroll")[0];
-                var height = $(cmScroll).height();
-                var scrollTop = cmScroll.scrollTop;
-                var percent = (scrollTop / cmScroll.scrollHeight);
-
-                if (scrollTop === 0) {
-                    preview.scrollTop(0);
-                } else if (scrollTop + height >= cmScroll.scrollHeight - 16) {
-                    preview.scrollTop(preview[0].scrollHeight);
-                } else {
-                    preview.scrollTop(preview[0].scrollHeight * percent);
-                }
+                this.syncPreviewScrolling();
             }
 
             cm.focus();
@@ -1124,6 +1114,10 @@
             }
 
             toolbarMenu.html(menu);
+            var rlist = toolbarMenu.find("li.pull-right").detach();
+            if (rlist) {
+                rlist.appendTo(toolbarMenu);
+            }
 
             toolbarMenu.find("[title=\"Lowercase\"]").attr("title", settings.lang.toolbar.lowercase);
             toolbarMenu.find("[title=\"ucwords\"]").attr("title", settings.lang.toolbar.ucwords);
@@ -1460,29 +1454,7 @@
                 previewContainer.find(".sequence-diagram").sequenceDiagram({theme: "simple"});
             }
 
-            var preview = $this.preview;
-            var codeMirror = $this.codeMirror;
-            var codeView = codeMirror.find(".CodeMirror-scroll");
-
-            var height = codeView.height();
-            var scrollTop = codeView.scrollTop();
-            var percent = (scrollTop / codeView[0].scrollHeight);
-            var tocHeight = 0;
-
-            preview.find(".markdown-toc-list").each(function () {
-                tocHeight += $(this).height();
-            });
-
-            var tocMenuHeight = preview.find(".editormd-toc-menu").height();
-            tocMenuHeight = (!tocMenuHeight) ? 0 : tocMenuHeight;
-
-            if (scrollTop === 0) {
-                preview.scrollTop(0);
-            } else if (scrollTop + height >= codeView[0].scrollHeight - 16) {
-                preview.scrollTop(preview[0].scrollHeight);
-            } else {
-                preview.scrollTop((preview[0].scrollHeight + tocHeight + tocMenuHeight) * percent);
-            }
+            $this.syncPreviewScrolling();
 
             return this;
         },
@@ -1563,6 +1535,63 @@
         },
 
         /**
+         * 同步预览进行滚动
+         *
+         * @returns {editormd} return this
+         */
+        syncPreviewScrolling: function () {
+            var _this = this;
+            var cm = this.cm;
+            var preview = this.preview;
+
+            var scrollInfo = cm.getScrollInfo();
+            var cmPos = cm.coordsChar(scrollInfo, "local");
+            var line_markers = preview.find('* [data-source-line]');
+            var lines = [];
+            line_markers.each(function () {
+                lines.push($(this).data('source-line'));
+            });
+
+            var currentLine = cmPos.line;
+            var lastMarker = false;
+            var nextMarker = false;
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i] < currentLine) {
+                    lastMarker = i;
+                } else {
+                    nextMarker = i;
+                    break;
+                }
+            }
+
+            var lastLine = 0;
+            if (lastMarker !== false) {
+                lastLine = lines[lastMarker];
+            }
+            var nextLine = cm.lastLine();
+            if (nextMarker !== false) {
+                nextLine = lines[nextMarker];
+            }
+            var percentage = 0;
+            if (lastLine != nextLine) {
+                percentage = (currentLine - lastLine) / (nextLine - lastLine);
+            }
+
+            var lastPosition = 0;
+            if (lastMarker !== false) {
+                lastPosition = preview.find('[data-source-line="' + lastLine + '"]').get(0).offsetTop;
+            }
+            var nextPosition = preview.get(0).scrollHeight;
+            if (nextMarker !== false) {
+                nextPosition = preview.find('[data-source-line="' + nextLine + '"]').get(0).offsetTop;
+            }
+            var scrollTop = lastPosition + (nextPosition - lastPosition) * percentage;
+            preview.scrollTop(scrollTop);
+
+            return this;
+        },
+
+        /**
          * 绑定同步滚动
          *
          * @returns {editormd} return this
@@ -1571,6 +1600,7 @@
         bindScrollEvent: function () {
 
             var _this = this;
+            var cm = this.cm;
             var preview = this.preview;
             var settings = this.settings;
             var codeMirror = this.codeMirror;
@@ -1582,26 +1612,7 @@
 
             var cmBindScroll = function () {
                 codeMirror.find(".CodeMirror-scroll").bind(mouseOrTouch("scroll", "touchmove"), function (event) {
-                    var height = $(this).height();
-                    var scrollTop = $(this).scrollTop();
-                    var percent = (scrollTop / $(this)[0].scrollHeight);
-
-                    var tocHeight = 0;
-
-                    preview.find(".markdown-toc-list").each(function () {
-                        tocHeight += $(this).height();
-                    });
-
-                    var tocMenuHeight = preview.find(".editormd-toc-menu").height();
-                    tocMenuHeight = (!tocMenuHeight) ? 0 : tocMenuHeight;
-
-                    if (scrollTop === 0) {
-                        preview.scrollTop(0);
-                    } else if (scrollTop + height >= $(this)[0].scrollHeight - 16) {
-                        preview.scrollTop(preview[0].scrollHeight);
-                    } else {
-                        preview.scrollTop((preview[0].scrollHeight + tocHeight + tocMenuHeight) * percent);
-                    }
+                    _this.syncPreviewScrolling();
 
                     $.proxy(settings.onscroll, _this)(event);
                 });
@@ -1614,18 +1625,48 @@
             var previewBindScroll = function () {
 
                 preview.bind(mouseOrTouch("scroll", "touchmove"), function (event) {
-                    var height = $(this).height();
-                    var scrollTop = $(this).scrollTop();
-                    var percent = (scrollTop / $(this)[0].scrollHeight);
-                    var codeView = codeMirror.find(".CodeMirror-scroll");
-
-                    if (scrollTop === 0) {
-                        codeView.scrollTop(0);
-                    } else if (scrollTop + height >= $(this)[0].scrollHeight) {
-                        codeView.scrollTop(codeView[0].scrollHeight);
-                    } else {
-                        codeView.scrollTop(codeView[0].scrollHeight * percent);
+                    if (_this.state.preview) {
+                        $.proxy(settings.onpreviewscroll, _this)(event);
+                        return;
                     }
+
+                    var height = $(this).height();
+                    var scroll = preview.scrollTop();
+                    var lastMarker = false;
+                    var nextMarker = false;
+                    var line_markers = preview.find('* [data-source-line]');
+                    for (var i = 0; i < line_markers.length; i++) {
+                        if (line_markers[i].offsetTop < scroll) {
+                            lastMarker = i;
+                        } else {
+                            nextMarker = i;
+                            break;
+                        }
+                    }
+
+                    var lastLine = 0;
+                    if (lastMarker !== false) {
+                        lastLine = line_markers[lastMarker].offsetTop;
+                    }
+                    var nextLine = height;
+                    if (nextMarker !== false) {
+                        nextLine = line_markers[nextMarker].offsetTop;
+                    }
+                    var percentage = 0;
+                    if (lastLine != nextLine) {
+                        percentage = (scroll - lastLine) / (nextLine - lastLine);
+                    }
+                    if (lastMarker !== false) {
+                        lastLine = line_markers[lastMarker].attributes["data-source-line"].value;
+                    }
+                    if (nextMarker !== false) {
+                        nextLine = line_markers[nextMarker].attributes["data-source-line"].value;
+                    }
+
+                    var lastCoords = cm.charCoords({line: lastLine, ch: 0}, "local");
+                    var nextCoords = cm.charCoords({line: nextLine, ch: 0}, "local");
+                    var scrollTop = (nextCoords.top - lastCoords.top) * percentage + lastCoords.top;
+                    cm.scrollTo(null, scrollTop);
 
                     $.proxy(settings.onpreviewscroll, _this)(event);
                 });
@@ -1652,6 +1693,52 @@
                 mouseout: previewUnbindScroll,
                 touchstart: previewBindScroll,
                 touchend: previewUnbindScroll
+            });
+
+            return this;
+        },
+
+        bindTocScrollEvent: function (tocContainer) {
+
+            var _this = this;
+            var cm = this.cm;
+            var preview = this.preview;
+            var settings = this.settings;
+            var previewContainer = this.previewContainer;
+
+            if (!settings.syncScrolling) {
+                return this;
+            }
+
+            tocContainer.find('a').on('click', function () {
+                var $el = $(this);
+                var id = $el.attr('href');
+                var lev = $el.attr('level');
+                var line = $el.attr('lineIdx');
+
+                preview.scrollTop(0);
+                var topOrg = preview.offset().top;
+
+                var hdName = id.substring(1);
+                var refs = previewContainer.find('a[name="' + hdName + '"]');
+                var ref = refs;
+                if (line && refs.length > 1) {
+                    // 解决相同标题时跳转错误
+                    refs.each(function () {
+                        if ($(this).parent().attr('data-source-line') == line) {
+                            ref = $(this);
+                            return false;
+                        }
+                    })
+                }
+                var topPos = ref.offset().top - topOrg;
+                preview.scrollTop(topPos);
+
+                var currentLine = ref.parent().attr('data-source-line');
+                var coords = cm.charCoords({line: currentLine, ch: 0}, "local");
+                cm.scrollTo(null, coords.top);
+
+                return false;
             });
 
             return this;
@@ -1923,7 +2010,8 @@
                         tocMenu.remove();
                     }
 
-                    editormd.markdownToCRenderer(markdownToC, tocContainer, settings.tocDropdown, settings.tocStartLevel);
+                    var tocContainerInternal = editormd.markdownToCRenderer(markdownToC, tocContainer, settings.tocDropdown, settings.tocStartLevel);
+                    this.bindTocScrollEvent(tocContainerInternal);
 
                     if (settings.tocDropdown || tocContainer.find("." + this.classPrefix + "toc-menu").length > 0) {
                         editormd.tocDropdownMenu(tocContainer, (settings.tocTitle !== "") ? settings.tocTitle : this.lang.tocTitle);
@@ -2439,6 +2527,8 @@
                 height: (settings.autoHeight && !this.state.fullscreen) ? "auto" : editor.height() - toolbar.height(),
                 top: (settings.toolbar) ? toolbar.height() : 0
             });
+
+            this.syncPreviewScrolling();
 
             if (this.state.loaded) {
                 $.proxy(settings.onpreviewed, this)();
@@ -3254,7 +3344,6 @@
         };
 
         markedRenderer.emoji = function (text) {
-
             text = text.replace(editormd.regexs.emojiDatetime, function ($1) {
                 return $1.replace(/:/g, "&#58;");
             });
@@ -3317,13 +3406,13 @@
                     });
 
                     text = text.replace(atLinkReg, function ($1, $2) {
-                        return "<a href=\"" + editormd.urls.atLinkBase + "" + $2 + "\" title=\"&#64;" + $2 + "\" class=\"at-link\">" + $1 + "</a>";
+                        return "<a target=\"_blank\" href=\"" + editormd.urls.atLinkBase + "" + $2 + "\" title=\"&#64;" + $2 + "\" class=\"at-link\">" + $1 + "</a>";
                     }).replace(/_#_&#64;_#_/g, "@");
                 }
 
                 if (settings.emailLink) {
                     text = text.replace(emailLinkReg, function ($1, $2, $3, $4, $5) {
-                        return (!$2 && $.inArray($5, "jpg|jpeg|png|gif|webp|ico|icon|pdf".split("|")) < 0) ? "<a href=\"mailto:" + $1 + "\">" + $1 + "</a>" : $1;
+                        return (!$2 && $.inArray($5, "jpg|jpeg|png|gif|webp|ico|icon|pdf".split("|")) < 0) ? "<a target=\"_blank\" href=\"mailto:" + $1 + "\">" + $1 + "</a>" : $1;
                     });
                 }
 
@@ -3614,6 +3703,7 @@
         for (var i = 0, len = toc.length; i < len; i++) {
             var text = toc[i].text;
             var level = toc[i].level;
+            var line = toc[i].lineIdx;
 
             if (level < startLevel) {
                 continue;
@@ -3621,13 +3711,17 @@
 
             if (level > lastLevel) {
                 html += "";
+
+                if (level > (lastLevel + 1)) {
+                    html += (new Array(level - lastLevel)).join("<ul>");
+                }
             } else if (level < lastLevel) {
                 html += (new Array(lastLevel - level + 2)).join("</ul></li>");
             } else {
                 html += "</ul></li>";
             }
 
-            html += "<li><a class=\"toc-level-" + level + "\" href=\"#" + text + "\" level=\"" + level + "\">" + text + "</a><ul>";
+            html += "<li><a class=\"toc-level-" + level + "\" href=\"#" + text + "\" level=\"" + level + "\" lineIdx=\"" + line + "\">" + text + "</a><ul>";
             lastLevel = level;
         }
 
@@ -4374,6 +4468,15 @@
         try {
             document.createEvent("TouchEvent");
             eventType = touchEventType;
+        } catch (e) {
+        }
+
+        // https://github.com/pandao/editor.md/issues/203
+        // https://github.com/pandao/editor.md/issues/246
+        // 工具栏按钮无法点击的修复
+        try {
+            document.createEvent("MouseEvent");
+            eventType = mouseEventType;
         } catch (e) {
         }
 

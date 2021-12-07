@@ -21,7 +21,7 @@
 @endsection
 
 @push('stylesheet')
-    <link href="{{ cdn_resource('/assets/vendor/editor-md/css/editormd.min.css') }}" rel="stylesheet"/>
+    <link href="{{ cdn_resource('/assets/vendor/editor-md/css/editormd.css') }}" rel="stylesheet"/>
 @endpush
 
 @push('script')
@@ -68,7 +68,17 @@
             });
 
             $.global.markdownEditor = editor;
-
+            if(typeof currentTheme == 'undefined') {
+                var currentTheme = store.get('wizard-theme');
+                if (currentTheme === undefined) {
+                    currentTheme = '{{ config('wizard.theme') }}';
+                }
+            }
+            if (currentTheme === 'dark') {
+                $.global.markdownEditor.setTheme('dark');
+                $.global.markdownEditor.setPreviewTheme('dark');
+                $.global.markdownEditor.setEditorTheme('paraiso-dark');
+            }
             $.global.getEditorContent = function () {
                 try {
                     return editor.getMarkdown();
