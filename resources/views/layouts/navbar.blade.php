@@ -90,8 +90,11 @@
                         $('body').addClass('wz-dark-theme');
                         if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
-                                $($.global.markdownEditor.toolbarSelector).children().css({'background-color':'#000'});
-                                $($.global.markdownEditor.toolbarSelector).children().css({'color':'#fff'});
+                                $('#editormd').children().css({
+                                    'background-color':'#000',
+                                    'color':'#fff',
+                                    'border-color':'#5c5c5c'
+                                });
                             } else {
                                 $.global.markdownEditor.setPreviewTheme('dark');
                                 $.global.markdownEditor.setEditorTheme('paraiso-dark');
@@ -104,8 +107,11 @@
                         $('body').removeClass('wz-dark-theme');
                         if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
-                                $($.global.markdownEditor.toolbarSelector).children().css({'background-color':'#fff'});
-                                $($.global.markdownEditor.toolbarSelector).children().css({'color':'#000'});
+                                $('#editormd').children().css({
+                                    'background-color':'#fff',
+                                    'color':'#000',
+                                    'border-color':'#c9d8db'
+                                });
                             } else {
                                 $.global.markdownEditor.setPreviewTheme('default');
                                 $.global.markdownEditor.setEditorTheme('default');

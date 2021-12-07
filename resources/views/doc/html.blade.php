@@ -3,12 +3,12 @@
 @section('container-style', 'container-fluid')
 @section('content')
 
-    <div class="row marketing wz-main-container-full">
+    <div class="marketing wz-main-container-full">
         <form class="w-100" method="POST" id="wz-doc-edit-form"
               action="{{ $newPage ? wzRoute('project:doc:new:show', ['id' => $project->id]) : wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
 
             @include('components.doc-edit', ['project' => $project, 'pageItem' => $pageItem ?? null, 'navigator' => $navigator])
-            <div class="row">
+            <div class="">
                 <input type="hidden" name="type" value="html"/>
                 <div class="col" style="padding-left: 0; padding-right: 0;">
                     <div id="editormd">
@@ -23,6 +23,9 @@
 
 @push('stylesheet')
     <link href="{{ cdn_resource('/assets/vendor/editor-md/css/editormd.css') }}" rel="stylesheet"/>
+    <style>
+        #editormd {border: none;}
+    </style>
 @endpush
 
 @push('script')
@@ -62,8 +65,11 @@
                 }
             }
             if (currentTheme === 'dark') {
-                $('#editormd').children().css({'background-color':'#000'});
-                $('#editormd').children().css({'color':'#fff'});
+                $('#editormd').children().css({
+                    'background-color':'#000',
+                    'color':'#fff',
+                    'border-color':'#5c5c5c'
+                });
             }
 
             $text1.val(editor.txt.html());
