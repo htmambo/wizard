@@ -84,3 +84,10 @@ td {
 img {
     margin: 10px 0;
 }
+.markdown-body .editormd-toc-menu ul {
+    padding-left: 20px;
+    list-style: none;
+}
+.markdown-body .editormd-toc-menu ul li h1{
+    margin-left: -20px;
+}

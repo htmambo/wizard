@@ -113,8 +113,9 @@
                     contentBody.find('.bmd-form-group').remove();
                     //移除可能配置了的目录
                     if(contentBody.find('.editormd-toc-menu').length) {
-                        contentBody.find('.editormd-toc-menu').remove();
-                        contentBody.find('br').first().remove();
+                        contentBody.find('.toc-menu-btn').remove();
+                        contentBody.find('.markdown-toc-list').show();
+                        contentBody.find('.markdown-toc-list').find('h1').show();
                     }
                     //移除可能存在的SQL_CREATE的多余部分
                     if($('.wz-sql-create').length) {
