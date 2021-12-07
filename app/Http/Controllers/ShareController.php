@@ -175,7 +175,7 @@ class ShareController extends Controller
                 'project_id' => $project_id,
                 'page_id'    => $page_id,
                 'user_id'    => \Auth::user()->id,
-                'password'   => $password,
+                'password'   => (string)$password,
             ]);
         }
 
