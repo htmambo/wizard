@@ -1530,3 +1530,25 @@ pre.prettyprint *,
 .editormd-preview-container .sequence-diagram, .editormd-preview-container .flowchart, .editormd-html-preview .sequence-diagram, .editormd-html-preview .flowchart {
     overflow: auto;
 }
+
+#wz-toc-container .toc-level-1 {
+    padding-left: 0;
+}
+#wz-toc-container .toc-level-2 {
+    padding-left: 20px;
+}
+#wz-toc-container .toc-level-3 {
+    padding-left: 40px;
+}
+#wz-toc-container .toc-level-4 {
+    padding-left: 60px;
+}
+#wz-toc-container .toc-level-5 {
+    padding-left: 80px;
+}
+#wz-toc-container .toc-level-6 {
+    padding-left: 100px;
+}
+#wz-toc-container li>ul {
+    margin-left: -20px;
+}
