@@ -872,33 +872,6 @@ function processSpreedSheetRows($originalRows): array
 }
 
 /**
- * 是否使用较为严格的 markdown 解释器
- *
- * 2019-12-16T21:54:00+08:00 之后创建的所有文档人采用该模式
- *
- * @param Document $pageItem
- *
- * @return bool
- */
-function markdownCompatibilityStrict($pageItem = null)
-{
-    if (!config('wizard.markdown.strict')) {
-        return false;
-    }
-
-    if (empty($pageItem) || empty($pageItem->created_at)) {
-        return true;
-    }
-
-    return $pageItem->created_at->greaterThan(
-        Carbon::createFromFormat(
-            Carbon::RFC3339,
-            '2019-12-16T21:54:00+08:00'
-        )
-    );
-}
-
-/**
  * 遍历导航项
  *
  * @param array $navigators

@@ -6,12 +6,7 @@
 @push('script')
 <script src="{{ cdn_resource('/assets/vendor/bootstrap-treeview.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/prettify.min.js') }}"></script>
-{{-- 从 2019-12-16T21:54:00+08:00 开始创建的新文档，使用最新的 marked 库，对 Markdown 文档格式要求更为严格一些，也更加规范，这里是对之前已经创建的不符合规范的文档做一个兼容 --}}
-@if(markdownCompatibilityStrict($pageItem ?? null))
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/marked.min.js') }}"></script>
-@else
-<script src="{{ cdn_resource('/assets/vendor/editor-md/lib/marked-0.3.3.min.js') }}"></script>
-@endif
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/raphael.min.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/underscore.min.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/sequence-diagram.min.js') }}"></script>
