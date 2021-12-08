@@ -199,10 +199,12 @@ a:hover {
     font-size: 18px;
     position: relative;
 }
-
+.wz-project-title > .wz-nav-item {
+    padding-left: 10px;
+}
 .wz-project-title > .dropdown {
     position: absolute;
-    top: 10px;
+    top: 6px;
     right: 0;
     width: 145px;
     text-align: right;
@@ -323,7 +325,7 @@ a:hover {
 }
 
 .wz-left-nav {
-    /*padding-left: 20px;*/
+    padding-left: 10px;
     display: block;
 }
 
@@ -744,7 +746,7 @@ a:hover {
 }
 
 .wz-panel-breadcrumb {
-    /*padding: 0 15px;*/
+    padding: 0 0 0 15px;
     background: #f7f7f7;
 }
 
