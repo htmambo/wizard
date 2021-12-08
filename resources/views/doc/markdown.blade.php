@@ -33,14 +33,6 @@
     <script src="{{ cdn_resource('/assets/js/markdown-editor.js') }}?{{ resourceVersion() }}"></script>
     <script type="text/javascript">
         $(function () {
-
-            {{-- 从 2019-12-16T21:54:00+08:00 开始创建的新文档，使用最新的 marked 库，对 Markdown 文档格式要求更为严格一些，也更加规范，这里是对之前已经创建的不符合规范的文档做一个兼容 --}}
-            @if(markdownCompatibilityStrict($pageItem ?? null))
-                editormd.markedURL.js = '{{ cdn_resource('/assets/vendor/editor-md/lib/marked.min') }}';
-            @else
-                editormd.markedURL.js = '{{ cdn_resource('/assets/vendor/editor-md/lib/marked-0.3.3.min') }}';
-            @endif
-
             editormd.defaults.resourcesVersion = "{{ resourceVersion() }}";
 
             // 初始化 Editor.md

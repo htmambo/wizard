@@ -1898,7 +1898,7 @@
 
             marked.setOptions(markedOptions);
 
-            var newMarkdownDoc = editormd.$marked(cmValue, markedOptions);
+            var newMarkdownDoc = editormd.$marked.parse(cmValue, markedOptions);
 
             //console.info("cmValue", cmValue, newMarkdownDoc);
 
@@ -3461,6 +3461,14 @@
 
             var headingHTML = "<h" + level + " id=\"h" + level + "-" + this.options.headerPrefix + id + "\">";
 
+            // Wizard 添加样式 START
+            // if (level === 2) {
+            //     headingHTML += "<i class='fa fa-thumb-tack mr-2'></i>";
+            // } else if (level === 3) {
+                headingHTML += "<i class='fa fa-slack mr-2'></i>";
+            // }
+            // Wizard 添加样式 END
+
             headingHTML += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
             headingHTML += "<span class=\"header-link octicon octicon-link\"></span>";
             headingHTML += (hasLinkReg) ? this.atLink(this.emoji(linkText)) : this.atLink(this.emoji(text));
@@ -3877,7 +3885,7 @@
 
         // markdownDoc = new String(markdownDoc);
 
-        var markdownParsed = marked(markdownDoc, markedOptions);
+        var markdownParsed = marked.parse(markdownDoc, markedOptions);
 
         markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
 

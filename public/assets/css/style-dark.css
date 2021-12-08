@@ -24,7 +24,7 @@ body.wz-dark-theme {
   color: #ffffff;
 }
 .wz-dark-theme .wz-panel-right {
-  background: #4e4e4e;
+  background: #3e3e3e;
 }
 .wz-dark-theme a.dropdown-item {
   color: #ccc;
@@ -118,9 +118,6 @@ body.wz-dark-theme {
 }
 .wz-dark-theme .wz-setting-breadcrumb .breadcrumb-item.active {
   color: #b1b1b1;
-}
-.wz-dark-theme .card:not(.card-white) {
-  background: #4e4e4e !important;
 }
 .wz-dark-theme .card:not(.card-white) .card-header a {
   color: #aeb0b2;
@@ -217,12 +214,20 @@ body.wz-dark-theme {
 .wz-dark-theme .nav-tabs .nav-item a {
   color: #fffffc;
 }
-.wz-dark-theme .wz-project-main {
+/*.wz-dark-theme .card:not(.card-white) {*/
+/*  background: #4e4e4e !important;*/
+/*}*/
+
+.wz-dark-theme .wz-project-main .editormd-html-preview {
   background: #4e4e4e;
+  color: #ffffff;
 }
+/*.wz-dark-theme .wz-project-main {*/
+/*  background: #4e4e4e;*/
+/*}*/
 .wz-dark-theme .wz-project-main img,
 .wz-dark-theme .wz-project-main svg {
-  background: #4e4e4e;
+  background: #3e3e3e;
 }
 .wz-dark-theme .wz-project-main .wz-project-description {
   color: #ffffff;
@@ -313,10 +318,6 @@ body.wz-dark-theme {
 }
 .wz-dark-theme .wz-project-main .wz-document-swagger-sync-info a:hover {
   text-decoration: underline;
-}
-.wz-dark-theme .wz-project-main .editormd-html-preview {
-  background: #4e4e4e;
-  color: #ffffff;
 }
 .wz-dark-theme .wz-project-main .editormd-html-preview blockquote {
   color: #cecece;

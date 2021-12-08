@@ -749,7 +749,7 @@ a:hover {
 }
 
 .wz-project-main {
-    padding: 0 10px 10px;
+    padding: 0 0 0 5px;
 }
 
 .wz-panel-breadcrumb .breadcrumb {
@@ -798,9 +798,9 @@ a:hover {
     display: block;
 }
 
-.wz-panel-limit {
-    max-width: 1100px;
-}
+/*.wz-panel-limit {*/
+/*    max-width: 1100px;*/
+/*}*/
 
 .wz-panel-limit img {
     max-width: 100%;
@@ -1304,13 +1304,31 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
     margin-bottom: 20px;
 }
 
+.editormd-preview-container, .editormd-html-preview {
+    padding: 10px !important;
+    /*margin: 10px;*/
+}
+
 .markdown-body h1,
-.markdown-body h2 {
-    border-bottom: none!important;
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6
+{
+    border-bottom: 1px dashed #ccc !important;
+    padding: 5px 0 !important;
+    margin: 10px 0 !important;
+    line-height: 1.7 !important;
 }
 
 .markdown-body h1>.fa,
-.markdown-body h2>.fa {
+.markdown-body h2>.fa,
+.markdown-body h3>.fa,
+.markdown-body h4>.fa,
+.markdown-body h5>.fa,
+.markdown-body h6>.fa
+{
     color: #c1c1c1e8;
 }
 
