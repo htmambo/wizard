@@ -125,11 +125,7 @@
 
             // 图片放大查看
             new Viewer(document.getElementById('markdown-body'));
-<<<<<<< HEAD
             $('.markdown-toc,.markdown-toc-list').find('a').on('click', function () {
-=======
-            $('.markdown-toc,#wz-toc-container').find('a').on('click', function () {
->>>>>>> 24226caf3a68d07a47875382714794e217bd2ecc
                 var $el = $(this);
                 var id = $el.attr('href');
                 var lev = $el.attr('level');
