@@ -68,7 +68,7 @@
                     return ;
                 }
                 tocElement.children().first().remove();
-                html = '<ul>' + tocElement.html().replace('<ul>','').replace('</ul>', '') + '</ul>';
+                html = '<ul>' + tocElement.html().replace('</a><ul>', '</a></li>').replace('</ul></li>', '').replace('<ul>','').replace('</ul>', '') + '</ul>';
             }
             if (html.length < 20) {
                 return ;
