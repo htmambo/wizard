@@ -3682,13 +3682,13 @@
             var $this = $(this);
             var toc = $this.children(".markdown-toc");
             var icon = "<i class=\"fa fa-angle-down\"></i>";
-            var btn = "<a href=\"javascript:;\" class=\"toc-menu-btn\"><i class=\"fa fa-angle-down\" style='float: right;'></i>" + icon + tocTitle + "</a>";
+            var btn = "<a href=\"javascript:;\" class=\"toc-menu-btn\">" + icon + tocTitle + "</a>";
             var menu = toc.children("ul");
             var list = menu.find("li");
 
-            toc.prepend(btn);
+            toc.append(btn);
 
-            list.first().before("<li><h1>" + tocTitle + "</h1></li>");
+            list.first().before("<li></li><li><h1>" + tocTitle + "</h1></li>");
 
             $this.mouseover(function () {
                 menu.show();
