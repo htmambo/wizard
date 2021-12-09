@@ -1004,7 +1004,7 @@ tr.warning {
 }
 
 .wz-tag-container .tm-tag-disabled {
-    color: #848484 !important;
+    color: #848484;
     padding-right: 10px;
     background-color: #fff;
 }

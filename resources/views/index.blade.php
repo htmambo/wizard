@@ -120,7 +120,7 @@
                         @foreach($tags as $tag)
                             <span class="tm-tag tm-tag-disabled">
                             <a href="{{ wzRoute('search:search', ['tag' => $tag->name]) }}">{{ $tag->name }}</a>
-                            <span style="color: #6c6c6c;">[{{ $tag->pages_count ?? 0 }}]</span>
+                            <span>[{{ $tag->pages_count ?? 0 }}]</span>
                         </span>
                         @endforeach
                     </div>

@@ -189,16 +189,19 @@ body.wz-dark-theme,
   color: #eee !important;
 }
 .wz-dark-theme .card:not(.card-white) .tm-tag a {
-  color: #bdbdbd;
+  color: #ccc;
 }
 .wz-dark-theme .card:not(.card-white) .tm-tag a:hover {
-  color: #eee;
+  color: #fff;
 }
 .wz-dark-theme .card:not(.card-white) .media .media-body a {
   color: #ccc;
 }
 .wz-dark-theme .card:not(.card-white) .media .media-body a:hover {
   color: #fff;
+}
+.wz-dark-theme .wz-tag-container .tm-tag-disabled {
+  color: #aaa;
 }
 .wz-dark-theme .card:not(.card-white) .media .border-bottom {
   border-bottom: 1px solid #848484 !important;
