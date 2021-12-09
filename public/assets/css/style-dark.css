@@ -5,11 +5,13 @@ body.wz-dark-theme,
 .wz-dark-theme .wz-main-container {
   background: #343a40;
 }
+.wz-dark-theme .markdown-body table tr,
 .wz-dark-theme .markdown-body table {
   background: #4e4e4e;
 }
 .wz-dark-theme .markdown-body .table-hover tbody tr:hover {
-  background-color: #fafafae0;
+  background-color: #999;
+  color: #0a0a0a;
 }
 .wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul {
   background: #4e4e4e;
@@ -24,6 +26,7 @@ body.wz-dark-theme,
 .wz-dark-theme .wz-theme-support-icon {
   color: #ffffff;
 }
+.wz-dark-theme .wz-markdown-style-fix table th,
 .wz-dark-theme .wz-left-main {
   background: #3e3e3e;
 }
