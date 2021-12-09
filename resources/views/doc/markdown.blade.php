@@ -1,6 +1,5 @@
 @extends('layouts.default')
 @section('title', $project->name)
-@section('container-style', 'container-fluid')
 @section('content')
 
     <div class="marketing wz-main-container-full">

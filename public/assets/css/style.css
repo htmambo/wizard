@@ -194,17 +194,19 @@ a:hover {
 }
 
 .wz-project-title {
-    padding-top: 10px;
+    /*padding-top: 10px;*/
     /*padding-left: 20px;*/
     font-size: 18px;
     position: relative;
+    height: 48px;
+    line-height: 48px;
 }
 .wz-project-title > .wz-nav-item {
     padding-left: 10px;
 }
 .wz-project-title > .dropdown {
     position: absolute;
-    top: 6px;
+    top: 0px;
     right: 0;
     width: 145px;
     text-align: right;
@@ -320,10 +322,6 @@ a:hover {
     margin: 0 0 20px;
 }
 
-.wz-main-container-full {
-    margin-top: 20px;
-}
-
 .wz-left-nav {
     padding-left: 10px;
     display: block;
@@ -422,7 +420,7 @@ a:hover {
     padding-top: 5px;
 }
 .wz-edit-control {
-    margin-bottom: 5px;
+    /*margin-bottom: 5px;*/
     position: relative;
     border: 1px dashed #ccc;
     background: #f3f3f3;
@@ -1297,7 +1295,6 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
 
 .wz-top-nav-search input:hover,
 .wz-top-nav-search input:focus {
-    background: #fbfbfb;
     width: 30rem;
 }
 
@@ -1426,13 +1423,15 @@ pre.prettyprint *,
     background: #f7f7f7;
     transform: none;
 }
-
+.wz-main-container-full {
+    /*margin-top: 20px;*/
+}
 .wz-editor-header .wz-editor-header-toolbar {
     padding: 0;
     /*margin-left: -14px;*/
-    margin-top: -17px;
+    /*margin-top: -17px;*/
     line-height: 1;
-    margin-bottom: 7px;
+    /*margin-bottom: 7px;*/
 }
 
 .markdown-body .wz-card-frame {

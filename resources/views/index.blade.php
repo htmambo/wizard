@@ -4,7 +4,7 @@
 @section('container-style', 'px-md-4')
 @section('content')
 
-    <div class="card mt-4 mb-4">
+    <div class="card row mt-2 mb-2">
         @if (!empty($catalog))
         <div class="card-header">
             <div class="card-header-operation">
@@ -89,7 +89,7 @@
 
         {{-- 非搜索模式，同时用于有关注的项目，则展示 --}}
         @if(!empty($favorites) && $favorites->count() > 0 && empty($name))
-            <div class="card mb-4">
+            <div class="card mt-2 row">
                 <div class="card-header">我关注的</div>
                 <div class="card-body">
                     <div class="row col-12">
@@ -113,7 +113,7 @@
         @endif
 
         @if (!empty($tags) && $tags->count() > 0)
-            <div class="card mb-4">
+            <div class="card mt-2 row">
                 <div class="card-header">标签</div>
                 <div class="card-body">
                     <div class="wz-tag-container">
@@ -128,7 +128,7 @@
             </div>
         @endif
 
-        <div class="card mb-4">
+        <div class="card mt-2 row mb-2">
             <div class="card-header">最近活动</div>
             <div class="card-body" id="operation-log-recently"></div>
             <div class="card-footer text-center">

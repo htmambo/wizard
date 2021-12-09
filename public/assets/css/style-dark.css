@@ -1,5 +1,6 @@
-body.wz-dark-theme {
-  background: #343a40;
+body.wz-dark-theme,
+.wz-dark-theme .wz-body {
+  background: #545a50;
 }
 .wz-dark-theme .wz-main-container {
   background: #343a40;
@@ -17,18 +18,17 @@ body.wz-dark-theme {
 .wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul > li > a {
   color: #ffffff;
 }
-.wz-dark-theme .wz-body {
-  background-color: #4e4e4e;
-}
 .wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul > li > a:hover {
   background-color: #0a001f;
 }
 .wz-dark-theme .wz-theme-support-icon {
   color: #ffffff;
 }
-.wz-dark-theme .wz-left-main,
-.wz-dark-theme .wz-panel-right {
+.wz-dark-theme .wz-left-main {
   background: #3e3e3e;
+}
+.wz-dark-theme .wz-panel-right {
+  background-color: #4e4e4e;
 }
 .wz-dark-theme a.dropdown-item {
   color: #ccc;
@@ -92,17 +92,30 @@ body.wz-dark-theme {
 .wz-dark-theme .wz-top-navbar a.text-dark:hover {
   color: #ffffff !important;
 }
+.wz-dark-theme .wz-top-nav-search input::-webkit-input-placeholder{
+  color:#868686 !important;
+}
+
+.wz-dark-theme .wz-top-nav-search input,
+.wz-dark-theme .wz-top-nav-search input::-webkit-keygen-select,
+.wz-dark-theme .wz-top-nav-search input::-webkit-input-placeholder,
+.wz-dark-theme .wz-top-nav-search input:-webkit-autofill,
 .wz-dark-theme .wz-top-nav-search input:hover,
 .wz-dark-theme .wz-top-nav-search input:focus {
-  background: #a0a0a0;
+  background: #a0a0a0 !important;
 }
-.wz-dark-theme .wz-top-navbar .wz-top-nav-search input::-webkit-input-placeholder {
-  color: #dcdcdc;
+.wz-dark-theme .wz-top-nav-search input,
+.wz-dark-theme .wz-top-nav-search input:-webkit-autofill,
+.wz-dark-theme .wz-top-nav-search input:hover,
+.wz-dark-theme .wz-top-nav-search input:focus
+{
+  color: #2a2a2a !important;
 }
 .wz-dark-theme .wz-panel-separator:hover {
   box-shadow: 8px 3px 5px 0 #b1b1b1;
   background: #343a40;
 }
+
 .wz-dark-theme .wz-project-title,
 .wz-dark-theme .wz-panel-breadcrumb {
   background: #343a40;
@@ -429,6 +442,7 @@ body.wz-dark-theme {
 .wz-dark-theme .swagger-ui label {
   color: #ffffff;
 }
+.wz-dark-theme .card,
 .wz-dark-theme .swagger-ui .opblock-tag {
   color: #ffffff;
   background: #616161;
@@ -523,4 +537,14 @@ body.wz-dark-theme {
 .wz-dark-theme .bmd-label-floating,
 .wz-dark-theme .bmd-label-static {
   color: #aaa;
+}
+.wz-dark-theme .tm-tag.tm-tag-success,
+.wz-dark-theme .wz-tag-container .tm-input {
+  color: #2a2a2a !important;
+}
+
+.wz-dark-theme .tm-tag.tm-tag-success,
+.wz-tag-container input.tm-input:focus {
+  background-color: #a0a0a0;
+  border: #4a4a4a 1px solid;
 }
