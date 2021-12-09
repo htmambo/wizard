@@ -91,10 +91,11 @@
                         if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
                                 $('#editormd').children().css({
-                                    'background-color':'#000',
-                                    'color':'#fff',
+                                    'background-color':'#3e3e3e',
+                                    'color':'#eee',
                                     'border-color':'#5c5c5c'
                                 });
+                                $('#editormd').find('.w-e-toolbar').css({'background-color':'#343a40'});
                             } else {
                                 $.global.markdownEditor.setPreviewTheme('dark');
                                 $.global.markdownEditor.setEditorTheme('paraiso-dark');

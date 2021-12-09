@@ -116,7 +116,7 @@ body.wz-dark-theme,
 }
 .wz-dark-theme .wz-panel-separator:hover {
   box-shadow: 8px 3px 5px 0 #b1b1b1;
-  background: #343a40;
+  background: #3e3e3e;
 }
 
 .wz-dark-theme .wz-project-title,
@@ -172,10 +172,6 @@ body.wz-dark-theme,
 .wz-dark-theme .card:not(.card-white) .wz-box-project:hover {
   background-color: #000000;
 }
-.wz-dark-theme .card:not(.card-white) .wz-box-project .wz-title,
-.wz-dark-theme .card:not(.card-white) .wz-box-project .wz-page-count {
-  color: #ffffff;
-}
 .wz-dark-theme .card:not(.card-white) .wz-main-container-full .alert-info {
   color: #9e9e9e;
   background-color: #4a4a4a;
@@ -194,9 +190,6 @@ body.wz-dark-theme,
 }
 .wz-dark-theme .card:not(.card-white) .tm-tag a:hover {
   color: #ffffff;
-}
-.wz-dark-theme .card:not(.card-white) .media .media-body .wz-text-dashed {
-  color: #aaa;
 }
 .wz-dark-theme .card:not(.card-white) .media .media-body a {
   color: #ccc;
@@ -254,18 +247,10 @@ body.wz-dark-theme,
 .wz-dark-theme .wz-project-main svg {
   background: #3e3e3e;
 }
-.wz-dark-theme .wz-project-main .wz-project-description,
-.wz-dark-theme .markdown-body > h1,
-.wz-dark-theme .markdown-body .wz-group-allowed-list,
-.wz-dark-theme .markdown-body .table thead th,
-.wz-dark-theme .wz-project-main .wz-page-control .material-icons,
-.wz-dark-theme .wz-project-main .wz-page-control .label,
-.wz-dark-theme .wz-project-main .wz-page-control .wz-page-title {
-  color: #eee;
-}
+.wz-dark-theme .text-muted,
 .wz-dark-theme .wz-project-main .wz-page-content table th,
 .wz-dark-theme .wz-project-main .wz-page-content table td {
-  color: #ccc;
+  color: #aaa !important;
 }
 .wz-dark-theme .wz-project-main .wz-document-header {
   color: #cecece;
@@ -419,7 +404,10 @@ body.wz-dark-theme,
 .wz-dark-theme .swagger-ui table {
   background: none;
 }
-.wz-dark-theme .wz-project-main .editormd-html-preview table td,
+.wz-dark-theme .wz-title,
+.wz-dark-theme .wz-page-title,
+.wz-dark-theme .markdown-body,
+.wz-dark-theme .wz-text-dashed,
 .wz-dark-theme .swagger-ui .info li,
 .wz-dark-theme .swagger-ui .info table,
 .wz-dark-theme .swagger-ui .info p,

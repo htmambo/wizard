@@ -1,12 +1,10 @@
 @extends('layouts.default')
 @section('title', $project->name)
-@section('container-style', 'container-fluid')
 @section('content')
 
     <div class="marketing wz-main-container-full">
         <form class="w-100" method="POST" id="wz-doc-edit-form"
               action="{{ $newPage ? wzRoute('project:doc:new:show', ['id' => $project->id]) : wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
-
             @include('components.doc-edit', ['project' => $project, 'pageItem' => $pageItem ?? null, 'navigator' => $navigator])
             <div class="">
                 <input type="hidden" name="type" value="html"/>
@@ -24,7 +22,8 @@
 @push('stylesheet')
     <link href="{{ cdn_resource('/assets/vendor/editor-md/css/editormd.css') }}" rel="stylesheet"/>
     <style>
-        #editormd {border: none;}
+        #editormd {border: none !important;display: none;}
+        #editormd img {max-width: 100%;}
     </style>
 @endpush
 
@@ -66,13 +65,15 @@
             }
             if (currentTheme === 'dark') {
                 $('#editormd').children().css({
-                    'background-color':'#000',
-                    'color':'#fff',
+                    'background-color':'#3e3e3e',
+                    'color':'#eee',
                     'border-color':'#5c5c5c'
                 });
+                $('#editormd').find('.w-e-toolbar').css({'background-color':'#343a40'});
             }
 
             $text1.val(editor.txt.html());
+            $('#editormd').show();
             $.global.markdownEditor = editor;
 
             $.global.getEditorContent = function () {

@@ -100,11 +100,6 @@
                     layer.close(index);
                     if (isDarkTheme) {
                         body.addClass('wz-dark-theme');
-                        if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
-                            $.global.markdownEditor.setPreviewTheme('dark');
-                            $.global.markdownEditor.setEditorTheme('paraiso-dark');
-                            $.global.markdownEditor.setTheme('dark');
-                        }
                     }
 
                     layer.msg('努力渲染中...', {
