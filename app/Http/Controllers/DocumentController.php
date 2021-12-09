@@ -568,6 +568,7 @@ class DocumentController extends Controller
             'pageItem' => $page,
             'type'     => $type,
             'noheader' => true,
+            'hash'     => ''
         ]);
     }
 

@@ -66,9 +66,11 @@
                 }
             }
             if (currentTheme === 'dark') {
-                $.global.markdownEditor.setTheme('dark');
-                $.global.markdownEditor.setPreviewTheme('dark');
-                $.global.markdownEditor.setEditorTheme('paraiso-dark');
+                if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
+                    $.global.markdownEditor.setTheme('dark');
+                    $.global.markdownEditor.setPreviewTheme('dark');
+                    $.global.markdownEditor.setEditorTheme('paraiso-dark');
+                }
             }
             $.global.getEditorContent = function () {
                 try {
