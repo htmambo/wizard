@@ -216,7 +216,7 @@ class BatchExportController extends Controller
                 $updatedTime = $doc->updated_at ?? '-';
 
                 if ($doc->type == Document::TYPE_HTML) {
-                    $title = '<h1>* ' . $doc->title . '</h1>';
+                    $title = '<h1> ' . $doc->title . '</h1>';
                     $intro =
                         "<p class='wz-document-header'>该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。</p>";
                     $html = $title . $intro;

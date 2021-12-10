@@ -237,7 +237,7 @@ $.wz.mdEditor = function (editor_id, params) {
                     lockScreen: true,
                     buttons: {
                         enter: [config.lang.confirmBtn, function () {
-                            cm.replaceSelection("```sql_create\n" + $('#sql-create-box-editor-' + editor_table_id).val() + "\n```");
+                            cm.replaceSelection("```sql_create\n" + $('#sql-create-box-editor-' + editor_table_id).val() + "\n```\n");
                             this.hide().lockScreen(false).hideMask();
                             return false;
                         }],

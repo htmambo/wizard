@@ -67,9 +67,16 @@ class ExportController extends Controller
 
         $header = '<link href="/assets/css/normalize.css" rel="stylesheet">';
         switch ($type) {
+            case 'html':
             case 'markdown':
                 $header .= '<link href="/assets/vendor/editor-md/css/editormd.preview.css" rel="stylesheet"/>';
                 $header .= '<link href="/assets/vendor/markdown-body.css" rel="stylesheet">';
+                /**
+                 * 修复一下有可能会出现的导出错误
+                 */
+                $content = preg_replace('@li\s+class=[\'"]L[^>]+>@i', 'li>', $content);
+                $content = preg_replace('@<code[^>]*>@i', '', $content);
+                $content = preg_replace('@</code[^>]*>@i', '', $content);
                 break;
             case 'swagger':
                 $header .= '<link href="/assets/vendor/swagger-ui/swagger-ui.css" rel="stylesheet">';

@@ -16,17 +16,17 @@
 }
 
 .wz-pdf-content pre.prettyprint ol.linenums {
-    margin: 0;
-    padding: 0;
+//    margin: 0;
+//    padding: 0;
 }
 
 .wz-pdf-content pre.prettyprint ol li,
 .wz-pdf-content pre.prettyprint ol {
-    list-style-type: none!important;
+//    list-style-type: none!important;
 }
 
 .wz-pdf-content pre.prettyprint li.L1, li.L3, li.L5, li.L7, li.L9 {
-    background: none;
+//    background: none;
 }
 
 .pdf-error {
@@ -92,5 +92,20 @@ img {
 }
 .markdown-body .markdown-toc-list li h1,
 .markdown-body .editormd-toc-menu ul li h1{
-    margin-left: -20px;
+    margin: 0 0 0 -20px;
+    border-bottom: none !important;
+}
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+    border-bottom: 1px solid #ccc !important;
+    width: 100%;
+}
+.markdown-body .wz-page-title {
+    border-bottom: none !important;
+    text-align: center;
+    margin-bottom: 5px;
 }
