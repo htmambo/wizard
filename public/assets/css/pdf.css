@@ -16,17 +16,17 @@
 }
 
 .wz-pdf-content pre.prettyprint ol.linenums {
-//    margin: 0;
-//    padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .wz-pdf-content pre.prettyprint ol li,
 .wz-pdf-content pre.prettyprint ol {
-//    list-style-type: none!important;
+    list-style-type: none!important;
 }
 
 .wz-pdf-content pre.prettyprint li.L1, li.L3, li.L5, li.L7, li.L9 {
-//    background: none;
+    background: none;
 }
 
 .pdf-error {
