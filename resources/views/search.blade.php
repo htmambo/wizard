@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('title', '搜索')
-@section('container-style', 'container container-small')
+@section('container-style', 'px-md-4')
 @section('content')
 
     <div class="card mt-4 mb-4">

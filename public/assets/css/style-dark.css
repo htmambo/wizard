@@ -1,6 +1,7 @@
 body.wz-dark-theme,
 .wz-dark-theme .wz-body {
   background: #545a50;
+  color: #ccc;
 }
 .wz-dark-theme .wz-main-container {
   background: #343a40;
@@ -51,11 +52,13 @@ body.wz-dark-theme,
 .wz-dark-theme .footer a:hover {
   color: #ffffff;
 }
+.wz-dark-theme .wz-panel-right  a,
 .wz-dark-theme .wz-left-main .material-icons,
 .wz-dark-theme .wz-left-main .wz-left-nav a,
 .wz-dark-theme .wz-left-main .wz-project-title > a {
   color: #aeb0b2;
 }
+.wz-dark-theme .wz-panel-right  a:hover,
 .wz-dark-theme .wz-left-main .wz-left-nav a:hover,
 .wz-dark-theme .wz-left-main .wz-left-nav li.active > a,
 .wz-dark-theme .wz-left-main .wz-left-nav li.active > a:hover {
@@ -152,6 +155,9 @@ body.wz-dark-theme,
 }
 .wz-dark-theme .card:not(.card-white) .card-header .badge {
   color: #e4e4e4;
+  background: #2e2e2e;
+  padding: 5px 20px;
+  font-size: 125%;
 }
 .wz-dark-theme .card:not(.card-white) .card-header .badge:hover {
   color: #ffffff;
@@ -243,15 +249,14 @@ body.wz-dark-theme,
 /*}*/
 
 .wz-dark-theme .wz-project-main .editormd-html-preview {
-  background: #4e4e4e;
-  color: #eee;
+  color: #aeb0b2;
 }
 /*.wz-dark-theme .wz-project-main {*/
 /*  background: #4e4e4e;*/
 /*}*/
 .wz-dark-theme .wz-project-main img,
 .wz-dark-theme .wz-project-main svg {
-  background: #3e3e3e;
+  background: #4e4e4e;
 }
 .wz-dark-theme .text-muted,
 .wz-dark-theme .wz-project-main .wz-page-content table th,
@@ -332,15 +337,12 @@ body.wz-dark-theme,
 .wz-dark-theme .wz-project-main .editormd-html-preview blockquote {
   color: #cecece;
 }
-.wz-dark-theme .wz-project-main .editormd-html-preview code {
-  background: #f6f6f614;
-  color: #ff0057;
-}
 .wz-dark-theme .wz-project-main .editormd-html-preview a {
-  color: #03a9f4;
+  color: #f0f0f0;
   text-decoration: none;
 }
 .wz-dark-theme .wz-project-main .editormd-html-preview a:hover {
+  color: #fff;
   text-decoration: underline;
 }
 .wz-dark-theme pre.prettyprint {
@@ -536,4 +538,9 @@ body.wz-dark-theme,
 .wz-tag-container input.tm-input:focus {
   background-color: #a0a0a0;
   border: #4a4a4a 1px solid;
+}
+
+.wz-dark-theme .card-body,
+.wz-dark-theme .card-header {
+  padding: 0.5rem !important;
 }

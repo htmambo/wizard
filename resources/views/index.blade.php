@@ -11,7 +11,7 @@
                 <div class="bmd-form-group bmd-collapse-inline pull-left">
                     <a href="{{ wzRoute('home') }}" class="material-icons" data-toggle="tooltip" title="返回首页">home</a>
                 </div>
-                <div class="bmd-form-group bmd-collapse-inline pull-right" style="padding-top: 3px;">
+                <div class="bmd-form-group bmd-collapse-inline pull-right">
                     <a class="badge badge-success badge-pill" href="{{ wzRoute('home', ['catalog' => $catalog_id]) }}" data-toggle="tooltip" title="点击此处刷新页面">#{{ $catalog->name }}</a>
                 </div> 
             </div>
