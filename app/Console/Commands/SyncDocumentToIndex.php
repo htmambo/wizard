@@ -39,10 +39,10 @@ class SyncDocumentToIndex extends Command
                 try {
                     if (!empty($doc->deleted_at)) {
                         Search::get()->deleteIndex($doc->id);
-                        $this->info(sprintf("delete document %s ok", $doc->title));
+                        $this->info(sprintf("delete document %d:%s ok", $doc->id, $doc->title));
                     } else {
                         Search::get()->syncIndex($doc);
-                        $this->info(sprintf("sync document %s ok", $doc->title));
+                        $this->info(sprintf("sync document %d:%s ok", $doc->id, $doc->title));
                     }
                 } catch (\Exception $ex) {
                     $this->error("{$ex->getFile()}:{$ex->getLine()} {$ex->getMessage()}");
