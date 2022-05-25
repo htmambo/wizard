@@ -10,7 +10,7 @@ return [
     /**
      * 当前版本
      */
-    'version' => '1.2.7',
+    'version'                    => '1.3.0',
     /**
      * 版本检查，暂时不可用
      */
@@ -152,6 +152,62 @@ return [
          */
         'support_extensions' => env('WIZARD_ATTACHMENTS_SUPPORT_EXTENSIONS',
             'jpg,jpeg,gif,png,bmp,zip,rar,war,mwb,xmind,itmz,mindnode,svg,md,vsd,vsdx,txt,doc,docx,xls,xlsx,ppt,pptx,pdf,sql'),
+    ],
+    /**
+     * 全文搜索
+     */
+    'search'                     => [
+        /**
+         * 全文搜索驱动 Class
+         *
+         * GoFound: App\Components\Search\GoFoundDriver
+         * Null: App\Components\Search\NullDriver
+         * ZincSearch: App\Components\Search\ZincSearchDriver
+         * ElasticSearch: App\Components\Search\ElasticSearchDriver
+         */
+        'driver'  => env('WIZARD_SEARCH_DRIVER', 'App\Components\Search\NullDriver'),
+
+        /**
+         * 驱动配置
+         */
+        'drivers' => [
+            /**
+             * GoFound 搜索引擎驱动
+             *
+             * https://github.com/newpanjing/gofound
+             */
+            'gofound' => [
+                'server'   => env('WIZARD_GOFOUND_SERVER', 'http://localhost:5678'),
+                'database' => env('WIZARD_GOFOUND_DATABASE', 'wizard'),
+                'username' => env('WIZARD_GOFOUND_USERNAME', ''),
+                'password' => env('WIZARD_GOFOUND_PASSWORD', ''),
+            ],
+            /**
+             *  ZincSearchDriver
+             *
+             * https://docs.zincsearch.com/
+             */
+            'zinc'    => [
+                'server'      => env('WIZARD_ZINC_SERVER', 'http://localhost:4080'),
+                'index'       => env('WIZARD_ZINC_INDEX', 'wizard'),
+                'username'    => env('WIZARD_ZINC_USERNAME', ''),
+                'password'    => env('WIZARD_ZINC_PASSWORD', ''),
+                // 支持： alldocuments,wildcard,fuzzy,term,daterange,matchall,match,matchphrase,multiphrase,prefix,querystring
+                // 参考文档： https://docs.zincsearch.com/API%20Reference/search/1_search/
+                'search_type' => env('WIZARD_ZINC_SEARCH_TYPE', 'matchphrase'),
+            ],
+            /**
+             *  ElasticSearchDriver
+             *
+             * https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html
+             */
+            'elasticsearch'    => [
+                'server'      => env('WIZARD_ES_SERVER', 'http://localhost:9200'),
+                'index'       => env('WIZARD_ES_INDEX', 'wizard'),
+                'username'    => env('WIZARD_ES_USERNAME', ''),
+                'password'    => env('WIZARD_ES_PASSWORD', ''),
+            ],
+        ],
     ],
     /**
      * 图片文件的水印

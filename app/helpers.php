@@ -13,6 +13,7 @@ use App\Repositories\Template;
 use App\Repositories\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -58,9 +59,9 @@ function documentType($type): string
  *
  * 必须保证pages是按照pid进行asc排序的，否则可能会出现菜单丢失
  *
- * @param int $projectID 当前项目ID
- * @param int $pageID 选中的文档ID
- * @param array $exclude 排除的文档ID列表
+ * @param int   $projectID 当前项目ID
+ * @param int   $pageID    选中的文档ID
+ * @param array $exclude   排除的文档ID列表
  *
  * @return array
  */
@@ -133,7 +134,7 @@ function navigator(
  * 导航排序，排序后，文件夹靠前，普通文件靠后
  *
  * @param array $navItems
- * @param int $sortStyle
+ * @param int   $sortStyle
  *
  * @return array
  */
@@ -165,7 +166,7 @@ function navigatorSort($navItems, $sortStyle = Project::SORT_STYLE_DIR_FIRST)
             $aIsFolder = !empty($a['nodes']);
             $bIsFolder = !empty($b['nodes']);
 
-            $bothIsFolder = $aIsFolder && $bIsFolder;
+            $bothIsFolder  = $aIsFolder && $bIsFolder;
             $bothNotFolder = !$aIsFolder && !$bIsFolder;
 
             if ($bothIsFolder || $bothNotFolder) {
@@ -186,7 +187,7 @@ function navigatorSort($navItems, $sortStyle = Project::SORT_STYLE_DIR_FIRST)
 /**
  * 文档模板
  *
- * @param int $type
+ * @param int       $type
  * @param User|null $user
  *
  * @return array
@@ -211,7 +212,7 @@ function convertJsonToMarkdownTable(string $json): string
 {
     $markdowns = [
         ['参数名', '类型', '是否必须', '说明'],
-        ['---', '---', '---', '---']
+        ['---', '---', '---', '---'],
     ];
 
     foreach (jsonFlatten($json) as $key => $type) {
@@ -343,7 +344,7 @@ function resourceVersion()
  * 创建一个JWT Token
  *
  * @param array $payloads
- * @param int $expire
+ * @param int   $expire
  *
  * @return \Lcobucci\JWT\Token
  */
@@ -415,7 +416,7 @@ function users()
  * 用户名列表（js数组）
  *
  * @param Collection $users
- * @param bool $actived
+ * @param bool       $actived
  *
  * @return string
  */
@@ -722,6 +723,7 @@ function convertSqlTo(string $sql, $callback)
  * Markdown 预处理
  *
  * @param string $markdown
+ *
  * @return string
  */
 function processMarkdown(string $markdown): string
@@ -839,6 +841,7 @@ function processSpreedSheetSingle($contentArray, $minRow, $minCol)
  * 只移除尾部的空行
  *
  * @param $originalRows
+ *
  * @return array
  */
 function processSpreedSheetRows($originalRows): array
@@ -901,6 +904,7 @@ function traverseNavigators(
  * 资源地址 CDN 加速
  *
  * @param string $resourceUrl
+ *
  * @return string
  */
 function cdn_resource(string $resourceUrl)
@@ -964,6 +968,45 @@ function impersonateUser()
 
     $impersonateUser = $user->impersonator();
     return ['id' => $impersonateUser->id, 'name' => $impersonateUser->name];
+}
+
+/**
+ * 文档按照指定 ID 顺序排列
+ *
+ * @param LengthAwarePaginator $docs
+ * @param array|null           $sortIds
+ *
+ * @return mixed
+ */
+function sortDocumentBySortIds(LengthAwarePaginator $docs, array $sortIds = null)
+{
+    if (empty($sortIds)) {
+        return $docs;
+    }
+
+    return $docs->sortBy(function ($doc) use ($sortIds) {
+        return array_search($doc->id, $sortIds);
+    });
+}
+
+/**
+ * 关键字高亮
+ *
+ * @param string      $content
+ * @param string|null $keyword
+ *
+ * @return string
+ */
+function highlight(string $content, string $keyword = null) :string {
+    if (empty($keyword)) {
+        return $content;
+    }
+
+    foreach (explode(',', $keyword) as $key) {
+        $content = str_replace($key, "<span class='highlight'>{$key}</span>", $content);
+    }
+
+    return $content;
 }
 
 /**

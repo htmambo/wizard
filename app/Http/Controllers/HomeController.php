@@ -88,7 +88,8 @@ class HomeController extends Controller
                 // 在分页查询的第一页之外，不展示目录
                 if ($page === 1) {
                     /** @var Collection $catalogs */
-                    $catalogs = Catalog::withCount('projects')->where('show_in_home', Catalog::SHOW_IN_HOME)->orderBy('sort_level', 'ASC')->get();
+                    $catalogs = Catalog::withCount('projects')->where('show_in_home',
+                        Catalog::SHOW_IN_HOME)->orderBy('sort_level', 'ASC')->get();
                 }
             }
             else {
@@ -144,17 +145,18 @@ class HomeController extends Controller
         }
 
         return view('index', [
-            'projects'   => $projects->appends([
+            'projects'            => $projects->appends([
                 'per_page' => $perPage,
                 'name'     => $name,
                 'catalog'  => $catalogId ?? null,
             ]),
-            'name'       => $name,
-            'catalogs'   => $catalogs ?? [],
-            'catalog_id' => $catalogId ?? 0,
-            'catalog'    => $catalog ?? null,
-            'favorites'  => $favorites ?? [],
-            'tags'       => $tags ?? [],
+            'name'                => $name,
+            'catalogs'            => $catalogs ?? [],
+            'catalog_id'          => $catalogId ?? 0,
+            'catalog'             => $catalog ?? null,
+            'favorites'           => $favorites ?? [],
+            'tags'                => $tags ?? [],
+            'must_show_login_btn' => true,
         ]);
     }
 

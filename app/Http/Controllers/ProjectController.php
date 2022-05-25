@@ -226,11 +226,11 @@ class ProjectController extends Controller
                                           ->orderBy('created_at', 'desc')
                                           ->limit(10)->get();
         }
-
         return view('project.project', [
             'project'            => $project,
             'pageID'             => $pageID,
             'pageItem'           => $page,
+            'keyword'            => trim(urldecode($request->input('keyword', ''))),
             'scores'             => $scores ?? [],
             'useful_score_users' => $usefulScoreUsers ?? [],
             'user_score_type'    => $userScoreType ?? 0,

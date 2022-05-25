@@ -25,7 +25,7 @@ return [
     'btn_back'   => 'Back',
     'btn_confirm' => 'OK',
 
-    'search' => 'Search',
+    'search' => 'GoFoundDriver',
 
     'login'            => 'Login',
     'register'         => 'Register',
