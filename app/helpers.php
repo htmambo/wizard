@@ -583,7 +583,7 @@ function convertSqlToMarkdownTable(string $sql)
                 $html .= '| ' . implode(' | ', $line) . ' | ' . "\n";
             }
 
-            return "\n表名：**{$tableName}**   \n备注：*{$tableComment}*\n\n{$html}\n";
+            return "\n表名：**{$tableName}**   备注：*{$tableComment}*\n\n{$html}\n";
         }
     );
 }
@@ -610,8 +610,9 @@ function convertSqlToHTMLTable(string $sql)
             }
 
             return <<<HEADER
-<p class="wz-table-name">❖ 表名： <b>{$tableName}</b></p>
-<p class="wz-table-desc">❖ 备注：<i>{$tableComment}</i></p>
+<p><div style="float: left;" class="wz-table-name">❖ 表名： <b>{$tableName}</b></div>
+<div style="float: right;" class="wz-table-desc">❖ 备注：<i>{$tableComment}</i></div>
+</p>
 <table class="table table-hover">
     <thead>
         <tr>

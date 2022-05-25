@@ -254,9 +254,10 @@ body.wz-dark-theme,
 /*.wz-dark-theme .wz-project-main {*/
 /*  background: #4e4e4e;*/
 /*}*/
+.wz-dark-theme .wz-userface-small,
 .wz-dark-theme .wz-project-main img,
 .wz-dark-theme .wz-project-main svg {
-  background: #4e4e4e;
+  background: #ccc;
 }
 .wz-dark-theme .text-muted,
 .wz-dark-theme .wz-project-main .wz-page-content table th,
@@ -544,3 +545,4 @@ body.wz-dark-theme,
 .wz-dark-theme .card-header {
   padding: 0.5rem !important;
 }
+.wz-dark-theme .btn {color:#fff;}
