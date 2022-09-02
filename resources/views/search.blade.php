@@ -90,7 +90,6 @@
 
 @push('script')
 
-
     <script>
         $(function () {
             @if (empty($tag))

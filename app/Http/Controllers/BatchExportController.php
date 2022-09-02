@@ -43,7 +43,7 @@ class BatchExportController extends Controller
         $this->validate(
             $request,
             [
-                'pid' => 'integer',
+                'pid'  => 'integer',
                 'type' => 'required|in:pdf,raw'
             ]
         );
@@ -175,11 +175,11 @@ class BatchExportController extends Controller
         set_time_limit(self::TIMEOUT);
 
         $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'tempDir' => sys_get_temp_dir() . '/wizard/',
+            'mode'              => 'utf-8',
+            'tempDir'           => sys_get_temp_dir() . '/wizard/',
             'defaultfooterline' => false,
-            'useSubstitutions' => true,
-            'backupSubsFont' => ['dejavusanscondensed', 'arialunicodems', 'sun-exta'],
+            'useSubstitutions'  => true,
+            'backupSubsFont'    => ['dejavusanscondensed', 'arialunicodems', 'sun-exta'],
         ]);
 
         $mpdf->allow_charset_conversion = true;
@@ -262,10 +262,10 @@ class BatchExportController extends Controller
                 } catch (\Exception $ex) {
                     Log::error('html_to_pdf_failed', [
                         'error' => $ex->getMessage(),
-                        'code' => $ex->getCode(),
-                        'doc' => [
-                            'id' => $doc->id,
-                            'title' => $doc->title,
+                        'code'  => $ex->getCode(),
+                        'doc'   => [
+                            'id'      => $doc->id,
+                            'title'   => $doc->title,
                             'content' => $html,
                         ]
                     ]);

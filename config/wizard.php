@@ -10,7 +10,7 @@ return [
     /**
      * 当前版本
      */
-    'version'                    => '1.3.0',
+    'version'                    => '1.3.1',
     /**
      * 版本检查，暂时不可用
      */
@@ -165,7 +165,7 @@ return [
          * ZincSearch: App\Components\Search\ZincSearchDriver
          * ElasticSearch: App\Components\Search\ElasticSearchDriver
          */
-        'driver'  => env('WIZARD_SEARCH_DRIVER', 'App\Components\Search\NullDriver'),
+        'driver'  => env('WIZARD_SEARCH_DRIVER', 'App\Components\Search\XunSearchDriver'),
 
         /**
          * 驱动配置

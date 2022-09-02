@@ -24,10 +24,38 @@
             }
             //监听粘贴板事件
             $('#' + id).on('paste', function (e) {
+                var obj = e.clipboardData || e.originalEvent.clipboardData;
                 var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                window.pasteObj = obj;
+                var isPic = false, file = '';
+                if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) != -1) {
+                    var htmlText = obj.getData("text/html");
+                    if (htmlText !== "") {
+                        var tmp = $(htmlText);
+                        if (tmp.length == 2) {
+                            if (tmp[0].tagName == 'META' && tmp[1].tagName == 'IMG') {
+                                isPic = true;
+                                file = tmp[1].getAttribute('src');
+                                var imageBlob = createImageBlob(file);
+                                try {
+                                    const { ClipboardItem } = window;
+                                    var items = new ClipboardItem({
+                                        [imageBlob.type]: imageBlob,
+                                    });
+                                    navigator.clipboard.write([items]);
+                                    console.log("文本和图像复制成功");
+                                } catch (error) {
+                                    console.error("文本和图像复制失败", error);
+                                }
+                                return false;
+                            }
+                        }
+                    }
+                }
                 //判断图片类型
                 if (items && items[0].type.indexOf('image') > -1) {
-                    var file = items[0].getAsFile();
+                    file = items[0].getAsFile();
+                    isPic = true;
                     /*生成blob
                     var blobImg = URL.createObjectURL(file);
                     */
@@ -38,6 +66,9 @@
                         var base64Img = e.target.result //图片的base64
                     }
                     */
+                }
+                if(isPic) {
+                    console.log(file);
                     // 创建FormData对象进行ajax上传
                     var forms = new FormData(document.forms[0]); //Filename
                     forms.append(classPrefix + "image-file", file, "file_"+Date.parse(new Date())+".png"); // 文件
@@ -51,9 +82,10 @@
                         }
                         console.log(ret.message);
                     });
+
                 }
                 else if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) != -1) {
-                    var htmlText = (e.clipboardData || e.originalEvent.clipboardData).getData("text/html");
+                    var htmlText = obj.getData("text/html");
                     if (htmlText !== "") {
                         var referencelinkRegEx = /reference-link/;
                         _this.insertValue(toMarkdown(htmlText, {
@@ -117,10 +149,16 @@
                                 }]})
                         );
                         e.preventDefault();
+                    } else {
+                        console.log('can not find');
                     }
                 }
             })
         };
+        async function createImageBlob(url) {
+            const response = await fetch(url);
+            return await response.blob();
+        }
         // ajax上传图片 可自行处理
         var _ajax = function(url, data, callback) {
             $.ajax({

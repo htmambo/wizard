@@ -28,16 +28,16 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) pcntl exif pdo_mysql zip ldap \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd
-RUN wget https://getcomposer.org/download/1.6.4/composer.phar \
+RUN wget https://mirrors.aliyun.com/composer/composer.phar \
     && mv composer.phar /usr/bin/composer.phar \
     && chmod +x /usr/bin/composer.phar \
     && ln -s /usr/bin/composer.phar /usr/bin/composer \
-    && php /usr/bin/composer config -g repo.packagist composer https://packagist.laravel-china.org
+    && php /usr/bin/composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 RUN a2enmod rewrite
 RUN a2enmod headers
 
-COPY ./composer.lock ./composer.json /webroot/
+COPY ./composer.json /webroot/
 RUN php /usr/bin/composer install --prefer-dist --no-autoloader --no-scripts --no-dev
 
 COPY ./ /webroot
