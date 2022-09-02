@@ -92,16 +92,16 @@ class XunSearchDriver implements Driver
         //获取索引对象(用来增删改的)
         $index = $this->client->getIndex();
 
-        $req = [
+        $doc = new XSDocument([
             'id'      => $doc->id,
             'type'    => $doc->type,
             'title'   => $doc->title,
             'content' => $doc->content,
-        ];
+        ]);
         //更新索引数据
-        $doc = new XSDocument($req);
         $index->update($doc);
         $index->flushIndex();
+        return 'OK';
     }
 
 

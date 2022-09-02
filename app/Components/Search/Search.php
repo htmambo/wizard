@@ -46,7 +46,7 @@ class Search implements Driver
     public function deleteIndex($id)
     {
         try {
-            $this->driver->deleteIndex($id);
+            return $this->driver->deleteIndex($id);
         } catch (\Exception $ex) {
             Log::error("search: delete index for documents failed", [
                 'id'      => $id,
@@ -54,6 +54,7 @@ class Search implements Driver
                 'code'    => $ex->getCode(),
                 'pos'     => "{$ex->getFile()}:{$ex->getLine()}",
             ]);
+            return 'ERR';
         }
     }
 
@@ -68,7 +69,7 @@ class Search implements Driver
     public function syncIndex(Document $doc)
     {
         try {
-            $this->driver->syncIndex($doc);
+            return $this->driver->syncIndex($doc);
         } catch (\Exception $ex) {
             Log::error("search: sync index for documents failed", [
                 'id'      => $doc->id,
@@ -76,6 +77,7 @@ class Search implements Driver
                 'code'    => $ex->getCode(),
                 'pos'     => "{$ex->getFile()}:{$ex->getLine()}",
             ]);
+            return 'ERR';
         }
     }
 

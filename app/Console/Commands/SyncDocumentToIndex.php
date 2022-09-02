@@ -38,11 +38,17 @@ class SyncDocumentToIndex extends Command
             foreach ($docs as $doc) {
                 try {
                     if (!empty($doc->deleted_at)) {
-                        Search::get()->deleteIndex($doc->id);
-                        $this->info(sprintf("delete document %s ok", $doc->title));
+                        $result = Search::get()->deleteIndex($doc->id);
+                        $msg = '删除';
                     } else {
-                        Search::get()->syncIndex($doc);
-                        $this->info(sprintf("sync document %s ok", $doc->title));
+                        $result = Search::get()->syncIndex($doc);
+                        $msg = '更新';
+                    }
+                    $msg.= sprintf('文档索引 %d:%s', $doc->id, $doc->title);
+                    if($result === false || $result === 'ERR') {
+                        $this->error($msg . ' 失败');
+                    } else {
+                        $this->info($msg . ' 成功');
                     }
                 } catch (\Exception $ex) {
                     $this->error("{$ex->getFile()}:{$ex->getLine()} {$ex->getMessage()}");
