@@ -3,7 +3,6 @@
 namespace App\Components\Search;
 
 use App\Repositories\Document;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -90,7 +89,6 @@ class XunSearchDriver implements Driver
      */
     public function syncIndex(Document $doc)
     {
-
         //获取索引对象(用来增删改的)
         $index = $this->client->getIndex();
 
@@ -101,7 +99,8 @@ class XunSearchDriver implements Driver
             'content' => $doc->content,
         ];
         //更新索引数据
-        $index->update($req);
+        $doc = new XSDocument($req);
+        $index->update($doc);
         $index->flushIndex();
     }
 
@@ -118,8 +117,9 @@ class XunSearchDriver implements Driver
     public function search(string $keyword, int $page, int $perPage): ?Result
     {
         try {
+            $starttime = microtime(4);
             $search = $this->client->getSearch();
-            $fuzzy = 'on';
+            $fuzzy = 'off';
             //搜索
             $docs = $search
                 //设置是否开启模糊查询
@@ -132,12 +132,21 @@ class XunSearchDriver implements Driver
                 ->setQuery($keyword)
                 ->search();
 
-//            pre('搜索内容：' . $keyword);
-//            $tokenizer = new \org\XSTokenizerScws;
-//            $words = $tokenizer->getResult($keyword);
-//            pre('分词结果：' . implode(',', array_column($words, 'word')));
-            $msg = '';
+//            echo('搜索内容：' . $keyword);
+            $tokenizer = new XSTokenizerScws;
+            $words = $tokenizer->getResult($keyword);
+//            echo('分词结果：' . implode(',', array_column($words, 'word')));
+//            $msg = '';
             $finded = $search->getLastCount();
+//            if($finded>$perPage) {
+//                $msg = '找到大约' . $finded . '条记录，';
+//            } else if ($finded>0) {
+//                $msg = '找到' . $finded .'条记录，';
+//            } else {
+//                $msg = '没有找到合适的记录，';
+//            }
+//            $msg .= '数据库中现有记录' . $search->getDbTotal() . '条，耗时：' . round(microtime(4) - $starttime, 4) . '秒';
+//            echo $msg;
             $list = [];
             foreach($docs  as $doc)
             {
@@ -151,8 +160,8 @@ class XunSearchDriver implements Driver
                 $row['percent'] = $doc->percent();
                 $list[] = $row;
             }
-            return new Result($list,
-                [$keyword],
+            return new Result(array_column($list, 'id'),
+                array_column($words, 'word'),
                 $finded
             );
         } catch (\Exception $ex) {

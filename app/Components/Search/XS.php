@@ -882,10 +882,10 @@ class XSFieldMeta
 		} else {
 			if (($pos1 = strpos($this->tokenizer, '(')) !== false
 					&& ($pos2 = strrpos($this->tokenizer, ')', $pos1 + 1))) {
-				$name = '\\org\\XSTokenizer' . ucfirst(trim(substr($this->tokenizer, 0, $pos1)));
+				$name = '\\App\\Components\\Search\\XSTokenizer' . ucfirst(trim(substr($this->tokenizer, 0, $pos1)));
 				$arg = substr($this->tokenizer, $pos1 + 1, $pos2 - $pos1 - 1);
 			} else {
-				$name = '\\org\\XSTokenizer' . ucfirst($this->tokenizer);
+				$name = '\\App\\Components\\Search\\XSTokenizer' . ucfirst($this->tokenizer);
 				$arg = null;
 			}
 			if (!class_exists($name)) {
