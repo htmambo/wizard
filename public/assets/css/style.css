@@ -1554,8 +1554,9 @@ pre.prettyprint *,
     list-style: circle;
 }
 
-.highlight {
+.highlight, .highlight > span {
     background: #f3f136;
+    color: #f00 !important;
 }
 .editormd {
     margin: 0 auto !important;

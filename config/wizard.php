@@ -164,8 +164,9 @@ return [
          * Null: App\Components\Search\NullDriver
          * ZincSearch: App\Components\Search\ZincSearchDriver
          * ElasticSearch: App\Components\Search\ElasticSearchDriver
+         * XunSearch: App\Components\Search\XunSearchDriver
          */
-        'driver'  => env('WIZARD_SEARCH_DRIVER', 'App\Components\Search\XunSearchDriver'),
+        'driver'  => env('WIZARD_SEARCH_DRIVER', 'App\Components\Search\NllDriver'),
 
         /**
          * 驱动配置
@@ -206,6 +207,16 @@ return [
                 'index'       => env('WIZARD_ES_INDEX', 'wizard'),
                 'username'    => env('WIZARD_ES_USERNAME', ''),
                 'password'    => env('WIZARD_ES_PASSWORD', ''),
+            ],
+            /**
+             *  XunSearchDriver
+             *
+             * http://www.xunsearch.com/
+             */
+            'xun'    => [
+                'fuzzy'         => env('WIZARD_XUN_FUZZY', false),
+                'index_server'  => env('WIZARD_XUN_INDEX_SERVER', '127.0.0.1:8383'),
+                'search_server' => env('WIZARD_XUN_SEARCH_SERVER', '127.0.0.1:8384'),
             ],
         ],
     ],

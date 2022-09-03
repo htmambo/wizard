@@ -103,13 +103,13 @@
 
             <div class="markdown-body wz-panel-limit {{ $type == 'markdown' ? 'wz-markdown-style-fix' : '' }}" id="markdown-body">
                 @if($type == 'html')
-                    {!! $pageItem->content !!}
+                    {!! highlight($pageItem->content ?? '', $keyword ?? null) !!}
                 @endif
                 @if($type === 'markdown')
 {{--                    @if($pageItem->html_code && config('wizard.markdown.direct_save_html'))--}}
 {{--                        {!! $pageItem->html_code !!}--}}
 {{--                    @else--}}
-                    <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', highlight(processMarkdown($pageItem->content ?? ''), $keyword ?? null)) }}</textarea>
+                        <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', processMarkdown($pageItem->content ?? '')) }}</textarea>
 {{--                    @endif--}}
                 @endif
                 @if($type === 'table')

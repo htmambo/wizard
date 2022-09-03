@@ -1003,7 +1003,7 @@ function highlight(string $content, string $keyword = null) :string {
     }
 
     foreach (explode(',', $keyword) as $key) {
-        $content = str_replace($key, "<span class='highlight'>{$key}</span>", $content);
+        $content = preg_replace('@(' . $key . ')@i', "<span class='highlight'>\\1</span>", $content);
     }
 
     return $content;

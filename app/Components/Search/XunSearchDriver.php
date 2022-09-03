@@ -43,8 +43,9 @@ class XunSearchDriver implements Driver
         $cfg = [
             'project.name' => 'wizard',
             'project.default_charset' => 'utf-8',
-            'server.index' => config('wizard.search.drivers.xun.index_server', '192.168.50.50:8383'),
-            'server.search' => config('wizard.search.drivers.xun.search_server', '192.168.50.50:8384'),
+            'server.index' => config('wizard.search.drivers.xun.index_server'),
+            'server.search' => config('wizard.search.drivers.xun.search_server'),
+            'fuzzy' => config('wizard.search.drivers.xun.fuzzy'),
             'id' => [
                 'type' => 'id'
             ],
@@ -119,11 +120,10 @@ class XunSearchDriver implements Driver
         try {
             $starttime = microtime(4);
             $search = $this->client->getSearch();
-            $fuzzy = 'off';
             //搜索
             $docs = $search
                 //设置是否开启模糊查询
-                ->setFuzzy($fuzzy=='on'?false:true)
+                ->setFuzzy($this->client->getConfig()['fuzzy'])
                 //设置是否开启同义词查询
                 ->setAutoSynonyms(false)
                 //设置查询结果显示条数
