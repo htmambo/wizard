@@ -53,6 +53,6 @@
             </a>
         @endif
 
-        <p class="mt-5 mb-3 text-muted">&copy; {{ date('Y') }} {{ config('wizard.copyright', 'IMZHP.COM') }}</p>
+        <p class="mt-5 mb-3 text-muted">&copy; {{ date('Y') }} {{ config('wizard.copyright', 'AICODE.CC') }}</p>
     </form>
 @endsection

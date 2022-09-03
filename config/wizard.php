@@ -166,7 +166,7 @@ return [
          * ElasticSearch: App\Components\Search\ElasticSearchDriver
          * XunSearch: App\Components\Search\XunSearchDriver
          */
-        'driver'  => env('WIZARD_SEARCH_DRIVER', 'App\Components\Search\NllDriver'),
+        'driver'  => env('WIZARD_SEARCH_DRIVER', 'App\Components\Search\NullDriver'),
 
         /**
          * 驱动配置
