@@ -784,6 +784,10 @@ a:hover {
     list-style: none;
 }
 
+#wz-toc-container li h1{
+    font-size: 18px;
+}
+
 #wz-toc-container > span {
     display: block;
     opacity: 0.5;
