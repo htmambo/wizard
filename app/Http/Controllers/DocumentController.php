@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use SoapBox\Formatter\Formatter;
 
 class DocumentController extends Controller
@@ -547,17 +548,29 @@ class DocumentController extends Controller
     /**
      * 阅读模式
      *
+     * @param Request $request
      * @param $id
      * @param $page_id
      *
      * @return mixed|string
      */
-    public function readMode($id, $page_id)
+    public function readMode(Request $request, $id, $page_id)
     {
         /** @var Project $project */
         $project = Project::query()->findOrFail($id);
-        $policy  = new ProjectPolicy();
-        if (!$policy->view(\Auth::user(), $project)) {
+        $key = config('app.key');
+        /**
+         * 为了能够使用外部工具生成PDF，所以让阅读页面支持使用TOKEN打开
+         */
+        $token = $request->input('token');
+        if($key && $token) {
+            $sign = md5($key . '_' . $id . '_' . $page_id);
+            $hasPriv = ($token === $sign);
+        } else {
+            $policy  = new ProjectPolicy();
+            $hasPriv = $policy->view(\Auth::user(), $project);
+        }
+        if (!$hasPriv) {
             abort(403, '您没有访问该项目的权限');
         }
 
