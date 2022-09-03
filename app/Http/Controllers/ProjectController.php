@@ -230,7 +230,7 @@ class ProjectController extends Controller
             'project'            => $project,
             'pageID'             => $pageID,
             'pageItem'           => $page,
-            'keyword'            => trim(urldecode($request->input('keyword', ''))),
+            'highlight'            => trim(urldecode($request->input('highlight', ''))),
             'scores'             => $scores ?? [],
             'useful_score_users' => $usefulScoreUsers ?? [],
             'user_score_type'    => $userScoreType ?? 0,

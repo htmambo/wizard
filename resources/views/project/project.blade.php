@@ -242,7 +242,7 @@
 
 <script src="{{ cdn_resource('/assets/vendor/moment-with-locales.min.js') }}"></script>
 <script>
-    var highlightStr = {!! json_encode(explode(',', $keyword)) !!};
+    var highlightStr = {!! json_encode(explode(',', $highlight)) !!};
     $(function () {
         moment.locale('zh-cn');
         @if(!Auth::guest())

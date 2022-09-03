@@ -60,7 +60,7 @@
                             <img src="{{ user_face($doc->user->name) }}" class="wz-userface-small">
                             <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray wz-search-result">
                                 <strong class="d-block text-gray-dark">
-                                    <a href="{{ wzRoute('project:home', ['id' => $doc->project_id, 'p' => $doc->id, 'keyword' => $search_word ?? $keyword]) }}"
+                                    <a href="{{ wzRoute('project:home', ['id' => $doc->project_id, 'p' => $doc->id, 'highlight' => $search_word ?? $keyword]) }}"
                                        style="font-size: 1.1rem;">{{ $doc->title }}</a>
                                     <span style="color: #a4a4a4;">{{ $doc->project->name ?? '' }}
                                         @if(!empty($doc->project->catalog_id))
