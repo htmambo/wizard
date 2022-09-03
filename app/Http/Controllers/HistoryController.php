@@ -19,12 +19,6 @@ use Illuminate\Http\Request;
 
 class HistoryController extends Controller
 {
-    protected $types = [
-        Document::TYPE_HTML    => 'html',
-        Document::TYPE_DOC     => 'markdown',
-        Document::TYPE_SWAGGER => 'swagger',
-        Document::TYPE_TABLE   => 'table',
-    ];
 
     /**
      * 文档编辑历史
@@ -74,7 +68,7 @@ class HistoryController extends Controller
 
         $history = DocumentHistory::where('page_id', $page_id)
             ->where('id', $history_id)->firstOrFail();
-        $type    =  $this->types[$page->type];
+        $type    =  documentType($page->type);
 
         return view('doc.history-doc', [
             'history'     => $history,

@@ -8,6 +8,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Policies\ProjectPolicy;
+use App\Repositories\Document;
+use App\Repositories\Project;
 use Illuminate\Http\Request;
 use Log;
 use Mpdf\Mpdf;
@@ -114,5 +117,27 @@ class ExportController extends Controller
         }
 
         $mpdf->Output($title . '.pdf', 'I');
+    }
+
+    /**
+     * 使用Gotenberg导出PDF
+     *
+     * @param Request $request
+     * @param $id
+     * @param $page_id
+     *
+     * @return mixed|string
+     */
+    public function gotenberg(Request $request, $id, $page_id)
+    {
+        /** @var Project $project */
+        $project = Project::query()->findOrFail($id);
+        $policy  = new ProjectPolicy();
+        if(!$policy->view(\Auth::user(), $project)) {
+            abort(403, '您没有访问该项目的权限');
+        }
+        $token = genReadToken($id, $page_id);
+        $url = wzRoute('project:doc:read', ['id' => $id, 'page_id' => $page_id, 'token' => $token ]);
+        echo '<a href="' . $url . '" target="_blank">' . $url . '</a>';
     }
 }

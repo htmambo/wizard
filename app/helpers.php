@@ -42,7 +42,7 @@ function wzRoute($name, $parameters = [], $absolute = false)
  *
  * @return string
  */
-function documentType($type): string
+function documentType($type, $flip = false): string
 {
     $types = [
         Document::TYPE_HTML    => 'html',
@@ -50,7 +50,9 @@ function documentType($type): string
         Document::TYPE_SWAGGER => 'swagger',
         Document::TYPE_TABLE   => 'table',
     ];
-
+    if($flip) {
+        $types = array_flip($types);
+    }
     return $types[$type] ?? '';
 }
 
@@ -1130,4 +1132,44 @@ function formatHtml($content = '')
     $content = preg_replace('@</p>\s*@i', "</p>\n", $content);
     $content = preg_replace('@</p>\s+<p>@i', "</p>\n<p>", $content);
     return $content;
+}
+
+/**
+ * 生成read页面的token
+ * 在生成前需要自行判断当前用户对$id和$page_id的权限
+ * @param $id
+ * @param $page_id
+ * @return false|string
+ */
+function genReadToken($id, $page_id){
+    $pre = date('ymdHis');
+//    echo $pre . '<br />';
+//    echo dechex($pre) . '<br />';
+    return shulz($id, $page_id, $pre);
+}
+function shulz($id, $page_id, $pre) {
+    $key = config('app.key');
+    if(!$key) {
+        return false;
+    }
+    $tmp = md5($key . '_' . $id . '_' . $page_id . '_' . $pre);
+    $key = config('app.key');
+    if(!$key) {
+        return false;
+    }
+    for($i=0; $i<strlen($pre); $i++) {
+        $pos = $i * 2 + 1;
+        $tmp = substr($tmp, 0, $pos) . substr($pre, $i, 1) . substr($tmp, $pos+1);
+    }
+    return $tmp;
+}
+function checkReadToken($id, $page_id, $token) {
+    $life = 60;         //TOKEN的有效期，单位为秒
+    $pre = '';
+    for($i=0;$i<12;$i++) {
+        $pos = $i * 2 + 1;
+        $pre .= substr($token, $pos, 1);
+    }
+    $tmp = shulz($id, $page_id, $pre);
+    return $token === $tmp && $pre>=date('ymdHis') - $life;
 }

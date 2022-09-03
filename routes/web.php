@@ -63,6 +63,7 @@ Route::group(['middleware' => 'locale'], function () {
         });
 
         // 文件导出
+        Route::get('/gotenberg/{id}/{page_id}.pdf', 'ExportController@gotenberg')->name('export:gotenberg');
         Route::post('/export/{type}.pdf', 'ExportController@pdf')->name('export:pdf');
         Route::post('/export-file/{filename}', 'ExportController@download')->name('export:download');
 

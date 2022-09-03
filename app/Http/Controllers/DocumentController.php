@@ -29,13 +29,6 @@ use SoapBox\Formatter\Formatter;
 class DocumentController extends Controller
 {
 
-    protected $types = [
-        Document::TYPE_HTML    => 'html',
-        Document::TYPE_DOC     => 'markdown',
-        Document::TYPE_SWAGGER => 'swagger',
-        Document::TYPE_TABLE   => 'table',
-    ];
-
     /**
      * 创建一个新文档页面
      *
@@ -85,7 +78,7 @@ class DocumentController extends Controller
 
         $this->authorize('page-edit', $pageItem);
 
-        $type = $this->types[$pageItem->type];
+        $type = documentType($pageItem->type);
         return view("doc.{$type}", [
             'pageItem'  => $pageItem,
             'project'   => $pageItem->project,
@@ -171,7 +164,7 @@ class DocumentController extends Controller
             'project_id'        => $projectID,
             'user_id'           => \Auth::user()->id,
             'last_modified_uid' => \Auth::user()->id,
-            'type'              => array_flip($this->types)[$type],
+            'type'              => documentType($type, true),
             'status'            => Document::STATUS_NORMAL,
             'sort_level'        => $sortLevel,
             'sync_url'          => $syncUrl,
@@ -558,14 +551,9 @@ class DocumentController extends Controller
     {
         /** @var Project $project */
         $project = Project::query()->findOrFail($id);
-        $key = config('app.key');
-        /**
-         * 为了能够使用外部工具生成PDF，所以让阅读页面支持使用TOKEN打开
-         */
         $token = $request->input('token');
-        if($key && $token) {
-            $sign = md5($key . '_' . $id . '_' . $page_id);
-            $hasPriv = ($token === $sign);
+        if($token) {
+            $hasPriv = checkReadToken($id, $page_id, $token);
         } else {
             $policy  = new ProjectPolicy();
             $hasPriv = $policy->view(\Auth::user(), $project);
@@ -575,7 +563,7 @@ class DocumentController extends Controller
         }
 
         $page = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
-        $type = $this->types[$page->type];
+        $type = documentType($page->type);
 
         return view('share-show', [
             'project'  => $project,

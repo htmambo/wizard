@@ -24,6 +24,10 @@
                             <span class="fa fa-download mr-2"></span>
                             PDF (完全渲染)
                         </a>
+                        <a href="#" class="dropdown-item wz-export-pdf" data-scope="gotenberg">
+                            <span class="fa fa-download mr-2"></span>
+                            PDF (Gotenberg)
+                        </a>
                         <a href="#" class="dropdown-item wz-export-markdown">
                             <span class="fa fa-download mr-2"></span>
                             Markdown
@@ -33,6 +37,7 @@
                             <ol>
                                 <li>完全渲染会将文档中的代码段渲染为图片，如果代码段较多，受系统限制可能会导出失败。</li>
                                 <li>渲染后可能会因为分页的原因丢失内容，请手动在合适的位置添加“分页符”。</li>
+                                <li>大文件推荐使用Gotenberg生成PDF</li>
                             </ol>
                         </div>
                     @endif
@@ -70,6 +75,12 @@
             var scope = $(this).attr('data-scope');
             var convertToImg = '.editormd-tex, .flowchart, .sequence-diagram, .mermaid';
             if(scope=='full') convertToImg += ', pre.prettyprint';
+            if(scope == 'gotenberg') {
+                window.open(
+                    '{{ wzRoute('export:gotenberg', ['id' => $project->id, 'page_id' => $pageItem->id]) }}'
+                );
+                return false;
+            }
             var sec = 0;
             var maxlen = {!! intval(ini_get('pcre.backtrack_limit')) !!};
             var total = $(convertToImg).length;
