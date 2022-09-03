@@ -107,7 +107,7 @@
                 @endif
                 @if($type === 'markdown')
 {{--                    @if($pageItem->html_code && config('wizard.markdown.direct_save_html'))--}}
-{{--                        {!! $pageItem->html_code !!}--}}
+{{--                        {!! highlight($pageItem->html_code ?? '', $keyword ?? null) !!}--}}
 {{--                    @else--}}
                         <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', processMarkdown($pageItem->content ?? '')) }}</textarea>
 {{--                    @endif--}}
@@ -242,6 +242,7 @@
 
 <script src="{{ cdn_resource('/assets/vendor/moment-with-locales.min.js') }}"></script>
 <script>
+    var highlightStr = {!! json_encode(explode(',', $keyword)) !!};
     $(function () {
         moment.locale('zh-cn');
         @if(!Auth::guest())
