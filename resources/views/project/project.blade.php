@@ -103,17 +103,17 @@
 
             <div class="markdown-body wz-panel-limit {{ $type == 'markdown' ? 'wz-markdown-style-fix' : '' }}" id="markdown-body">
                 @if($type == 'html')
-                    {!! highlight($pageItem->content ?? '', $keyword ?? null) !!}
+                    {!! highlight($pageItem->content ?? '', $highlight ?? null) !!}
                 @endif
                 @if($type === 'markdown')
 {{--                    @if($pageItem->html_code && config('wizard.markdown.direct_save_html'))--}}
-{{--                        {!! highlight($pageItem->html_code ?? '', $keyword ?? null) !!}--}}
+{{--                        {!! highlight($pageItem->html_code ?? '', $highlight ?? null) !!}--}}
 {{--                    @else--}}
                         <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', processMarkdown($pageItem->content ?? '')) }}</textarea>
 {{--                    @endif--}}
                 @endif
                 @if($type === 'table')
-                    <textarea id="x-spreadsheet-content" class="d-none">{{ highlight(processSpreedSheet($pageItem->content), $keyword ?? null) }}</textarea>
+                    <textarea id="x-spreadsheet-content" class="d-none">{{ highlight(processSpreedSheet($pageItem->content), $highlight ?? null) }}</textarea>
                     <div class="wz-spreadsheet">
                         <div id="x-spreadsheet"></div>
                     </div>
@@ -304,6 +304,33 @@
             if (documentIsEmpty && $('.wz-has-child.active') !== null && $('.wz-has-child.active').children('ul') !== null && $('.wz-has-child.active').children('ul').html() != null) {
                 $('.markdown-body').prepend("<div class='wz-nav-normalize'>" + $('.wz-has-child.active').children('ul').html() + "</div>");
             }
+        }
+        // 处理一下Markdown的搜索结果高亮
+        if(typeof(highlightStr) == 'object' && highlightStr[0]) {
+            html = $('#markdown-body').html();
+            for(var i =  0, len = highlightStr.length; i < len; i++) {
+                html = html.replaceAll(highlightStr[i], '<span class="highlight">' + highlightStr[i] + '</span>');
+            }
+            var finded = true;
+            while(finded) {
+                finded = false;
+                html = html.replaceAll(/<[^>]+>/g, function(a,b){
+                    if(a.indexOf('<span')>0) {
+                        a = a.replaceAll('<span class="highlight">', '');
+                        finded = true;
+                    }
+                    return a;
+                })
+                html = html.replaceAll(/<[^>]+>/g, function(a,b){
+                    if(a.indexOf('</span>')>0) {
+                        a = a.replaceAll('</span>', '');
+                        finded = true;
+                    }
+                    return a;
+                })
+            }
+            html = '<div >您正在搜索：<span class="highlight">' + highlightStr.join(',') + '</span></div>' + html;
+            $('#markdown-body').html(html);
         }
     });
 </script>

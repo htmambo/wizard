@@ -3746,12 +3746,6 @@
         if (typeof html !== "string") {
             html = new String(html);
         }
-        // 处理一下Markdown的搜索结果高亮
-        if(typeof(highlightStr) == 'object') {
-            for(var i =  0, len = highlightStr.length; i < len; i++) {
-                html = html.replace(highlightStr[i], '<span class="highlight">' + highlightStr[i] + '</span>');
-            }
-        }
         if (typeof filters !== "string") {
             return html;
         }
@@ -3886,15 +3880,6 @@
             sanitize: (settings.htmlDecode) ? false : true, // 是否忽略HTML标签，即是否开启HTML标签解析，为了安全性，默认不开启
             smartLists: true,
             smartypants: true,
-            highlight: function(html) {
-                // 有一部分内容需要单独处理
-                if(typeof(highlightStr) == 'object') {
-                    for(var i =  0, len = highlightStr.length; i < len; i++) {
-                        html = html.replace(highlightStr[i], '<span class="highlight">' + highlightStr[i] + '</span>');
-                    }
-                }
-                return html;
-            }
         };
 
         // markdownDoc = new String(markdownDoc);

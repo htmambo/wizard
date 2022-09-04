@@ -62,6 +62,7 @@ class SearchController extends Controller
             } else {
                 $total = $result->total;
                 $documentModel->whereIn('id', $result->ids);
+                $sortIds = $result->ids;
                 if (!empty($result->words)) {
                     $searchWord = implode(',', $result->words);
                 }

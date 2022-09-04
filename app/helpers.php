@@ -1000,13 +1000,13 @@ function sortDocumentBySortIds(LengthAwarePaginator $docs, array $sortIds = null
  * @return string
  */
 function highlight(string $content, string $keyword = null) :string {
-    if (empty($keyword)) {
-        return $content;
-    }
-
-    foreach (explode(',', $keyword) as $key) {
-        $content = preg_replace('@(' . $key . ')@i', "<span class='highlight'>\\1</span>", $content);
-    }
+//    if (empty($keyword)) {
+//        return $content;
+//    }
+//
+//    foreach (explode(',', $keyword) as $key) {
+//        $content = preg_replace('@(' . $key . ')@i', "<span class='highlight'>\\1</span>", $content);
+//    }
 
     return $content;
 }
