@@ -992,26 +992,6 @@ function sortDocumentBySortIds(LengthAwarePaginator $docs, array $sortIds = null
 }
 
 /**
- * 关键字高亮
- *
- * @param string      $content
- * @param string|null $keyword
- *
- * @return string
- */
-function highlight(string $content, string $keyword = null) :string {
-//    if (empty($keyword)) {
-//        return $content;
-//    }
-//
-//    foreach (explode(',', $keyword) as $key) {
-//        $content = preg_replace('@(' . $key . ')@i', "<span class='highlight'>\\1</span>", $content);
-//    }
-
-    return $content;
-}
-
-/**
  * 从Cookie里获取已经设置的样式
  * @return string
  */

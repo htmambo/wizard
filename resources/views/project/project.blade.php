@@ -103,17 +103,17 @@
 
             <div class="markdown-body wz-panel-limit {{ $type == 'markdown' ? 'wz-markdown-style-fix' : '' }}" id="markdown-body">
                 @if($type == 'html')
-                    {!! highlight($pageItem->content ?? '', $highlight ?? null) !!}
+                    {!! $pageItem->content ?? '' !!}
                 @endif
                 @if($type === 'markdown')
 {{--                    @if($pageItem->html_code && config('wizard.markdown.direct_save_html'))--}}
-{{--                        {!! highlight($pageItem->html_code ?? '', $highlight ?? null) !!}--}}
+{{--                        {!! $pageItem->html_code ?? '' !!}--}}
 {{--                    @else--}}
                         <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', processMarkdown($pageItem->content ?? '')) }}</textarea>
 {{--                    @endif--}}
                 @endif
                 @if($type === 'table')
-                    <textarea id="x-spreadsheet-content" class="d-none">{{ highlight(processSpreedSheet($pageItem->content), $highlight ?? null) }}</textarea>
+                    <textarea id="x-spreadsheet-content" class="d-none">{{ processSpreedSheet($pageItem->content) }}</textarea>
                     <div class="wz-spreadsheet">
                         <div id="x-spreadsheet"></div>
                     </div>
@@ -306,7 +306,7 @@
             }
         }
         // 处理一下Markdown的搜索结果高亮
-        if(typeof(highlightStr) == 'object' && highlightStr[0]) {
+        if(typeof(highlightStr) == 'object' && highlightStr[0] && '{{$type}}' !== 'swagger') {
             html = $('#markdown-body').html();
             for(var i =  0, len = highlightStr.length; i < len; i++) {
                 html = html.replaceAll(highlightStr[i], '<span class="highlight">' + highlightStr[i] + '</span>');

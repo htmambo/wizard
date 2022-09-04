@@ -535,7 +535,7 @@ class DocumentController extends Controller
             abort(422, '该文档不是Swagger文档');
         }
 
-        return highlight($page->content, $request->input('keyword', ''));
+        return $page->content;
     }
 
     /**
