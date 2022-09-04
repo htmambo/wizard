@@ -135,7 +135,18 @@ class XunSearchDriver implements Driver
 //            echo('搜索内容：' . $keyword);
             $tokenizer = new XSTokenizerScws;
             $words = $tokenizer->getResult($keyword);
+//            $corrected = $search->getCorrectedQuery();
+//            if (count($corrected) !== 0)
+//            {
+//                // 有纠错建议，列出来看看；此情况就会得到 "测试" 这一建议
+//                echo "您是不是要找：\n";
+//                foreach ($corrected as $word)
+//                {
+//                    echo $word . "\n";
+//                }
+//            }
 //            echo('分词结果：' . implode(',', array_column($words, 'word')));
+//            exit;
 //            $msg = '';
             $finded = $search->getLastCount();
 //            if($finded>$perPage) {

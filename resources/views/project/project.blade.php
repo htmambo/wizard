@@ -308,29 +308,7 @@
         // 处理一下Markdown的搜索结果高亮
         if(typeof(highlightStr) == 'object' && highlightStr[0] && '{{$type}}' !== 'swagger') {
             html = $('#markdown-body').html();
-            for(var i =  0, len = highlightStr.length; i < len; i++) {
-                html = html.replaceAll(highlightStr[i], '<span class="highlight">' + highlightStr[i] + '</span>');
-            }
-            var finded = true;
-            while(finded) {
-                finded = false;
-                html = html.replaceAll(/<[^>]+>/g, function(a,b){
-                    if(a.indexOf('<span')>0) {
-                        a = a.replaceAll('<span class="highlight">', '');
-                        finded = true;
-                    }
-                    return a;
-                })
-                html = html.replaceAll(/<[^>]+>/g, function(a,b){
-                    if(a.indexOf('</span>')>0) {
-                        a = a.replaceAll('</span>', '');
-                        finded = true;
-                    }
-                    return a;
-                })
-            }
-            html = '<div >您正在搜索：<span class="highlight">' + highlightStr.join(',') + '</span></div>' + html;
-            $('#markdown-body').html(html);
+            $('#markdown-body').html($.wz.highlight(html, highlightStr));
         }
     });
 </script>

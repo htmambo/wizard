@@ -331,5 +331,31 @@ $.wz = {
     },
     delCookie: function (cname) {
         document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT"; //设置 expires 参数为以前的时间即可
+    },
+    highlight: function(html, highlightStr) {
+        if(typeof(highlightStr) !== 'object' || !highlightStr[0]) return html;
+        for(var i =  0, len = highlightStr.length; i < len; i++) {
+            html = html.replaceAll(highlightStr[i], '<span class="highlight">' + highlightStr[i] + '</span>');
+        }
+        var finded = true;
+        while(finded) {
+            finded = false;
+            html = html.replaceAll(/<[^>]+>/g, function(a,b){
+                if(a.indexOf('<span')>0) {
+                    a = a.replaceAll('<span class="highlight">', '');
+                    finded = true;
+                }
+                return a;
+            })
+            html = html.replaceAll(/<[^>]+>/g, function(a,b){
+                if(a.indexOf('</span>')>0) {
+                    a = a.replaceAll('</span>', '');
+                    finded = true;
+                }
+                return a;
+            })
+        }
+        html = '<div >您正在搜索：<span class="highlight">' + highlightStr.join(',') + '</span></div>' + html;
+        return html;
     }
 };
