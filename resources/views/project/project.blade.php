@@ -70,7 +70,11 @@
                 <div class="wz-document-swagger-sync-info wz-panel-limit">
                     @if($share)
                         <p>
-                            该文档已分享，任何拥有分享链接的人都可以查看该文档，您可以
+                            该文档已分享，任何拥有分享链接
+                            @if($share->password)
+                                并知晓<span>分享密钥</span>
+                            @endif
+                            的人都可以查看该文档，您可以
                             @can('page-edit', $pageItem)
                                 <button class="btn btn-link btn-danger wz-share-cancel mr-2">取消分享</button>
                                 或者
