@@ -653,10 +653,11 @@ function convertSqlTo(string $sql, $callback)
                 $sql = str_replace($str, $rep, $sql);
             }
         }
+        $sql = preg_replace('@CHARACTER\s+SET\s*=\s*[a-z0-9_]+\s*@i', '', $sql);
+        $sql = preg_replace('@COLLATE\s*=\s*[a-z0-9_]+\s*@i', '', $sql);
         $sql = trim($sql);
         $parser = new PHPSQLParser\PHPSQLParser();
         $parsed = $parser->parse($sql);
-
         if (!isset($parsed['CREATE'])) {
             return null;
         }
@@ -669,7 +670,8 @@ function convertSqlTo(string $sql, $callback)
             $markdowns = [];
 
             foreach ($fields as $field) {
-                if ($field['sub_tree'][0]['expr_type'] == 'constraint') {
+           
+                if (!isset($field['sub_tree'][0]) || $field['sub_tree'][0]['expr_type'] == 'constraint') {
                     continue;
                 }
 
