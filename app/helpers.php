@@ -213,16 +213,28 @@ function wzTemplates($type = Template::TYPE_DOC, User $user = null): array
 function convertJsonToMarkdownTable(string $json): string
 {
     $markdowns = [
-        ['参数名', '类型', '是否必须', '说明'],
-        ['---', '---', '---', '---'],
+        ['参数名', '类型', '说明'],
+        ['---', '---', '---'],
     ];
-
     foreach (jsonFlatten($json) as $key => $type) {
-        $markdowns[] = [$key, $type, '', ''];
+        $segs = explode('.', $key);
+        $prefix = str_repeat('&emsp; &emsp; ', count($segs) - 1);
+        $markdowns[] = [count($segs) > 1 ? $prefix . '┣ ' . $segs[count($segs) - 1] : $segs[count($segs) - 1], $type, ''];
+    }
+
+    $lastEmp = '';
+    $rev = array_reverse($markdowns);
+    foreach ($rev as $index => $item) {
+        $empPart = explode('┣', $item[0])[0];
+        if ($empPart !== '' && $empPart !== $lastEmp) {
+            $rev[$index][0] = str_replace('┣', '┗', $item[0]);
+        }
+
+        $lastEmp = $empPart;
     }
 
     $html = '';
-    foreach ($markdowns as $line) {
+    foreach (array_reverse($rev) as $line) {
         $html .= '| ' . implode(' | ', $line) . ' | ' . "\n";
     }
 
