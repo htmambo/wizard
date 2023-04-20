@@ -646,15 +646,9 @@ function convertSqlTo(string $sql, $callback)
 {
     try {
         $sql .= "\n";
-        if(preg_match_all('@\)\s*ENGINE\s*=.+COMMENT\s*=\s*[^\n]+\n@i', $sql, $match)) {
-            foreach($match as $v) {
-                $str = $v[0];
-                $rep = preg_replace('@\s+COMMENT\s*=\s*@', ' COMMENT ', $str);
-                $sql = str_replace($str, $rep, $sql);
-            }
-        }
-        $sql = preg_replace('@CHARACTER\s+SET\s*=\s*[a-z0-9_]+\s*@i', '', $sql);
+        // PHPSQLParser似乎有BUG，一旦SQL中包含COLLATE的话，后面的内容就丢失了
         $sql = preg_replace('@COLLATE\s*=\s*[a-z0-9_]+\s*@i', '', $sql);
+
         $sql = trim($sql);
         $parser = new PHPSQLParser\PHPSQLParser();
         $parsed = $parser->parse($sql);
@@ -706,11 +700,16 @@ function convertSqlTo(string $sql, $callback)
             if (!$options || empty($options)) {
                 $options = [];
             }
-
             foreach ($options as $option) {
                 $type = strtoupper($option['sub_tree'][0]['base_expr'] ?? '');
                 if ($type === 'COMMENT') {
-                    $tableComment = trim($option['sub_tree'][1]['base_expr'] ?? '', "'");
+                    $tableComment = '';
+                    foreach($option['sub_tree'] as $v) {
+                        if($v['expr_type'] == 'const') {
+                            $tableComment = trim($v['base_expr'], ' \'"');
+                            break;
+                        }
+                    }
                     break;
                 }
             }
