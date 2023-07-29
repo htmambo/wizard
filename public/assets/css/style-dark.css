@@ -204,7 +204,7 @@ body.wz-dark-theme,
 }
 .wz-dark-theme .card:not(.card-white) .wz-box-project:hover,
 .wz-dark-theme .card:not(.card-white) .wz-box-catalog:hover {
-  background-color: #3a3a3a;
+  background-color: #1a1a1a;
   color: #eee;
 }
 .wz-dark-theme .wz-page-count {
@@ -322,7 +322,7 @@ body.wz-dark-theme,
   border: 1px solid #1f1f1f;
 }
 .wz-dark-theme .wz-project-main .wz-comment-panel .wz-comment-box .wz-comment-header {
-  background: #3a3a3a;
+  background-color: transparent;
   border-bottom: 1px solid #1f1f1f;
   color: #CCCCCC;
 }
@@ -330,7 +330,7 @@ body.wz-dark-theme,
   border: 1px solid #1f1f1f;
 }
 .wz-dark-theme .wz-project-main .wz-comment-panel .wz-comment-editor .wz-comment-editor-header {
-  background: #3a3a3a;
+  background-color: #1a1a1a;
   border-bottom: 1px solid #1f1f1f;
 }
 .wz-dark-theme .wz-project-main .wz-comment-panel .wz-comment-editor .wz-comment-editor-header button {
@@ -349,11 +349,11 @@ body.wz-dark-theme,
   color: #fbfbfb;
 }
 .wz-dark-theme .wz-project-main .wz-comment-panel .wz-comment-editor .wz-comment-editor-body textarea {
-  background: #424242;
+  background: #3a3a3a;
   color: #ffffff;
 }
 .wz-dark-theme .wz-project-main .wz-comment-panel .wz-comment-editor .wz-comment-editor-body textarea:focus {
-  background: #000000;
+  background: #0a0a0a;
 }
 .wz-dark-theme .wz-project-main .wz-document-swagger-sync-info {
   background: #4e4e4e;
@@ -606,3 +606,15 @@ body.wz-dark-theme,
   color: hsl(130, 20%, 70%);
 }
 
+.wz-dark-theme .wz-comments-box .media:nth-child(odd),
+.wz-dark-theme .wz-recently-log .media:nth-child(odd),
+.wz-dark-theme .card-body .media:nth-child(odd)
+{
+  background: #2e2e2e !important;
+}
+.wz-dark-theme .wz-comments-box .media:nth-child(even),
+.wz-dark-theme .wz-recently-log .media:nth-child(even),
+.wz-dark-theme .card-body .media:nth-child(even)
+{
+  background: #272727 !important;
+}
