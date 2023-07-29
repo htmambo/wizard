@@ -5,7 +5,10 @@
     padding-right: 15px;
     padding-left: 15px;
 }
-
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url(font/JetBrainsMono-Regular.woff2);
+}
 /* Custom page header */
 .header {
     border-bottom: 1px solid #e5e5e5;
@@ -1370,7 +1373,7 @@ li.L1, li.L3, li.L5, li.L7, li.L9 {
 
 pre.prettyprint *,
 .cm-comment {
-    font-family: 'Courier New', Courier, monospace, "YaHei Consolas Hybrid", Consolas, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace, "YaHei Consolas Hybrid", Consolas, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica;
 }
 
 .wz-beta {
