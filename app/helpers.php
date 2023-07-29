@@ -89,6 +89,7 @@ function navigator(
         'type',
         'status',
         'created_at',
+        'updated_at',
         'sort_level'
     )->orderBy('pid')->get();
 
@@ -108,6 +109,7 @@ function navigator(
             'type'       => documentType($page->type),
             'status'     => $page->status,
             'created_at' => $page->created_at,
+            'updated_at' => $page->updated_at,
             'sort_level' => $page->sort_level ?? 1000,
         ];
     }
@@ -152,7 +154,7 @@ function navigatorSort($navItems, $sortStyle = Project::SORT_STYLE_DIR_FIRST)
                 if ($a['sort_level'] < $b['sort_level']) {
                     return -1;
                 } else {
-                    return $a['created_at']->greaterThan($b['created_at']);
+                    return $b['updated_at']->greaterThan($a['updated_at']);
                 }
             }
         } catch (Exception $e) {
