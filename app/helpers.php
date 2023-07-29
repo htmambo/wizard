@@ -22,8 +22,8 @@ use Intervention\Image\Facades\Image;
  * 生成路由url
  *
  * @param string $name
- * @param array $parameters
- * @param bool $absolute
+ * @param array  $parameters
+ * @param bool   $absolute
  *
  * @return string
  */
@@ -38,7 +38,8 @@ function wzRoute($name, $parameters = [], $absolute = false)
 /**
  * 文档类型标识转换
  *
- * @param $type
+ * @param      $type
+ * @param bool $flip
  *
  * @return string
  */
@@ -49,8 +50,9 @@ function documentType($type, $flip = false): string
         Document::TYPE_DOC     => 'markdown',
         Document::TYPE_SWAGGER => 'swagger',
         Document::TYPE_TABLE   => 'table',
+        Document::TYPE_FLOW    => 'flowchart',
     ];
-    if($flip) {
+    if ($flip) {
         $types = array_flip($types);
     }
     return $types[$type] ?? '';
@@ -70,7 +72,7 @@ function documentType($type, $flip = false): string
 function navigator(
     int $projectID,
     int $pageID = 0,
-    $exclude = []
+        $exclude = []
 ) {
     static $cached = [];
 
@@ -194,9 +196,9 @@ function navigatorSort($navItems, $sortStyle = Project::SORT_STYLE_DIR_FIRST)
  *
  * @return array
  */
-function wzTemplates($type = Template::TYPE_DOC, User $user = null): array
+function wzTemplates($type = Template::TYPE_DOC, User $user = NULL): array
 {
-    if ($user == null && !Auth::guest()) {
+    if ($user == NULL && !Auth::guest()) {
         $user = Auth::user();
     }
 
@@ -213,28 +215,16 @@ function wzTemplates($type = Template::TYPE_DOC, User $user = null): array
 function convertJsonToMarkdownTable(string $json): string
 {
     $markdowns = [
-        ['参数名', '类型', '说明'],
-        ['---', '---', '---'],
+        ['参数名', '类型', '是否必须', '说明'],
+        ['---', '---', '---', '---'],
     ];
+
     foreach (jsonFlatten($json) as $key => $type) {
-        $segs = explode('.', $key);
-        $prefix = str_repeat('&emsp; &emsp; ', count($segs) - 1);
-        $markdowns[] = [count($segs) > 1 ? $prefix . '┣ ' . $segs[count($segs) - 1] : $segs[count($segs) - 1], $type, ''];
-    }
-
-    $lastEmp = '';
-    $rev = array_reverse($markdowns);
-    foreach ($rev as $index => $item) {
-        $empPart = explode('┣', $item[0])[0];
-        if ($empPart !== '' && $empPart !== $lastEmp) {
-            $rev[$index][0] = str_replace('┣', '┗', $item[0]);
-        }
-
-        $lastEmp = $empPart;
+        $markdowns[] = [$key, $type, '', ''];
     }
 
     $html = '';
-    foreach (array_reverse($rev) as $line) {
+    foreach ($markdowns as $line) {
         $html .= '| ' . implode(' | ', $line) . ' | ' . "\n";
     }
 
@@ -345,7 +335,7 @@ function subDocuments($pid)
  */
 function resourceVersion()
 {
-    static $version = null;
+    static $version = NULL;
     if (is_null($version)) {
         $version = 'v=' . config('wizard.resource_version');
     }
@@ -418,7 +408,7 @@ function user_face($id)
  */
 function users()
 {
-    static $users = null;
+    static $users = NULL;
     if (is_null($users)) {
         $users = User::all();
     }
@@ -462,7 +452,7 @@ function comment_filter_users($content)
         return $users;
     }
 
-    return null;
+    return NULL;
 }
 
 
@@ -484,7 +474,7 @@ function comment_filter(string $comment): string
             return $users;
         }
 
-        return null;
+        return NULL;
     })(
         $comment
     );
@@ -518,7 +508,7 @@ function comment_filter(string $comment): string
  */
 function ldap_enabled(): bool
 {
-    static $enabled = null;
+    static $enabled = NULL;
     if (is_null($enabled)) {
         $enabled = (bool)config('wizard.ldap.enabled');
     }
@@ -533,7 +523,7 @@ function ldap_enabled(): bool
  */
 function register_enabled(): bool
 {
-    static $enabled = null;
+    static $enabled = NULL;
     if (is_null($enabled)) {
         $enabled = (bool)config('wizard.register_enabled');
     }
@@ -658,26 +648,30 @@ function convertSqlTo(string $sql, $callback)
 {
     try {
         $sql .= "\n";
-        // PHPSQLParser似乎有BUG，一旦SQL中包含COLLATE的话，后面的内容就丢失了
-        $sql = preg_replace('@COLLATE\s*=\s*[a-z0-9_]+\s*@i', '', $sql);
-
-        $sql = trim($sql);
+        if (preg_match_all('@\)\s*ENGINE\s*=.+COMMENT\s*=\s*[^\n]+\n@i', $sql, $match)) {
+            foreach ($match as $v) {
+                $str = $v[0];
+                $rep = preg_replace('@\s+COMMENT\s*=\s*@', ' COMMENT ', $str);
+                $sql = str_replace($str, $rep, $sql);
+            }
+        }
+        $sql    = trim($sql);
         $parser = new PHPSQLParser\PHPSQLParser();
         $parsed = $parser->parse($sql);
+
         if (!isset($parsed['CREATE'])) {
-            return null;
+            return NULL;
         }
 
 //        \Log::error('xxx', ['struct' => $parsed]);
         if ($parsed['CREATE']['expr_type'] === 'table') {
-            $fields = $parsed['TABLE']['create-def']['sub_tree'];
+            $fields    = $parsed['TABLE']['create-def']['sub_tree'];
             $tableName = $parsed['TABLE']['base_expr'];
 
             $markdowns = [];
 
             foreach ($fields as $field) {
-           
-                if (!isset($field['sub_tree'][0]) || $field['sub_tree'][0]['expr_type'] == 'constraint') {
+                if ($field['sub_tree'][0]['expr_type'] == 'constraint') {
                     continue;
                 }
 
@@ -689,39 +683,34 @@ function convertSqlTo(string $sql, $callback)
                 $type = $length = '';
                 foreach ($field['sub_tree'][1]['sub_tree'] as $item) {
                     if ($item['expr_type'] == 'data-type') {
-                        $type = $item['base_expr'] ?? '';
+                        $type   = $item['base_expr'] ?? '';
                         $length = $item['length'] ?? '';
                     }
                 }
 
-                $name = $field['sub_tree'][0]['base_expr'];
-                $comment = trim($field['sub_tree'][1]['comment'] ?? '', "'");
+                $name     = $field['sub_tree'][0]['base_expr'];
+                $comment  = trim($field['sub_tree'][1]['comment'] ?? '', "'");
                 $nullable = $field['sub_tree'][1]['nullable'] ?? false;
 
 //        $autoInc      = $field['sub_tree'][1]['auto_inc'] ?? false;
 //        $primary      = $field['sub_tree'][1]['primary'] ?? false;
 //        $defaultValue = $field['sub_tree'][1]['default'] ?? '-';
 
-                $type = empty($length) ? $type : "{$type} ($length)";
+                $type        = empty($length) ? $type : "{$type} ($length)";
                 $markdowns[] = [trim($name, '`'), $type, $nullable ? 'Y' : 'N', $comment];
             }
 
 
             $tableComment = '-';
-            $options = $parsed['TABLE']['options'] ?? [];
+            $options      = $parsed['TABLE']['options'] ?? [];
             if (!$options || empty($options)) {
                 $options = [];
             }
+
             foreach ($options as $option) {
                 $type = strtoupper($option['sub_tree'][0]['base_expr'] ?? '');
                 if ($type === 'COMMENT') {
-                    $tableComment = '';
-                    foreach($option['sub_tree'] as $v) {
-                        if($v['expr_type'] == 'const') {
-                            $tableComment = trim($v['base_expr'], ' \'"');
-                            break;
-                        }
-                    }
+                    $tableComment = trim($option['sub_tree'][1]['base_expr'] ?? '', "'");
                     break;
                 }
             }
@@ -741,7 +730,7 @@ function convertSqlTo(string $sql, $callback)
  *
  * @return string
  */
-function processMarkdown(string $markdown = null): string
+function processMarkdown(string $markdown = NULL): string
 {
     if (is_null($markdown)) {
         $markdown = '';
@@ -779,7 +768,7 @@ function processSpreedSheet(string $content): string
     if (Str::startsWith($content, '[')) {
         $maxColsLen = $maxRowsLen = 0;
         foreach ($contentArray as $k => $arr) {
-            $cur = processSpreedSheetSingle($arr, $minRow, $minCol);
+            $cur              = processSpreedSheetSingle($arr, $minRow, $minCol);
             $contentArray[$k] = $cur;
             if ($cur['cols']['len'] > $maxColsLen) {
                 $maxColsLen = $cur['cols']['len'];
@@ -805,7 +794,7 @@ function processSpreedSheet(string $content): string
 /**
  * 处理单一 sheet 的表格
  *
- * @param $contentArray
+ * @param     $contentArray
  * @param int $minRow
  * @param int $minCol
  *
@@ -821,7 +810,7 @@ function processSpreedSheetSingle($contentArray, $minRow, $minCol)
         })
         // 列过滤，去掉每一行最后多余的空列
         ->map(function ($item) {
-            $cells = $item['cells'] ?? [];
+            $cells     = $item['cells'] ?? [];
             $lastIndex = count($cells);
             if ($lastIndex === 0) {
                 return $item;
@@ -897,16 +886,16 @@ function processSpreedSheetRows($originalRows): array
 /**
  * 遍历导航项
  *
- * @param array $navigators
+ * @param array   $navigators
  * @param Closure $callback
- * @param array $parents
- * @param bool $callbackWithFullNavItem 是否在回调函数中传递完整的nav对象
+ * @param array   $parents
+ * @param bool    $callbackWithFullNavItem 是否在回调函数中传递完整的nav对象
  */
 function traverseNavigators(
-    array $navigators,
+    array    $navigators,
     \Closure $callback,
-    array $parents = [],
-    $callbackWithFullNavItem = false
+    array    $parents = [],
+             $callbackWithFullNavItem = false
 ) {
     foreach ($navigators as $nav) {
         $callback($callbackWithFullNavItem ? $nav : $nav['id'], $parents);
@@ -928,8 +917,8 @@ function traverseNavigators(
  */
 function cdn_resource(string $resourceUrl)
 {
-    static $enabled = null;
-    static $cdnUrl = null;
+    static $enabled = NULL;
+    static $cdnUrl = NULL;
 
     if (is_null($enabled)) {
         $enabled = config('wizard.cdn.enabled', false);
@@ -964,7 +953,7 @@ function cdn_resource(string $resourceUrl)
  */
 function allCatalogs()
 {
-    static $catalogs = null;
+    static $catalogs = NULL;
     if (is_null($catalogs)) {
         $catalogs = Catalog::all();
     }
@@ -982,7 +971,7 @@ function impersonateUser()
     /** @var User $user */
     $user = Auth::user();
     if (!$user->isImpersonated()) {
-        return null;
+        return NULL;
     }
 
     $impersonateUser = $user->impersonator();
@@ -997,7 +986,7 @@ function impersonateUser()
  *
  * @return mixed
  */
-function sortDocumentBySortIds(LengthAwarePaginator $docs, array $sortIds = null)
+function sortDocumentBySortIds(LengthAwarePaginator $docs, array $sortIds = NULL)
 {
     if (empty($sortIds)) {
         return $docs;
@@ -1010,25 +999,27 @@ function sortDocumentBySortIds(LengthAwarePaginator $docs, array $sortIds = null
 
 /**
  * 从Cookie里获取已经设置的样式
+ *
  * @return string
  */
 function getThemeByCookie()
 {
     $name = \Illuminate\Support\Facades\Cookie::get('wizard-theme');
-    if($name == 'dark') {
+    if ($name == 'dark') {
         $name = 'wz-dark-theme';
     } else {
         $name = '';
     }
     return $name;
 }
+
 function to_unicode($string)
 {
-    $str = mb_convert_encoding($string, 'UCS-2', 'UTF-8');
+    $str    = mb_convert_encoding($string, 'UCS-2', 'UTF-8');
     $arrstr = str_split($str, 2);
     $unistr = '';
     foreach ($arrstr as $n) {
-        $dec = hexdec(bin2hex($n));
+        $dec    = hexdec(bin2hex($n));
         $unistr .= '&#' . $dec . ';';
     }
     return $unistr;
@@ -1036,64 +1027,68 @@ function to_unicode($string)
 
 /**
  * 给图片添加水印
+ *
  * @param $file1 图片文件
  */
-function watermark($file1) {
+function watermark($file1)
+{
     $cfg = config('wizard.watermark');
     if ($cfg['enabled'] && (in_array($cfg['type'], ['logo', 'text']))) {
         $img  = Image::make($file1);
         $base = $cfg['position'];
         if ($cfg['type'] == 'logo') {
             $img->insert(public_path($cfg['pic']), $base, 0, 10);
-        }
-        else if ($cfg['font']) {
-            $fontpath = $cfg['font'];
-            $fontpath = public_path($fontpath);
-            if (file_exists($fontpath)) {
-                $text       = $cfg['text'] ?: config('app.name');
-                $fontsize   = $cfg['size'];
-                $color      = $cfg['color'] ?: 'FF0000';
-                $background = $cfg['background'] ?: 'FFFFFF';
-                //需要计算一下水印文字的展示位置
-                $fontclassname = sprintf('\Intervention\Image\%s\Font', $img->getDriver()->getDriverName());
-                $font          = new $fontclassname($text);
-                $font->file($fontpath);
-                $font->size($fontsize);
-                $size = $font->getBoxSize();
-
-                $base_x = $base_y = 0;
-                $width  = $img->width();
-                $height = $img->height();
-                // define base color position
-                $ar = explode('-', $base);
-                if (in_array('left', $ar)) {
-                    $base_x = 10;
-                }
-                if (in_array('right', $ar)) {
-                    $base_x = $width - 10 - $size['width'] - $size[6];
-                }
-                if (in_array('top', $ar)) {
-                    $base_y = 10 - $size[7];
-                }
-                if (in_array('bottom', $ar)) {
-                    $base_y = $height - 10 - $size['height'] - $size[7];
-                }
-                //位置计算完毕
-                for ($i = 0; $i < 5; $i++) {
-                    for ($j = 0; $j < 5; $j++) {
-                        $img->text($text, $base_x + $i, $base_y + $j, function ($font) use ($fontpath, $fontsize, $background) {
-                            $font->file($fontpath);
-                            $font->size($fontsize);
-                            $font->color($background);
-                        });
-                    }
-                }
-                $img->text($text, $base_x + 2, $base_y + 2, function ($font) use ($fontpath, $fontsize, $color) {
+        } else {
+            if ($cfg['font']) {
+                $fontpath = $cfg['font'];
+                $fontpath = public_path($fontpath);
+                if (file_exists($fontpath)) {
+                    $text       = $cfg['text'] ?: config('app.name');
+                    $fontsize   = $cfg['size'];
+                    $color      = $cfg['color'] ?: 'FF0000';
+                    $background = $cfg['background'] ?: 'FFFFFF';
+                    //需要计算一下水印文字的展示位置
+                    $fontclassname = sprintf('\Intervention\Image\%s\Font', $img->getDriver()->getDriverName());
+                    $font          = new $fontclassname($text);
                     $font->file($fontpath);
                     $font->size($fontsize);
-                    $font->color($color);
-                });
+                    $size = $font->getBoxSize();
 
+                    $base_x = $base_y = 0;
+                    $width  = $img->width();
+                    $height = $img->height();
+                    // define base color position
+                    $ar = explode('-', $base);
+                    if (in_array('left', $ar)) {
+                        $base_x = 10;
+                    }
+                    if (in_array('right', $ar)) {
+                        $base_x = $width - 10 - $size['width'] - $size[6];
+                    }
+                    if (in_array('top', $ar)) {
+                        $base_y = 10 - $size[7];
+                    }
+                    if (in_array('bottom', $ar)) {
+                        $base_y = $height - 10 - $size['height'] - $size[7];
+                    }
+                    //位置计算完毕
+                    for ($i = 0; $i < 5; $i++) {
+                        for ($j = 0; $j < 5; $j++) {
+                            $img->text($text, $base_x + $i, $base_y + $j,
+                                function ($font) use ($fontpath, $fontsize, $background) {
+                                    $font->file($fontpath);
+                                    $font->size($fontsize);
+                                    $font->color($background);
+                                });
+                        }
+                    }
+                    $img->text($text, $base_x + 2, $base_y + 2, function ($font) use ($fontpath, $fontsize, $color) {
+                        $font->file($fontpath);
+                        $font->size($fontsize);
+                        $font->color($color);
+                    });
+
+                }
             }
         }
         $img->save();
@@ -1102,12 +1097,16 @@ function watermark($file1) {
 
 /**
  * 格式化HTML代码以方便前端进行对比
+ *
  * @param string $content
+ *
  * @return mixed|string|string[]|null
  */
 function formatHtml($content = '')
 {
-    if(!$content) return $content;
+    if (!$content) {
+        return $content;
+    }
     //格式化一下以方便前端进行差异对比
     $content = preg_replace('@<\s+@i', '<', $content);
     $content = preg_replace('@\s+>@i', '>', $content);
@@ -1134,39 +1133,46 @@ function formatHtml($content = '')
 /**
  * 生成read页面的token
  * 在生成前需要自行判断当前用户对$id和$page_id的权限
+ *
  * @param $id
  * @param $page_id
+ *
  * @return false|string
  */
-function genReadToken($id, $page_id){
+function genReadToken($id, $page_id)
+{
     $pre = date('ymdHis');
 //    echo $pre . '<br />';
 //    echo dechex($pre) . '<br />';
     return shulz($id, $page_id, $pre);
 }
-function shulz($id, $page_id, $pre) {
+
+function shulz($id, $page_id, $pre)
+{
     $key = config('app.key');
-    if(!$key) {
+    if (!$key) {
         return false;
     }
     $tmp = md5($key . '_' . $id . '_' . $page_id . '_' . $pre);
     $key = config('app.key');
-    if(!$key) {
+    if (!$key) {
         return false;
     }
-    for($i=0; $i<strlen($pre); $i++) {
+    for ($i = 0; $i < strlen($pre); $i++) {
         $pos = $i * 2 + 1;
-        $tmp = substr($tmp, 0, $pos) . substr($pre, $i, 1) . substr($tmp, $pos+1);
+        $tmp = substr($tmp, 0, $pos) . substr($pre, $i, 1) . substr($tmp, $pos + 1);
     }
     return $tmp;
 }
-function checkReadToken($id, $page_id, $token) {
+
+function checkReadToken($id, $page_id, $token)
+{
     $life = 60;         //TOKEN的有效期，单位为秒
-    $pre = '';
-    for($i=0;$i<12;$i++) {
+    $pre  = '';
+    for ($i = 0; $i < 12; $i++) {
         $pos = $i * 2 + 1;
         $pre .= substr($token, $pos, 1);
     }
     $tmp = shulz($id, $page_id, $pre);
-    return $token === $tmp && $pre>=date('ymdHis') - $life;
+    return $token === $tmp && $pre >= date('ymdHis') - $life;
 }

@@ -3548,3 +3548,8 @@ hr.editormd-page-break {
   width: 100%;
   padding: 40px;
 }
+pre button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}

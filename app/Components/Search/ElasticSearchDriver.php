@@ -47,6 +47,24 @@ class ElasticSearchDriver implements Driver
         $this->index        = config('wizard.search.drivers.elasticsearch.index', 'wizard');
         $this->authUsername = config('wizard.search.drivers.elasticsearch.username');
         $this->authPassword = config('wizard.search.drivers.elasticsearch.password');
+
+        $url = '/' . $this->index . '/_doc/_mapping';
+        // $this->client->delete($url, ['auth' => $this->auth()]);
+        $cfg = [
+            'properties' => [
+                'title' => [
+                    'type' => 'text',
+                    'analyzer' => 'ik_max_word',
+                    'search_analyzer' => 'ik_smart'
+                ],
+                'content' => [
+                    'type' => 'text',
+                    'analyzer' => 'ik_max_word',
+                    'search_analyzer' => 'ik_smart'
+                ],
+            ]
+        ];
+        // $this->client->post($url, ['json' => $cfg, 'auth' => $this->auth()]);
     }
 
     /**
@@ -92,7 +110,7 @@ class ElasticSearchDriver implements Driver
     public function syncIndex(Document $doc)
     {
         $req = [
-            'id'      => $doc->id,
+            'id'      => "DOCUMENT_" . trim($doc->id),
             'type'    => $doc->type,
             'title'   => $doc->title,
             'content' => $doc->content,
@@ -102,7 +120,7 @@ class ElasticSearchDriver implements Driver
             'json' => $req,
             'auth' => $this->auth(),
         ]);
-
+var_dump($resp->getBody()->getContents());
 
         if ($resp->getStatusCode() < 200 || $resp->getStatusCode() >= 300) {
             throw new \Exception("sync document to server failed: " . $resp->getReasonPhrase() . ", response: " . $resp->getBody()->getContents());
@@ -144,7 +162,16 @@ class ElasticSearchDriver implements Driver
                 'json' => $req,
                 'auth' => $this->auth(),
             ]);
-
+            $result = $this->client->post('/_analyze', [
+                'json' => [
+                    'analyzer' => 'ik_smart',
+                    'text' => $keyword
+                ],
+                'auth' => $this->auth()
+            ]);
+            $tokens = json_decode($result->getBody()->getContents(), true);
+            $keywords = array_column($tokens['tokens'], 'token');
+            if(!$keywords) $keywords = [$keyword];
             if ($resp->getStatusCode() !== 200) {
                 return null;
             }
@@ -161,7 +188,7 @@ class ElasticSearchDriver implements Driver
                     $total = (int)($respBody['hits']['total']['value'] ?? 0);
                 }
 
-                return new Result(array_slice($sortIds, 0, $perPage), [$keyword], $total);
+                return new Result(array_slice($sortIds, 0, $perPage), $keywords, $total);
             }
 
             return null;

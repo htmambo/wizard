@@ -67,10 +67,11 @@ class Document extends Repository
 
     use SoftDeletes;
 
-    const TYPE_HTML    = 0;
-    const TYPE_DOC     = 1;
-    const TYPE_SWAGGER = 2;
-    const TYPE_TABLE   = 3;
+    const TYPE_HTML         = 0;     //富文本，HTML文档
+    const TYPE_DOC          = 1;     //MD文档
+    const TYPE_SWAGGER      = 2;     //SWAGGER文档
+    const TYPE_TABLE        = 3;     //表格
+    const TYPE_FLOW         = 4;     //流程图
 
     /**
      * 状态：正常

@@ -127,6 +127,9 @@
         fontSize: "13px",
         saveHTMLToTextarea: false,
         disabledKeyMaps: [],
+        copyText: '复制',
+        copiedText: '复制成功',
+        copyFailureText: '复制失败，请手动复制',
 
         onload: function () {
         },
@@ -1394,34 +1397,11 @@
         },
 
         /**
-         * 高亮预览HTML的pre代码部分
-         * highlight of preview codes
-         *
-         * @returns {editormd}             返回editormd的实例对象
-         */
-
-        previewCodeHighlight: function () {
-            var settings = this.settings;
-            var previewContainer = this.previewContainer;
-
-            if (settings.previewCodeHighlight) {
-                previewContainer.find("pre").addClass("prettyprint linenums");
-
-                if (typeof prettyPrint !== "undefined") {
-                    prettyPrint();
-                }
-            }
-
-            return this;
-        },
-
-        /**
          * 解析TeX(KaTeX)科学公式
          * TeX(KaTeX) Renderer
          *
          * @returns {editormd}             返回editormd的实例对象
          */
-
         katexRender: function () {
 
             if (timer === null) {
@@ -1893,10 +1873,13 @@
                 pedantic: false,
                 sanitize: (settings.htmlDecode) ? false : true,  // 关闭忽略HTML标签，即开启识别HTML标签，默认为false
                 smartLists: true,
-                smartypants: true
+                smartypants: true,
+                lineNumCss: 'linenums',
+                noLineNumCss: 'no-line-numbers',
+                startLineAttr: 'linenums',
             };
 
-            marked.setOptions(markedOptions);
+            // marked.setOptions(markedOptions);
 
             var newMarkdownDoc = editormd.$marked.parse(cmValue, markedOptions);
 
@@ -1917,7 +1900,7 @@
             if (settings.watch || (!settings.watch && state.preview)) {
                 previewContainer.html(newMarkdownDoc);
 
-                this.previewCodeHighlight();
+                editormd.codeHighlight(previewContainer);
 
                 if (settings.toc) {
                     var tocContainer = (settings.tocContainer === "") ? previewContainer : $(settings.tocContainer);
@@ -3214,7 +3197,7 @@
 
         var settings = $.extend(defaults, options || {});
         var marked = editormd.$marked;
-        var markedRenderer = new marked.Renderer();
+        var markedRenderer = new editormd.$marked.Renderer();
         markdownToC = markdownToC || [];
 
         var regexs = editormd.regexs;
@@ -3511,7 +3494,29 @@
                 : ((pageBreakReg.test(text)) ? this.pageBreak(text) : "<p" + isTeXAddClass + ">" + this.atLink(this.emoji(text)) + "</p>\n");
         };
 
-        markedRenderer.code = function (code, lang, escaped) {
+        markedRenderer.code = function (code, infostring, escaped) {
+            let lang = 'txt'; // 默认为txt
+            let startline = 1; // 默认为 1
+            // 匹配 lang 和 startline
+            const match = (infostring || '').match(/^([\w-]+)(?:,(-?\d+))?$/);
+            if (match) {
+                if(!isNaN(Number(match[1]))) {
+                    startline = parseInt(match[1], 10) || 1;
+                } else {
+                    lang = match[1]
+                    startline = parseInt(match[2], 10) || 1;
+                }
+            }
+            var preclass=' class="prettyprint '+this.options.langPrefix+escape(lang) + ' ';
+            if(startline>0) {
+                if(startline>1) {
+                    startline--;
+                    preclass+='linenums:'+startline;
+                } else {
+                    preclass+='linenums';
+                }
+            }
+            preclass+='" style="position: relative;"';
 
             // Wizard 添加 START
             var randomId = function () {
@@ -3557,7 +3562,9 @@
             }
             // wizard 添加 END
             else {
-                return marked.Renderer.prototype.code.apply(this, arguments);
+                var html = editormd.$marked.Renderer.prototype.code.apply(this, arguments);
+                var btnid = randomId();
+                return html.replace('<pre>', '<pre' + preclass + '>');
             }
         };
         // 代码转换为 alert box
@@ -3878,13 +3885,16 @@
             breaks: false,
             pedantic: false,
             sanitize: (settings.htmlDecode) ? false : true, // 是否忽略HTML标签，即是否开启HTML标签解析，为了安全性，默认不开启
+            lineNumCss: 'linenums',
+            noLineNumCss: 'no-line-numbers',
+            startLineAttr: 'linenums',
             smartLists: true,
             smartypants: true,
         };
 
         // markdownDoc = new String(markdownDoc);
 
-        var markdownParsed = marked.parse(markdownDoc, markedOptions);
+        var markdownParsed = editormd.$marked.parse(markdownDoc, markedOptions);
 
         markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
 
@@ -3914,9 +3924,9 @@
             }
         }
 
+        // 代码块高亮显示
         if (settings.previewCodeHighlight) {
-            div.find("pre").addClass("prettyprint linenums");
-            prettyPrint();
+            editormd.codeHighlight(div);
         }
 
         if (!editormd.isIE8) {
@@ -4412,7 +4422,6 @@
      * @param   {String}   [format=""]  日期时间的格式，类似PHP的格式
      * @returns {String}   datefmt      返回格式化后的日期时间字符串
      */
-
     editormd.dateFormat = function (format) {
         format = format || "";
 
@@ -4518,6 +4527,157 @@
         return datefmt;
     };
 
+    /**
+     * 高亮HTML的pre代码部分
+     * highlight of preview codes
+     *
+     * @param {Object}      obj         要处理容器的jQuery对象元素
+     * @returns {editormd}              返回editormd的实例对象
+     */
+    editormd.codeHighlight = function(obj) {
+        if (typeof prettyPrint !== "undefined") {
+            prettyPrint();
+            // 编辑状态下不添加复制按钮
+            if(!obj.hasClass('editormd-preview-container')) {
+                const codeBlock = new CodeBlock(this.options);
+                codeBlock.addCopyButtonToCode();
+            }
+        }
+    };
     return editormd;
 
 }));
+/**
+ * 代码块处理类，用于添加复制按钮和复制代码功能。
+ */
+class CodeBlock {
+    /**
+     * 创建一个代码块对象。
+     * @param {Object} options - 选项对象，可选。
+     * @param {string} options.copyText - 复制按钮文本，默认为 '复制'。
+     * @param {string} options.copiedText - 复制成功后按钮文本，默认为 '已经复制'。
+     * @param {string} options.copyFailureText - 复制失败后按钮文本，默认为 '复制失败'。
+     */
+    constructor(options = {}) {
+        // 设置默认值
+        this.copyText = options.copyText || '复制';
+        this.copiedText = options.copiedText || '已经复制';
+        this.copyFailureText = options.copyFailureText || '复制失败';
+        // 对默认值进行类型检查
+        if (typeof this.copyText !== 'string') {
+            this.copyText = '复制';
+        }
+        if (typeof this.copiedText !== 'string') {
+            this.copiedText = '已经复制';
+        }
+        if (typeof this.copyFailureText !== 'string') {
+            this.copyFailureText = '复制失败';
+        }
+    }
+
+    /**
+     * 复制文本到剪贴板（使用新的 navigator.clipboard API）。
+     * @param {string} copyInfo - 要复制的文本。
+     * @param {HTMLElement} obj - 复制按钮对象。
+     */
+    copyTextToClipboard(copyInfo, obj) {
+        if (navigator.clipboard) {
+            // 使用新的 navigator.clipboard API 进行复制
+            navigator.clipboard.writeText(copyInfo)
+                .then(() => this.setCopyBtnText(obj))
+                .catch(() => this.fallbackCopyTextToClipboard(copyInfo, obj));
+        } else {
+            // 使用旧的 execCommand API 进行复制
+            this.fallbackCopyTextToClipboard(copyInfo, obj);
+        }
+    }
+
+    /**
+     * 尝试使用 execCommand API 复制文本到剪贴板（兼容性更好）。
+     * @param {string} copyInfo - 要复制的文本。
+     * @param {HTMLElement} obj - 复制按钮对象。
+     */
+    fallbackCopyTextToClipboard(copyInfo, obj) {
+        const textArea = document.createElement('textarea');
+        // 去掉字符串末尾的空白字符
+        copyInfo = copyInfo.replace(/[\s\r\n]+$/g, '');
+        textArea.textContent = copyInfo;
+
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.position = 'fixed';
+
+        // 将 textarea 插入到文档中
+        document.body.insertBefore(textArea, document.body.firstChild);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            // 尝试复制到剪贴板
+            const successful = document.execCommand('copy');
+            setTimeout(() => {
+                if (successful) {
+                    // 复制成功
+                    this.setCopyBtnText(obj);
+                } else {
+                    // 复制失败
+                    this.setCopyBtnText(obj, this.copyFailureText);
+                }
+            }, 0);
+        } catch (err) {
+            // 复制失败
+            setTimeout(() => {
+                err = err.toString().replace(/[\r\n]/g, '');
+                this.setCopyBtnText(obj, this.copyFailureText + ':' + err);
+            }, 0);
+        }
+
+        // 从文档中移除 textarea
+        document.body.removeChild(textArea);
+    }
+
+    /**
+     * 设置复制按钮的文本。
+     * @param {HTMLElement} obj - 复制按钮对象。
+     * @param {string} [str=this.copiedText] - 要设置的文本，默认为已经复制。
+     */
+    setCopyBtnText(obj, str) {
+        str = str || this.copiedText;
+        $(obj).text(str);
+        setTimeout(() => { $(obj).text(this.copyText); }, 5000);
+    }
+
+    /**
+     * 将复制按钮添加到代码块中。
+     */
+    addCopyButtonToCode() {
+        const codeBlocks = document.querySelectorAll('pre.prettyprinted');
+        for (let i = 0; i < codeBlocks.length; i++) {
+            const codeBlock = codeBlocks[i];
+            let lines = '';
+            const codeElements = codeBlock.querySelectorAll('code');
+            for (let j = 0; j < codeElements.length; j++) {
+                // 按行拼接代码
+                lines += codeElements[j].textContent + '\n';
+            }
+
+            const copyButtonHtml = `<button class="copy-button">${this.copyText}</button>`;
+            codeBlock.insertAdjacentHTML('beforeend', copyButtonHtml);
+            const copyButton = codeBlock.lastElementChild;
+            // 为复制按钮绑定点击事件
+            copyButton.addEventListener('click', this.copyButtonClickHandler(lines, copyButton));
+        }
+    }
+
+    /**
+     * 复制按钮点击事件处理函数。
+     * @param {string} lines - 要复制的代码。
+     * @param {HTMLElement} obj - 复制按钮对象。
+     * @returns {Function} - 点击事件处理函数。
+     */
+    copyButtonClickHandler(lines, obj) {
+        return () => {
+            this.copyTextToClipboard(lines, obj);
+        };
+    }
+}
