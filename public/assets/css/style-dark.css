@@ -351,46 +351,6 @@ body.wz-dark-theme,
   color: #fff;
   text-decoration: underline;
 }
-.wz-dark-theme pre.prettyprint {
-  border: 1px dashed #000 !important;
-  background: #636363 !important;
-}
-.wz-dark-theme pre.prettyprint li {
-  background: #4e4e4ead;
-}
-.wz-dark-theme pre.prettyprint li.L1,
-.wz-dark-theme pre.prettyprint li.L3,
-.wz-dark-theme pre.prettyprint li.L5,
-.wz-dark-theme pre.prettyprint li.L7,
-.wz-dark-theme pre.prettyprint li.L9 {
-  background: #4e4e4e !important;
-}
-.wz-dark-theme pre.prettyprint code {
-  background: none;
-}
-.wz-dark-theme pre.prettyprint code .pln {
-  color: #CCCCCC;
-}
-.wz-dark-theme pre.prettyprint code .str {
-  color: #72ff72;
-}
-.wz-dark-theme pre.prettyprint code .com {
-  color: #949494;
-}
-.wz-dark-theme pre.prettyprint code .lit {
-  color: #08f1f1;
-}
-.wz-dark-theme pre.prettyprint code .kwd {
-  color: #000073;
-}
-.wz-dark-theme pre.prettyprint code .typ {
-  color: #f03;
-}
-.wz-dark-theme pre.prettyprint code .pun,
-.wz-dark-theme pre.prettyprint code .opn,
-.wz-dark-theme pre.prettyprint code .clo {
-  color: #ff0;
-}
 .wz-dark-theme .wz-project-main .editormd-html-preview table tr {
   background: transparent;
 }
@@ -551,3 +511,71 @@ body.wz-dark-theme,
   padding: 0.5rem !important;
 }
 .wz-dark-theme .btn {color:#fff;}
+
+/* Code blocks */
+.wz-dark-theme pre.prettyprint {
+  background: #2f1e2e !important;
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto;
+  border: .3em solid hsl(30, 20%, 40%);
+  border-radius: .5em;
+  box-shadow: 1px 1px .5em black inset;
+}
+.wz-dark-theme pre button {
+  color: #bbb;
+  font-size: .8em;
+  padding: 0 .5em;
+  background: #f5f2f0;
+  background: rgba(224, 224, 224, 0.2);
+  box-shadow: 0 2px 0 0 rgba(0,0,0,0.2);
+  border-radius: .5em;
+}
+.wz-dark-theme pre button:hover {
+  cursor: pointer;
+  background: #f5f2f0;
+  background: rgba(224, 224, 224, 0.4);
+  box-shadow: 0 2px 0 0 rgba(0,0,0,0.4);
+}
+/*.wz-dark-theme pre.prettyprint {*/
+/*  border: 1px solid #000 !important;*/
+/*  background: #636363 !important;*/
+/*}*/
+.wz-dark-theme pre.prettyprint li,
+.wz-dark-theme pre.prettyprint li.L1,
+.wz-dark-theme pre.prettyprint li.L3,
+.wz-dark-theme pre.prettyprint li.L5,
+.wz-dark-theme pre.prettyprint li.L7,
+.wz-dark-theme pre.prettyprint li.L9,
+.wz-dark-theme pre.prettyprint code {
+  background: none !important;
+}
+
+.wz-dark-theme pre.prettyprint code .pln {
+  color: hsl(150, 40%, 50%);
+}
+.wz-dark-theme pre.prettyprint code .str {
+  color: rgb(255, 97, 185);
+}
+.wz-dark-theme pre.prettyprint code .com {
+  color: rgb(152, 143, 129);
+}
+.wz-dark-theme pre.prettyprint code .lit {
+  color: hsl(40, 90%, 60%);
+}
+.wz-dark-theme pre.prettyprint code .kwd {
+  color: rgb(202, 255, 97);
+}
+.wz-dark-theme pre.prettyprint code .typ {
+  color: hsl(75, 70%, 60%);
+}
+.wz-dark-theme pre.prettyprint code .pun {
+  color: rgb(200, 159, 110);
+  background-image: initial;
+  background-color: rgba(24, 26, 27, 0.5);
+}
+.wz-dark-theme pre.prettyprint code .opn,
+.wz-dark-theme pre.prettyprint code .clo {
+  color: hsl(130, 20%, 70%);
+}
+

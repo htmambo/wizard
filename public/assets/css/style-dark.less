@@ -1,4 +1,5 @@
-@background-color: #343a40;
+@background-color: #545a0;
+@body-color: #ccc;
 @link: #aeb0b2;
 @link-hover: #ffffff;
 @link-hover-reverse: #000000;
@@ -22,9 +23,14 @@
 
 body.wz-dark-theme {
   background: @background-color;
+  color: @body-color;
 }
 
 .wz-dark-theme {
+  .wz-body {
+    background: @background-color;
+    color: @body-color;
+  }
   .wz-main-container {
     background: @background-color;
   }
@@ -40,7 +46,8 @@ body.wz-dark-theme {
     .table-hover {
         tbody {
             tr:hover {
-                background-color: #fafafae0;
+                background-color: #999;
+                color: #0a0a0a;
             }
         }
     }
