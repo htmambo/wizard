@@ -525,7 +525,6 @@ body.wz-dark-theme,
 .wz-dark-theme .wz-tag-container .tm-input {
   color: #2a2a2a !important;
 }
-
 .wz-dark-theme .tm-tag.tm-tag-success,
 .wz-tag-container input.tm-input:focus {
   background-color: #a0a0a0;
@@ -548,6 +547,7 @@ body.wz-dark-theme,
   border-radius: .5em;
   box-shadow: 1px 1px .5em black inset;
 }
+
 .wz-dark-theme pre.prettyprint:hover {
   background: #2f1e2e !important;
 }
@@ -617,4 +617,9 @@ body.wz-dark-theme,
 .wz-dark-theme .card-body .media:nth-child(even)
 {
   background: #272727 !important;
+}
+.wz-dark-theme .editormd-preview-container code,
+.wz-dark-theme .editormd-html-preview code {
+  background: #2f1e2e !important;
+  color: rgb(202, 255, 97);
 }
