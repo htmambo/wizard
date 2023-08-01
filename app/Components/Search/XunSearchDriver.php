@@ -85,7 +85,7 @@ class XunSearchDriver implements Driver
      *
      * @param Document $doc
      *
-     * @return void
+     * @return string
      * @throws \Exception
      */
     public function syncIndex(Document $doc)

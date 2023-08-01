@@ -145,12 +145,6 @@ body.wz-dark-theme,
 .wz-dark-theme .wz-top-nav-search input:hover,
 .wz-dark-theme .wz-top-nav-search input:focus {
   background: #a0a0a0 !important;
-}
-.wz-dark-theme .wz-top-nav-search input,
-.wz-dark-theme .wz-top-nav-search input:-webkit-autofill,
-.wz-dark-theme .wz-top-nav-search input:hover,
-.wz-dark-theme .wz-top-nav-search input:focus
-{
   color: #2a2a2a !important;
 }
 .wz-dark-theme .wz-panel-separator:hover {
