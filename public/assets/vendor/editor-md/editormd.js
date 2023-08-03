@@ -311,7 +311,8 @@
                 },
                 preformattedText: {
                     title: "添加预格式文本或代码块",
-                    emptyAlert: "错误：请填写预格式文本或代码的内容。"
+                    emptyAlert: "错误：请填写预格式文本或代码的内容。",
+                    placeholder: "请输入代码...."
                 },
                 codeBlock: {
                     title: "添加代码块",
@@ -319,7 +320,8 @@
                     selectDefaultText: "请选择代码语言",
                     otherLanguage: "其他语言",
                     unselectedLanguageAlert: "错误：请选择代码所属的语言类型。",
-                    codeEmptyAlert: "错误：请填写代码内容。"
+                    codeEmptyAlert: "错误：请填写代码内容。",
+                    placeholder: "请输入代码...."
                 },
                 htmlEntities: {
                     title: "HTML 实体字符"
@@ -3495,7 +3497,7 @@
         };
 
         markedRenderer.code = function (code, infostring, escaped) {
-            let lang = 'txt'; // 默认为txt
+            let lang = '';
             let startline = 1; // 默认为 1
             // 匹配 lang 和 startline
             const match = (infostring || '').match(/^([\w-]+)(?:,(-?\d+))?$/);
@@ -3507,7 +3509,7 @@
                     startline = parseInt(match[2], 10) || 1;
                 }
             }
-            var preclass=' class="prettyprint '+this.options.langPrefix+escape(lang) + ' ';
+            var preclass=' class="prettyprint '+(lang?this.options.langPrefix+escape(lang):'') + ' ';
             if(startline>0) {
                 if(startline>1) {
                     startline--;
@@ -4242,7 +4244,7 @@
 
         dialog.lockScreen(true).showMask();
 
-        dialog.show().css({
+        dialog.css({
             zIndex: editormd.dialogZindex,
             border: (editormd.isIE8) ? "1px solid #ddd" : "",
             width: (typeof options.width === "number") ? options.width + "px" : options.width,
@@ -4255,8 +4257,14 @@
                 left: ($(window).width() - dialog.width()) / 2 + "px"
             });
         };
-
         dialogPosition();
+
+        dialog.show("fast", function(){
+            if(typeof(layui)==='object' && layui.hasOwnProperty('form')) {
+                layui.form.render();
+            }
+        });
+
 
         $(window).resize(dialogPosition);
 
@@ -4536,6 +4544,17 @@
      */
     editormd.codeHighlight = function(obj) {
         if (typeof prettyPrint !== "undefined") {
+            // 检查一下pre中是否标注了prettyprint class，如果没有则手动添加上去
+            obj.find("pre").each(function() {
+                var $this = $(this);
+                $this.hasClass('prettyprint') || $this.addClass('prettyprint');
+                $this.hasClass('linenums') || $this.addClass('linenums');
+                var lang = $this.attr('lang');
+                if(lang) {
+                    $this.addClass('lang-' + lang);
+                }
+            });
+            obj.find('pre').addClass('prettyprint linenums');
             prettyPrint();
             // 编辑状态下不添加复制按钮
             if(!obj.hasClass('editormd-preview-container')) {

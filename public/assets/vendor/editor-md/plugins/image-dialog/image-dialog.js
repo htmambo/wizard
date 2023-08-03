@@ -13,9 +13,9 @@
 
     var factory = function (exports) {
 
-		var pluginName   = "image-dialog";
+        var pluginName   = "image-dialog";
 
-		exports.fn.imageDialog = function() {
+        exports.fn.imageDialog = function() {
 
             var _this       = this;
             var cm          = this.cm;
@@ -27,9 +27,9 @@
             var imageLang   = lang.dialog.image;
             var classPrefix = this.classPrefix;
             var iframeName  = classPrefix + "image-iframe";
-			var dialogName  = classPrefix + pluginName, dialog;
+            var dialogName  = classPrefix + pluginName, dialog;
 
-			cm.focus();
+            cm.focus();
 
             var loading = function(show) {
                 var _loading = dialog.find("." + classPrefix + "dialog-mask");
@@ -110,7 +110,7 @@
                                 }
                             }
 
-							var altAttr = (alt !== "") ? " \"" + alt + "\"" : "";
+                            var altAttr = (alt !== "") ? " \"" + alt + "\"" : "";
 
                             if (link === "" || link === "http://")
                             {
@@ -127,12 +127,18 @@
 
                             this.hide().lockScreen(false).hideMask();
 
+                            //删除对话框
+                            //this.remove();
+
                             return false;
                         }],
 
                         cancel : [lang.buttons.cancel, function() {
                             this.hide().lockScreen(false).hideMask();
 
+                            //删除对话框
+                            //this.remove();
+                            
                             return false;
                         }]
                     }
@@ -140,29 +146,29 @@
 
                 dialog.attr("id", classPrefix + "image-dialog-" + guid);
 
-				if (!settings.imageUpload) {
+                if (!settings.imageUpload) {
                     return ;
                 }
 
-				var fileInput  = dialog.find("[name=\"" + classPrefix + "image-file\"]");
+                var fileInput  = dialog.find("[name=\"" + classPrefix + "image-file\"]");
 
-				fileInput.bind("change", function() {
-					var fileName  = fileInput.val();
-					var isImage   = new RegExp("(\\.(" + settings.imageFormats.join("|") + "))$"); // /(\.(webp|jpg|jpeg|gif|bmp|png))$/
+                fileInput.bind("change", function() {
+                    var fileName  = fileInput.val();
+                    var isImage   = new RegExp("(\\.(" + settings.imageFormats.join("|") + "))$"); // /(\.(webp|jpg|jpeg|gif|bmp|png))$/
 
-					if (fileName === "")
-					{
-						alert(imageLang.uploadFileEmpty);
+                    if (fileName === "")
+                    {
+                        alert(imageLang.uploadFileEmpty);
 
                         return false;
-					}
+                    }
 
                     if (!isImage.test(fileName.toLowerCase()))
-					{
-						alert(imageLang.formatNotAllowed + settings.imageFormats.join(", "));
+                    {
+                        alert(imageLang.formatNotAllowed + settings.imageFormats.join(", "));
 
                         return false;
-					}
+                    }
 
                     loading(true);
 
@@ -196,48 +202,48 @@
                     };
 
                     dialog.find("[type=\"submit\"]").bind("click", submitHandler).trigger("click");
-				});
+                });
             }
 
-			dialog = editor.find("." + dialogName);
-			dialog.find("[type=\"text\"]").val("");
-			dialog.find("[type=\"file\"]").val("");
-			dialog.find("[data-link]").val("http://");
-			dialog.find("[data-alt]").val("");
-			dialog.find("[data-width]").val("800");
-			dialog.find("[data-height]").val("1000");
+            dialog = editor.find("." + dialogName);
+            dialog.find("[type=\"text\"]").val("");
+            dialog.find("[type=\"file\"]").val("");
+            dialog.find("[data-link]").val("http://");
+            dialog.find("[data-alt]").val("");
+            dialog.find("[data-width]").val("800");
+            dialog.find("[data-height]").val("1000");
 
-			this.dialogShowMask(dialog);
-			this.dialogLockScreen();
-			dialog.show();
+            this.dialogShowMask(dialog);
+            this.dialogLockScreen();
+            dialog.show();
 
-		};
+        };
 
-	};
+    };
 
-	// CommonJS/Node.js
-	if (typeof require === "function" && typeof exports === "object" && typeof module === "object")
+    // CommonJS/Node.js
+    if (typeof require === "function" && typeof exports === "object" && typeof module === "object")
     {
         module.exports = factory;
     }
-	else if (typeof define === "function")  // AMD/CMD/Sea.js
+    else if (typeof define === "function")  // AMD/CMD/Sea.js
     {
-		if (define.amd) { // for Require.js
+        if (define.amd) { // for Require.js
 
-			define(["editormd"], function(editormd) {
+            define(["editormd"], function(editormd) {
                 factory(editormd);
             });
 
-		} else { // for Sea.js
-			define(function(require) {
+        } else { // for Sea.js
+            define(function(require) {
                 var editormd = require("./../../editormd");
                 factory(editormd);
             });
-		}
-	}
-	else
-	{
+        }
+    }
+    else
+    {
         factory(window.editormd);
-	}
+    }
 
 })();
