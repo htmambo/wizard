@@ -149,13 +149,13 @@ html #layuicss-layer{display: none; position: absolute; width: 1989px;}
 .layui-layer-dialog{min-width: 240px;}
 .layui-layer-dialog .layui-layer-content{position: relative; padding: 16px; line-height: 24px; word-break: break-all; overflow:hidden; font-size:14px; overflow-x: hidden; overflow-y:auto;}
 .layui-layer-dialog .layui-layer-content .layui-layer-face{position: absolute; top: 18px; left: 16px; color: #959595; font-size: 32px; _left: -40px;}
-.layui-layer-dialog .layui-layer-content .layui-icon-tips{color: #F39B12;}
-.layui-layer-dialog .layui-layer-content .layui-icon-success{color: #16b777;}
-.layui-layer-dialog .layui-layer-content .layui-icon-error{top: 19px; color: #FF5722;}
-.layui-layer-dialog .layui-layer-content .layui-icon-question{color: #FFB800;}
-.layui-layer-dialog .layui-layer-content .layui-icon-lock{color: #787878;}
-.layui-layer-dialog .layui-layer-content .layui-icon-face-cry{color: #FF5722;}
-.layui-layer-dialog .layui-layer-content .layui-icon-face-smile{color: #16b777;}
+.layui-layer-dialog .layui-layer-content .fa-info-circle{color: #F39B12;}
+.layui-layer-dialog .layui-layer-content .fa-check-circle-o{color: #16b777;}
+.layui-layer-dialog .layui-layer-content .fa-warning{top: 19px; color: #FF5722;}
+.layui-layer-dialog .layui-layer-content .fa-question-circle-o{color: #FFB800;}
+.layui-layer-dialog .layui-layer-content .fa-lock{color: #787878;}
+.layui-layer-dialog .layui-layer-content .fa-hand-stop-o{color: #FF5722;}
+.layui-layer-dialog .layui-layer-content .fa-handshake-o{color: #16b777;}
 
 .layui-layer-rim{border:6px solid #8D8D8D; border:6px solid rgba(0,0,0,.3); border-radius:5px; box-shadow: none;}
 .layui-layer-msg{min-width:180px; border:1px solid #D3D4D3; box-shadow: none;}
@@ -197,8 +197,8 @@ html #layuicss-layer{display: none; position: absolute; width: 1989px;}
 .layui-layer-molv .layui-layer-title{background: #009f95; color:#fff; border: none;}
 .layui-layer-molv .layui-layer-btn a{background: #009f95; border-color: #009f95;}
 .layui-layer-molv .layui-layer-btn .layui-layer-btn1{background:#92B8B1;}
-.layui-layer-lan .layui-layer-setwin .layui-icon,
-.layui-layer-molv .layui-layer-setwin .layui-icon{color: #fff;}
+.layui-layer-lan .layui-layer-setwin .fa,
+.layui-layer-molv .layui-layer-setwin .fa{color: #fff;}
 
 /* Windows 10 风格主题  */
 .layui-layer-win10{border: 1px solid #aaa; box-shadow: 1px 1px 6px rgba(0,0,0,.3); border-radius: none;}
@@ -207,7 +207,7 @@ html #layuicss-layer{display: none; position: absolute; width: 1989px;}
 .layui-layer-win10 .layui-layer-setwin span{margin-left: 0; padding: 8px;}
 .layui-layer-win10.layui-layer-page .layui-layer-setwin span{padding: 8px 11px;}
 .layui-layer-win10 .layui-layer-setwin span:hover{background-color: #E5E5E5;}
-.layui-layer-win10 .layui-layer-setwin span.layui-icon-close:hover{background-color: #E81123; color: #fff;}
+.layui-layer-win10 .layui-layer-setwin span.layui-layer-close:hover{background-color: #E81123; color: #fff;}
 .layui-layer-win10.layui-layer-dialog .layui-layer-content{padding: 8px 16px 32px; color: #0033BC;}
 .layui-layer-win10.layui-layer-dialog .layui-layer-padding{padding-top: 18px; padding-left: 58px;}
 .layui-layer-win10 .layui-layer-btn{padding: 5px 5px 10px; border-top:1px solid #DFDFDF; background-color: #F0F0F0;}

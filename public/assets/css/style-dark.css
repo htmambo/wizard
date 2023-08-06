@@ -627,7 +627,21 @@ body.wz-dark-theme,
 /*.wz-layer .layui-layer-btn .layui-layer-btn0{border-color: #FA584D; background-color: #FA584D; color: #fff;}*/
 
 /* layer */
-.wz-dark-theme .wz-layer, .wz-dark-theme .wz-layer *{background: #3b3b3b !important; color: #fff !important;}
+.wz-dark-theme .wz-layer, .wz-dark-theme .wz-layer div, .wz-dark-theme .wz-layer input{background: #3b3b3b !important; color: #fff !important;}
 .wz-dark-theme .wz-layer .layui-layer-content {background-color: #2b2b2b !important;}
 .wz-dark-theme .wz-layer .layui-layer-btn * {background: #5b5b5b !important; border-color: #ccc; color: #fff;}
 .wz-dark-theme .wz-layer .layui-layer-btn .layui-layer-btn0 {border-color: #FA584D; background-color: #FA584D!important; color: #fff;}
+
+.wz-dark-theme .alert-dismissible .close {padding: 0.45rem 1.25rem;}
+@media screen and (max-width: 600px) {
+  .wz-dark-theme .alert-dismissible .close {padding: 0px 10px;}
+}
+.wz-dark-theme div.layui-layer-content.layui-layer-loading-box,
+.wz-dark-theme div.layui-layer-loading {background: none !important;}
+.wz-dark-theme .layui-layer-close,
+.wz-dark-theme .close,
+.wz-dark-theme .radio label{color: #555;}
+
+.wz-dark-theme .layui-layer-close:hover,
+.wz-dark-theme .close:hover,
+.wz-dark-theme .radio label:hover{color: #fff;}
