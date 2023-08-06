@@ -927,7 +927,7 @@ function cdn_resource(string $resourceUrl)
     }
 
     if (!$enabled) {
-        return $resourceUrl;
+        return $resourceUrl . '?' . resourceVersion();
     }
 
     if (is_null($cdnUrl)) {

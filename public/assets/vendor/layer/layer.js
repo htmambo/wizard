@@ -131,8 +131,16 @@
         // 主体 CSS 等待事件
         ready: function (callback) {
             var cssname = 'layer';
-            var ver = '';
-            var path = (isLayui ? 'modules/' : 'css/') + 'layer.css?v=' + layer.v + ver;
+            // 获取当前正在执行的 <script> 标签
+            const scriptTag = document.currentScript;
+            // 获取参数
+            const params = new URLSearchParams(scriptTag.src.split('?')[1]);
+            // 获取 v 参数的值
+            var ver = params.get('v');
+            if(!ver) {
+                ver = layer.v;
+            }
+            var path = (isLayui ? 'modules/' : 'css/') + 'layer.css?v=' + ver;
 
             isLayui ? (
                 layui['layui.all']
