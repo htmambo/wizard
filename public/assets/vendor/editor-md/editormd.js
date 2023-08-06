@@ -1658,7 +1658,7 @@
             cm.on("change", function (_cm, changeObj) {
 
                 if (settings.watch) {
-                    _this.previewContainer.css("padding", settings.autoHeight ? "20px 20px 50px 40px" : "20px");
+                    _this.previewContainer.css("padding", settings.autoHeight ? "20px 20px 50px 40px" : "4px");
                 }
 
                 timer = setTimeout(function () {
@@ -1796,7 +1796,7 @@
                 codeMirror.width(editor.width() / 2);
                 preview.width((!state.preview) ? editor.width() / 2 : editor.width());
 
-                this.previewContainer.css("padding", settings.autoHeight ? "20px 20px 50px 40px" : "20px");
+                this.previewContainer.css("padding", settings.autoHeight ? "20px 20px 50px 40px" : "4px");
 
                 if (settings.toolbar && !settings.readOnly) {
                     preview.css("top", toolbar.height() + 1);
@@ -2420,7 +2420,7 @@
             previewContainer.removeClass(this.classPrefix + "preview-active");
 
             if (settings.watch) {
-                previewContainer.css("padding", "20px");
+                previewContainer.css("padding", "4px");
             }
 
             preview.css({

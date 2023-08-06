@@ -2460,7 +2460,7 @@
   overflow: hidden;
   font-family: "Microsoft YaHei", Helvetica, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", "Monaco", monospace, Tahoma, STXihei, "华文细黑", STHeiti, "Helvetica Neue", "Droid Sans", "wenquanyi micro hei", FreeSans, Arimo, Arial, SimSun, "宋体", Heiti, "黑体", sans-serif;
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 32px;
   word-wrap: break-word;
 }
 
@@ -3109,7 +3109,7 @@
 .editormd-preview-container, .editormd-html-preview {
   text-align: left;
   /*font-size: 14px;*/
-  line-height: 1.6;
+  line-height: 32px;
   padding: 20px;
   overflow: auto;
   width: 100%;
@@ -3493,7 +3493,7 @@ li.L9 {
   padding-left: 0;
 }
 .markdown-body .highlight pre, .markdown-body pre {
-  line-height: 1.6;
+  line-height: 32px;
 }
 
 hr.editormd-page-break {

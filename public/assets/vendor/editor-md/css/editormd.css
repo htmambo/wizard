@@ -672,7 +672,7 @@
   right: 0;
   right: -1px\0;
   overflow: auto;
-  line-height: 1.6;
+  line-height: 32px;
   display: none;
   background: #fff;
 }
@@ -683,7 +683,7 @@
   border-right: 1px solid #ddd;
   font-size: 14px;
   font-family: "YaHei Consolas Hybrid", Consolas, "微软雅黑", "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, "Monaco", courier, monospace;
-  line-height: 1.6;
+  line-height: 32px;
   margin-top: 35px;
 }
 .editormd .CodeMirror pre {
@@ -3176,7 +3176,7 @@
   overflow: hidden;
   font-family: "Microsoft YaHei", Helvetica, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", "Monaco", monospace, Tahoma, STXihei, "华文细黑", STHeiti, "Helvetica Neue", "Droid Sans", "wenquanyi micro hei", FreeSans, Arimo, Arial, SimSun, "宋体", Heiti, "黑体", sans-serif;
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 32px;
   word-wrap: break-word;
 }
 
@@ -3829,7 +3829,7 @@
 .editormd-preview-container, .editormd-html-preview {
   text-align: left;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 32px;
   padding: 20px;
   overflow: auto;
   width: 100%;
@@ -4213,7 +4213,7 @@ li.L9 {
   padding-left: 0;
 }
 .markdown-body .highlight pre, .markdown-body pre {
-  line-height: 1.6;
+  line-height: 32px;
 }
 
 hr.editormd-page-break {
@@ -4424,6 +4424,7 @@ hr.editormd-page-break {
   left: 0;
   border: none;
   margin: 0 auto;
+  z-index: 999999;
 }
 
 /* Editor.md Dark theme */

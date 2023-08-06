@@ -113,7 +113,7 @@
         @elseif (session('alert.message.error'))
         $.wz.message_failed("{{ session('alert.message.error') }}");
         @endif
-
+        layer.config({skin:'wz-layer'});
         // 功能开发中提示消息
         $('[wz-wait-develop]').on('click', function () {
             $.wz.alert('@lang('common.not_ready_for_use')');

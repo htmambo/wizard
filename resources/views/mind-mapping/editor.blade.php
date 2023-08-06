@@ -111,7 +111,7 @@
                 keypress: false,
                 @endif
             };
-
+            layer.config({skin:'wz-layer'});
             let mind = new MindElixir(config);
             mind.init();
 
