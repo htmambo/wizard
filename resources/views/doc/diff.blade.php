@@ -81,21 +81,37 @@
             border: 1px dashed #ccc;
             border-radius: 3px;
         }
+        .wz-dark-theme .d2h-cntx {
+            background: #fff;
+        }
     </style>
 @endpush
 
 @push('script')
-    <script src="{{ cdn_resource('/assets/vendor/highlight/highlight.pack.js') }}"></script>
-    <script src="{{ cdn_resource('/assets/vendor/diff2html/diff2html.min.js') }}"></script>
+{{--    <script src="{{ cdn_resource('/assets/vendor/highlight/highlight.pack.js') }}"></script>--}}
     <script src="{{ cdn_resource('/assets/vendor/diff2html/diff2html-ui.min.js') }}"></script>
     <script src="{{ cdn_resource('/assets/vendor/base64.min.js') }}"></script>
     <script>
         $(function () {
             var switchDisplay = function(mode) {
                 $('#wz-diff-result').html('');
-                var diff2htmlUi = new Diff2HtmlUI({diff: Base64.decode($('#wz-diff-original').text())});
-                diff2htmlUi.draw('#wz-diff-result', {inputFormat: 'diff', showFiles: false, matching: 'lines', outputFormat: mode});
-                diff2htmlUi.highlightCode('#wz-diff-result');
+                //{inputFormat: 'diff', showFiles: false, matching: 'lines', outputFormat: mode}
+                var configuration = {
+                    inputFormat: 'diff',
+                    showFiles: false,
+                    drawFileList: false,
+                    fileListToggle: false,
+                    fileListStartVisible: false,
+                    fileContentToggle: false,
+                    matching: 'lines',
+                    outputFormat: mode,
+                    synchronisedScroll: true,
+                    // highlight: true,
+                    renderNothingWhenEmpty: false,
+                };
+                var diff2htmlUi = new Diff2HtmlUI(document.getElementById('wz-diff-result'), Base64.decode($('#wz-diff-original').html()), configuration);
+                diff2htmlUi.draw();
+                // diff2htmlUi.highlightCode();
             };
 
             var currentDisplayMode = 'line-by-line';

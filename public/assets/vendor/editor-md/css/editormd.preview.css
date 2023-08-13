@@ -3492,8 +3492,12 @@ li.L9 {
 .markdown-body .editormd-toc-menu ul {
   padding-left: 0;
 }
+.markdown-body .highlight pre ol, .markdown-body pre ol {
+  background-image: linear-gradient(to bottom, transparent 20px, #444 4px) !important;
+  background-size: 100% 21px !important;
+}
 .markdown-body .highlight pre, .markdown-body pre {
-  line-height: 32px;
+  line-height: 21px;
 }
 
 hr.editormd-page-break {
