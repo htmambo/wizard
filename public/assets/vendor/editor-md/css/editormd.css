@@ -4484,22 +4484,3 @@ hr.editormd-page-break {
 .editormd-theme-dark .str {
   color: #f00;
 }
-.wz-dark-theme .CodeMirror .cm-comment,
-.wz-dark-theme .com {
-  color: #ccc;
-}
-.wz-dark-theme .pln {
-  color: #fff;
-}
-.wz-dark-theme .editormd,
-.wz-dark-theme .editormd > *,
-.wz-dark-theme .editormd-preview-container,
-.wz-dark-theme .editormd-html-preview
-.wz-dark-theme .CodeMirror,
-.wz-dark-theme .CodeMirror-gutters {
-  background: #2C2827;
-}
-.wz-dark-theme .markdown-body.editormd-preview-container a,
-.wz-dark-theme .cm-s-default .cm-link {
-  color: #03a9f4;
-}

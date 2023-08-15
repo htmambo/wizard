@@ -2523,16 +2523,6 @@
   padding: 0;
 }
 
-.markdown-body table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-.markdown-body td,
-.markdown-body th {
-  padding: 0;
-}
-
 .markdown-body * {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -2852,6 +2842,8 @@
 }
 
 .markdown-body table {
+  border-collapse: collapse;
+  border-spacing: 0;
   display: block;
   width: 100%;
   overflow: auto;
@@ -2865,7 +2857,7 @@
 
 .markdown-body table th,
 .markdown-body table td {
-  padding: 6px 13px;
+  padding: 0 3px;
   border: 1px solid #ddd;
 }
 
@@ -3367,7 +3359,7 @@ li.L9 {
   left: -1px;
   top: -2px;
   z-index: 100;
-  padding: 0 10px 10px;
+  padding: 3px;
   display: none;
   background: #fff;
   border: 1px solid #ddd;
@@ -3459,9 +3451,10 @@ li.L9 {
   text-decoration: none;
 }
 .editormd-preview-container .editormd-toc-menu h1, .editormd-html-preview .editormd-toc-menu h1 {
-  font-size: 16px;
-  padding: 5px 0 10px 10px;
-  line-height: 1;
+  font-size: 16px !important;
+  padding: 0 7px !important;
+  margin: 0 !important;
+  /*line-height: 1;*/
   border-bottom: 1px solid #eee;
 }
 .editormd-preview-container .editormd-toc-menu h1 .fa, .editormd-html-preview .editormd-toc-menu h1 .fa {
@@ -3470,7 +3463,7 @@ li.L9 {
 .editormd-preview-container .editormd-toc-menu .toc-menu-btn, .editormd-html-preview .editormd-toc-menu .toc-menu-btn {
   color: #666;
   min-width: 180px;
-  padding: 5px 10px;
+  padding: 0 10px;
   border-radius: 4px;
   display: inline-block;
   -webkit-transition: background-color 500ms ease-out;
@@ -3485,7 +3478,7 @@ li.L9 {
 }
 .editormd-preview-container .editormd-toc-menu .toc-menu-btn .fa, .editormd-html-preview .editormd-toc-menu .toc-menu-btn .fa {
   float: right;
-  padding: 3px 0 0 10px;
+  padding: 6px 0 0 10px;
   font-size: 1.3em;
 }
 

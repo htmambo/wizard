@@ -14,8 +14,6 @@ body.wz-dark-theme,
 .wz-dark-theme .wz-project-main .wz-page-control,
 .wz-dark-theme .wz-project-main h1 {
   background: rgb(47,47,47);
-  margin:0;
-  padding: 10px;
 }
 .wz-dark-theme .wz-project-main .wz-document-header.wz-panel-limit,
 .wz-dark-theme .wz-project-main .wz-panel-limit.wz-project-description,
@@ -52,13 +50,19 @@ body.wz-dark-theme,
   background-color: #999;
   color: #0a0a0a;
 }
-.wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul {
+
+.wz-dark-theme .editormd-preview-container .editormd-toc-menu > .markdown-toc > ul > li ul,
+.wz-dark-theme .editormd-html-preview .editormd-toc-menu > .markdown-toc > ul > li ul,
+.wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul,
+.wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul > li > a,
+.wz-dark-theme .editormd-preview-container .editormd-toc-menu > .markdown-toc > ul > li a,
+.wz-dark-theme .editormd-html-preview .editormd-toc-menu > .markdown-toc > ul > li a {
   background: #4e4e4e;
   color: #ffffff;
 }
-.wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul > li > a {
-  color: #ffffff;
-}
+
+.wz-dark-theme .editormd-preview-container .editormd-toc-menu > .markdown-toc > ul > li a:hover,
+.wz-dark-theme .editormd-html-preview .editormd-toc-menu > .markdown-toc > ul > li a:hover,
 .wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul > li > a:hover {
   background-color: #0a001f;
 }
@@ -651,7 +655,24 @@ body.wz-dark-theme,
 .wz-dark-theme .layui-layer-close:hover,
 .wz-dark-theme .close:hover,
 .wz-dark-theme .radio label:hover{color: #fff;}
-.wz-dark-theme .table thead th {
+
+/* Markdown */
+.wz-dark-theme .CodeMirror .cm-comment,
+.wz-dark-theme .com {
   color: #ccc;
-  background: #4e4e4e;
+}
+.wz-dark-theme .pln {
+  color: #fff;
+}
+.wz-dark-theme .editormd,
+.wz-dark-theme .editormd > *,
+.wz-dark-theme .editormd-preview-container,
+.wz-dark-theme .editormd-html-preview
+.wz-dark-theme .CodeMirror,
+.wz-dark-theme .CodeMirror-gutters {
+  background: #2C2827;
+}
+.wz-dark-theme .markdown-body.editormd-preview-container a,
+.wz-dark-theme .cm-s-default .cm-link {
+  color: #03a9f4;
 }

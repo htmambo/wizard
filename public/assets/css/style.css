@@ -692,6 +692,7 @@ a:hover {
 .wz-markdown-style-fix table th {
     background: #009688;
     color: #fff;
+    text-align: center;
 }
 
 .wz-markdown-style-fix img {
@@ -976,7 +977,7 @@ tr.warning {
 
 
 .wz-tag-container {
-    padding-left: 10px;
+    padding: 10px 10px 0 10px;
 }
 
 .wz-tag-container .wz-tags {
@@ -1623,3 +1624,4 @@ pre.prettyprint *,
 }
 
 .dropdown-menu .dropdown-item {padding-top: 0;padding-bottom: 0;}
+.wz-score-opt .material-icons {font-size: 48px;}
