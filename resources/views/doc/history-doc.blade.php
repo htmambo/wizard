@@ -1,6 +1,6 @@
 @extends('layouts.project')
 @section('page-content')
-    <div class="wz-project-main" style="padding-top: 10px">
+    <div class="wz-project-main">
         <nav class="wz-page-control clearfix">
             <a href="{{ wzRoute('project:doc:history', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}"
                class="btn btn-link"><i class="material-icons">arrow_back</i></a>
