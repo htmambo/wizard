@@ -66,9 +66,28 @@ body.wz-dark-theme,
 .wz-dark-theme .markdown-body .editormd-toc-menu > .markdown-toc > ul > li > a:hover {
   background-color: #0a001f;
 }
+.wz-dark-theme .checkbox label .checkbox-decorator .check,
+.wz-dark-theme label.checkbox-inline .checkbox-decorator .check,
+.wz-dark-theme .checkbox label .checkbox-decorator .check:before,
+.wz-dark-theme label.checkbox-inline .checkbox-decorator .check:before
+{
+  color: #fff;
+  border-color: #fff;
+}
+.wz-dark-theme .checkbox-inline,
+.wz-dark-theme .checkbox label,
+.wz-dark-theme .is-focused .checkbox-inline,
+.wz-dark-theme .is-focused .checkbox label,
+.wz-dark-theme .is-focused .radio-inline,
+.wz-dark-theme .is-focused .radio label,
+.wz-dark-theme .is-focused .switch label,
+.wz-dark-theme .radio-inline,
+.wz-dark-theme .radio label,
+.wz-dark-theme .switch label,
 .wz-dark-theme .wz-theme-support-icon {
   color: #ffffff;
 }
+
 .wz-dark-theme .markdown-body table th,
 .wz-dark-theme .wz-left-main {
   background: rgb(34,36,37);

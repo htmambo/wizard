@@ -58,7 +58,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">移动到</h5>
+                        <h5 class="modal-title">移动到 ...</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -75,6 +75,13 @@
                             <select class="form-control" name="target_page_id" id="wz-target-page_id"></select>
                         </div>
 
+                        <div class="form-group ">
+                            <div class="checkbox mb-3">
+                                <label>
+                                    <input type="checkbox" name="dont_save_updated" value="1"> 不记录修改时间
+                                </label>
+                            </div>
+                        </div>
                         <button class="btn btn-raised btn-info" wz-move-confirm>确定</button>
                     </div>
                 </div>
@@ -152,6 +159,7 @@
 
                 var targetProjectId = $('#wz-target-project_id').val();
                 var targetPageId = $('#wz-target-page_id').val();
+                var dontSaveUpdated = $('input[name="dont_save_updated"]').is(':checked');
 
                 if (targetProjectId === '' || targetProjectId === '0') {
                     return;
@@ -166,6 +174,7 @@
                     {
                         target_project_id: targetProjectId,
                         target_page_id: targetPageId,
+                        dont_save_updated: dontSaveUpdated ? 1 : 0
                     }
                 )
             });

@@ -667,6 +667,7 @@ class DocumentController extends Controller
         // 检查目标项目权限
         $targetProjectId = $request->input('target_project_id', 0);
         $targetPageId    = $request->input('target_page_id', 0);
+        $dontSaveUpdated = $request->input('dont_save_updated', 0);
 
         /** @var Project $targetProject */
         $targetProject = Project::where('id', $targetProjectId)->firstOrFail();
@@ -684,12 +685,14 @@ class DocumentController extends Controller
             return (int)$nav['id'] === (int)$pageItem->id;
         });
 
-        DB::transaction(function () use ($pageItem, $targetProject, $targetPage, $navigators) {
+        DB::transaction(function () use ($pageItem, $targetProject, $targetPage, $navigators, $dontSaveUpdated) {
             // 修改当前页面的pid和project_id
             $pageItem->project_id = $targetProject->id;
             $pageItem->pid        = $targetPage->id ?? 0;
-            // 移动文档时不更新最后修改时间
-            $pageItem->timestamps = false;
+            if($dontSaveUpdated) {
+                // 移动文档时不更新最后修改时间
+                $pageItem->timestamps = false;
+            }
 
             $pageItem->save();
 
