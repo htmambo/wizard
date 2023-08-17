@@ -688,6 +688,8 @@ class DocumentController extends Controller
             // 修改当前页面的pid和project_id
             $pageItem->project_id = $targetProject->id;
             $pageItem->pid        = $targetPage->id ?? 0;
+            // 移动文档时不更新最后修改时间
+            $pageItem->timestamps = false;
 
             $pageItem->save();
 
@@ -716,7 +718,7 @@ class DocumentController extends Controller
 
         return redirect(wzRoute(
             'project:home',
-            ['id' => $targetProject->id, 'p' => $targetPage->id ?? null]
+            ['id' => $targetProject->id, 'p' => $targetPage->id ?? $pageItem->id]
         ));
     }
 

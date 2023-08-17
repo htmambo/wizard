@@ -102,6 +102,7 @@ class Document extends Repository
         ];
 
     public $dates = ['deleted_at'];
+    public $timestamps = true;
 
     /**
      * 文档恢复
