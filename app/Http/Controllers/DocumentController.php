@@ -668,6 +668,7 @@ class DocumentController extends Controller
         $targetProjectId = $request->input('target_project_id', 0);
         $targetPageId    = $request->input('target_page_id', 0);
         $dontSaveUpdated = $request->input('dont_save_updated', 0);
+        $dontJumpTarget = $request->input('dont_jump_target', 0);
 
         /** @var Project $targetProject */
         $targetProject = Project::where('id', $targetProjectId)->firstOrFail();
@@ -719,9 +720,13 @@ class DocumentController extends Controller
             );
         });
 
+        $param = ['id' => $targetProject->id, 'p' => $targetPage->id ?? $pageItem->id];
+        if($dontJumpTarget) {
+            $param = ['id' => $project_id];
+        }
         return redirect(wzRoute(
             'project:home',
-            ['id' => $targetProject->id, 'p' => $targetPage->id ?? $pageItem->id]
+            $param
         ));
     }
 
