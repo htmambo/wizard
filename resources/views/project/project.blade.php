@@ -31,7 +31,7 @@
                                 data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}"
                                 data-toggle="tooltip"
                                 title="@lang('common.btn_diff')" class="btn btn-primary  bmd-btn-icon">
-                            <i class="fa fa-history"></i>
+                            <i class="fa fa-columns"></i>
                         </button>
                     </li>
                 @endif

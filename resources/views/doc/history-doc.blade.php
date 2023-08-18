@@ -20,7 +20,7 @@
                 <a href="#" wz-doc-compare-submit
                    data-doc1="{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" style="position: absolute; top: 15px; right: 40px;"
                    data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}">
-                    <i class="fa fa-eye-slash" data-toggle="tooltip" title=" @lang('common.btn_diff')"></i>
+                    <i class="fa fa-columns" data-toggle="tooltip" title=" @lang('common.btn_diff')"></i>
                 </a>
             </div>
             <hr />

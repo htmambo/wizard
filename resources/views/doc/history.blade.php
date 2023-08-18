@@ -33,19 +33,19 @@
                             <a href="{{ wzRoute('project:doc:history:show', ['id' => $project->id, 'p' => $pageItem->id, 'history_id' => $history->id]) }}">
                                 <i class="fa fa-eye" data-toggle="tooltip" title="@lang('common.btn_view')"></i>
                             </a>
-                            &nbsp;
+
                             @if($index < count($histories) - 1)
                                 <a href="#" wz-doc-compare-submit
                                    data-doc1="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}"
                                    data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $histories[$index + 1]->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}">
-                                    <i class="fa fa-eye-slash" data-toggle="tooltip" title=" @lang('common.btn_diff')"></i>
+                                    <i class="fa fa-columns" data-toggle="tooltip" title=" @lang('common.btn_diff')"></i>
                                 </a>
                             @endif
 
                             @can('page-edit', $pageItem)
                                 <a href="#" wz-form-submit data-form="#form-recover-{{ $history->id }}"
                                    data-confirm="@lang('document.recover_confirm')">
-                                    <i class="fa fa-rotate-right" data-toggle="tooltip" title="@lang('document.btn_recover')"></i>
+                                    <i class="fa fa-rotate-left" data-toggle="tooltip" title="@lang('document.btn_recover')"></i>
                                 </a>
                                 <form id="form-recover-{{ $history->id }}"
                                       action="{{ wzRoute('project:doc:history:recover', ['id' => $project->id, 'p' => $pageItem->id, 'history_id' => $history->id]) }}"
