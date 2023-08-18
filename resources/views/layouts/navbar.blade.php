@@ -61,7 +61,7 @@
         @endImpersonating
     @endif
     <button type="button" class="wz-hide-small-screen btn bmd-btn-icon wz-theme-indicator ml-2" data-toggle="tooltip" title="切换主题">
-        <i class="material-icons">wb_sunny</i>
+        <i class="fa fa-sun-o"></i>
     </button>
 </div>
 
@@ -81,13 +81,17 @@
                     currentTheme = '{{ config('wizard.theme') }}';
                 }
 
-                var themeIndicator = $('.wz-theme-indicator .material-icons');
-                themeIndicator.text(currentTheme === 'dark' ? 'brightness_3' : 'wb_sunny');
+                var themeIndicator = $('.wz-theme-indicator .fa');
+                if(currentTheme === 'dark') {
+                    themeIndicator.removeClass('fa-sun-o').addClass('fa-moon-o');
+                } else {
+                    themeIndicator.removeClass('fa-moon-o').addClass('fa-sun-o');
+                }
 
                 $('.wz-theme-indicator').on('click', function () {
                     if (currentTheme === 'default') {
                         currentTheme = 'dark';
-                        themeIndicator.text('brightness_3');
+                        // themeIndicator.text('brightness_3');
                         $('body').addClass('wz-dark-theme');
                         if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
@@ -105,7 +109,6 @@
                         }
                     } else {
                         currentTheme = 'default';
-                        themeIndicator.text('wb_sunny');
                         $('body').removeClass('wz-dark-theme');
                         if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
@@ -120,6 +123,11 @@
                                 $.global.markdownEditor.setTheme('default');
                             }
                         }
+                    }
+                    if(currentTheme === 'dark') {
+                        themeIndicator.removeClass('fa-sun-o').addClass('fa-moon-o');
+                    } else {
+                        themeIndicator.removeClass('fa-moon-o').addClass('fa-sun-o');
                     }
                     $.wz.setCookie('wizard-theme', currentTheme, 365);
                     store.set('wizard-theme', currentTheme);
