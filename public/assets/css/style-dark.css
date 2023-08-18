@@ -552,7 +552,6 @@ body.wz-dark-theme,
   padding: 0.5rem !important;
 }
 .wz-dark-theme .btn {color:#fff;}
-
 /* Code blocks */
 .wz-dark-theme pre.prettyprint {
   background: #2f1e2e !important;
@@ -668,7 +667,7 @@ body.wz-dark-theme,
 .wz-dark-theme div.layui-layer-loading {background: none !important;}
 .wz-dark-theme .layui-layer-close,
 .wz-dark-theme .close,
-.wz-dark-theme .radio label{color: #555;}
+.wz-dark-theme .radio label{color: #ccc;}
 
 .wz-dark-theme .layui-layer-close:hover,
 .wz-dark-theme .close:hover,
