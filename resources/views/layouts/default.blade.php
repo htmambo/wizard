@@ -19,7 +19,6 @@
 
     <!-- Bootstrap core CSS -->
     {{--<link href="{{ cdn_resource('/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">--}}
-    <link rel="stylesheet" href="{{ cdn_resource('/assets/vendor/material-design-icons/material-icons.css') }}">
     <link rel="stylesheet" href="{{ cdn_resource('/assets/vendor/bootstrap-material-design/css/bootstrap-material-design.min.css') }}">
     <link href="{{ cdn_resource('/assets/vendor/font-awesome4/css/font-awesome.min.css') }}" rel="stylesheet">
 

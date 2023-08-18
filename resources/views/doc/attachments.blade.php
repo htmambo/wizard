@@ -3,7 +3,7 @@
     <div class="wz-project-main" style="padding-top: 10px;">
         <nav class="wz-page-control clearfix">
             <a href="{{ wzRoute('project:home', ['id' => $project->id, 'p' => $pageItem->id]) }}"
-               class="btn btn-link" title="@lang('common.btn_back')"><i class="material-icons">arrow_back</i></a>
+               class="btn btn-link" title="@lang('common.btn_back')"><i class="fa fa-long-arrow-left"></i></a>
             <h1 class="wz-page-title">
                 {{ $pageItem->title }}
             </h1>

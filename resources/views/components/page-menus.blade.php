@@ -2,7 +2,7 @@
     <li role="presentation" class="dropdown">
         <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="wz-doc-more-btn" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-            <i class="material-icons" title="@lang('common.btn_more')">tune</i>
+            <i class="fa fa-sliders" title="@lang('common.btn_more')"></i>
         </button>
 
         <div class="dropdown-menu wz-dropdown-menu-left" aria-labelledby="wz-doc-more-btn">

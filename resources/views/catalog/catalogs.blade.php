@@ -65,15 +65,15 @@
                     <td><a href="{{ wzRoute('home', ['catalog' => $cat->id]) }}">{{ $cat->name }}</a></td>
                     <td>{{ $cat->projects_count }}</td>
                     <td>{{ $cat->sort_level }}</td>
-                    <td><i class="material-icons text-{{ ($cat->show_in_home ?? true) ? 'success':'warning' }}">{{ ($cat->show_in_home ?? true) ? 'check':'close' }}</i></td>
+                    <td><i class="fa fa-{{ ($cat->show_in_home ?? true) ? 'check':'close' }} text-{{ ($cat->show_in_home ?? true) ? 'success':'warning' }}"></i></td>
                     <td>
                         <a href="{!! wzRoute('admin:catalogs:view', ['id' => $cat->id]) !!}">
-                            <i class="material-icons" title="编辑">create</i>
+                            <i class="fa fa-plus-square" title="编辑"></i>
                         </a>
                         &nbsp;
                         <a href="#" wz-form-submit data-form="#form-cat-{{ $cat->id }}"
                            data-confirm="确定要删除该目录？删除后所有内部项目将重置为无目录">
-                            <i class="material-icons text-danger" title="@lang('common.btn_delete')">delete_sweep</i>
+                            <i class="fa fa-trash text-danger" title="@lang('common.btn_delete')"></i>
                             <form id="form-cat-{{ $cat->id }}" method="post"
                                   action="{{ wzRoute('admin:catalogs:delete', ['id' => $cat->id]) }}">
                                 {{ method_field('DELETE') }}{{ csrf_field() }}

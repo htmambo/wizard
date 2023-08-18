@@ -15,7 +15,7 @@
                 @can('page-edit', $pageItem)
                     <li role="presentation" class="mr-2">
                         <button type="button" data-href="{{ wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" data-toggle="tooltip" title="@lang('common.btn_edit')" class="btn btn-primary bmd-btn-icon">
-                            <i class="material-icons">mode_edit</i>
+                            <i class="fa fa-pencil"></i>
                         </button>
                     </li>
                     <li role="presentation" class="mr-2">
@@ -31,7 +31,7 @@
                                 data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}"
                                 data-toggle="tooltip"
                                 title="@lang('common.btn_diff')" class="btn btn-primary  bmd-btn-icon">
-                            <i class="material-icons">history</i>
+                            <i class="fa fa-history"></i>
                         </button>
                     </li>
                 @endif
@@ -132,15 +132,15 @@
                 @if (!Auth::guest())
                     <fieldset {{ Auth::guest() ? 'disabled':'' }}>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 1 ? 'active' : '' }} bmd-btn-fab" style="color: #21b351" data-type="1"><i class="material-icons">sentiment_satisfied</i></button>
+                            <button type="button" class="btn btn-default {{ $user_score_type == 1 ? 'active' : '' }} bmd-btn-fab" style="color: #21b351" data-type="1"><i class="fa fa-smile-o"></i></button>
                             <p>{{ $scores[1] ?? '' }} 很赞</p>
                         </div>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 2 ? 'active' : '' }} bmd-btn-fab" style="color: #989898" data-type="2"><i class="material-icons">sentiment_very_dissatisfied</i></button>
+                            <button type="button" class="btn btn-default {{ $user_score_type == 2 ? 'active' : '' }} bmd-btn-fab" style="color: #989898" data-type="2"><i class="fa fa-di">sentiment_very_dissatisfied</i></button>
                             <p>{{ $scores[2] ?? '' }} 看不懂</p>
                         </div>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 3 ? 'active' : '' }} bmd-btn-fab" style="color: #fed612" data-type="3"><i class="material-icons">sentiment_dissatisfied</i></button>
+                            <button type="button" class="btn btn-default {{ $user_score_type == 3 ? 'active' : '' }} bmd-btn-fab" style="color: #fed612" data-type="3"><i class="fa fa-frown-o"></i></button>
                             <p>{{ $scores[3] ?? '' }} 潦草</p>
                         </div>
                     </fieldset>

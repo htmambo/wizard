@@ -3,7 +3,7 @@
     <div class="wz-project-main">
         <nav class="wz-page-control clearfix">
             <a href="{{ wzRoute('project:doc:history', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}"
-               class="btn btn-link"><i class="material-icons">arrow_back</i></a>
+               class="btn btn-link"><i class="fa fa-long-arrow-left"></i></a>
             <h1 class="wz-page-title">
                 {{ $history->title }} <span class="label label-default">@lang('document.page_history')</span>
             </h1>
@@ -11,7 +11,7 @@
                 @can('page-edit', $pageItem)
                     <a href="#" wz-form-submit data-form="#form-recover-{{ $history->id }}"
                        data-confirm="@lang('document.recover_confirm')" style="position: absolute; top: 15px; right: 80px;">
-                        <i class="material-icons" title="@lang('document.btn_recover')" data-toggle="tooltip">redo</i>
+                        <i class="fa fa-rotate-right" title="@lang('document.btn_recover')" data-toggle="tooltip"></i>
                         <form id="form-recover-{{ $history->id }}"
                               action="{{ wzRoute('project:doc:history:recover', ['id' => $project->id, 'p' => $pageItem->id, 'history_id' => $history->id]) }}"
                               method="post">{{ csrf_field() }}{{ method_field('PUT') }}</form>
@@ -20,7 +20,7 @@
                 <a href="#" wz-doc-compare-submit
                    data-doc1="{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" style="position: absolute; top: 15px; right: 40px;"
                    data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}">
-                    <i class="material-icons" data-toggle="tooltip" title=" @lang('common.btn_diff')">tonality</i>
+                    <i class="fa fa-eye-slash" data-toggle="tooltip" title=" @lang('common.btn_diff')"></i>
                 </a>
             </div>
             <hr />

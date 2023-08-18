@@ -3347,7 +3347,7 @@
                                 "   <div class='card-header-title'>" + text + "</div>" +
                                 "   <div class='card-header-tool'>" +
                                 "       <a href='" + href + "' target='_blank' class='btn bmd-btn-icon' title='新窗口打开'>" +
-                                "           <i class='material-icons'>open_in_new</i>" +
+                                "           <i class='fa fa-location-arrow'></i>" +
                                 "       </a>" +
                                 "   </div>" +
                                 "</div>";

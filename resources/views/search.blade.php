@@ -10,7 +10,7 @@
                 @if (!empty($project_id))
                     <button type="button" data-href="{{ wzRoute('project:home', ['id' => $project_id]) }}"
                             class="btn btn-default bmd-btn-icon" id="wz-document-goback">
-                        <i class="material-icons">arrow_back</i>
+                        <i class="fa fa-long-arrow-left"></i>
                     </button>
                 @endif
                 @if (!empty($tag))

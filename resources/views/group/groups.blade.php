@@ -48,12 +48,12 @@
                     <td>{{ $group->projects_count }}</td>
                     <td>
                         <a href="{!! wzRoute('admin:groups:view', ['id' => $group->id]) !!}">
-                            <i class="material-icons" title="管理">create</i>
+                            <i class="fa fa-pencil" title="管理"></i>
                         </a>
                         &nbsp;&nbsp;
                         <a href="#" wz-form-submit data-form="#form-group-{{ $group->id }}"
                            data-confirm="确定要删除该分组？将会同步删除该分组分配的项目权限和用户关系">
-                            <i class="material-icons text-danger" title="@lang('common.btn_delete')">delete_sweep</i>
+                            <i class="fa fa-trash text-danger" title="@lang('common.btn_delete')"></i>
                             <form id="form-group-{{ $group->id }}" method="post"
                                   action="{{ wzRoute('admin:groups:del', ['id' => $group->id]) }}">
                                 {{ method_field('DELETE') }}{{ csrf_field() }}

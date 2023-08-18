@@ -26,7 +26,7 @@
                         <td>
                             <p><img src="/assets/{{ $temp->type == 1 ? 'swagger' : 'markdown' }}.png" style="width: 20px;" title="{{ $temp->type == 1 ? 'swagger' : 'markdown' }}"/></p>
                             @if($temp->scope == \App\Repositories\Template::SCOPE_GLOBAL)
-                                <p><i class="material-icons" title="与他人共享的">people</i></p>
+                                <p><i class="fa fa-share" title="与他人共享的"></i></p>
                             @endif
                         </td>
                         <td>
@@ -35,11 +35,11 @@
                         </td>
                         <td>{{ $temp->description }}</td>
                         <td>
-                            <a href="{{ wzRoute('user:templates:edit', ['id' => $temp->id]) }}"><i class="material-icons" title="编辑">create</i> </a>
+                            <a href="{{ wzRoute('user:templates:edit', ['id' => $temp->id]) }}"><i class="fa fa-pencil" title="编辑"></i> </a>
                             &nbsp;
                             <a href="#" wz-form-submit data-form="#form-template-{{ $temp->id }}"
                                data-confirm="确定要删除该模板？">
-                                <i class="material-icons text-danger" title="@lang('common.btn_delete')">delete_sweep</i>
+                                <i class="fa fa-trash text-danger" title="@lang('common.btn_delete')"></i>
                                 <form id="form-template-{{ $temp->id }}" method="post"
                                       action="{{ wzRoute('user:templates:delete', ['id' => $temp->id]) }}">
                                     {{ method_field('DELETE') }}{{ csrf_field() }}

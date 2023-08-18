@@ -111,7 +111,7 @@ body.wz-dark-theme,
   color: #ffffff;
 }
 .wz-dark-theme .wz-panel-right  a,
-.wz-dark-theme .wz-left-main .material-icons,
+.wz-dark-theme .wz-left-main .fa,
 .wz-dark-theme .wz-left-main .wz-left-nav a,
 .wz-dark-theme .wz-left-main .wz-project-title > a {
   color: #aeb0b2;
@@ -123,7 +123,7 @@ body.wz-dark-theme,
   color: #ffffff;
 }
 .wz-dark-theme .wz-left-main .wz-project-title > a:hover,
-.wz-dark-theme .wz-left-main button:hover .material-icons {
+.wz-dark-theme .wz-left-main button:hover .fa {
   color: #ffffff;
 }
 .wz-dark-theme .wz-left-main .nav .nav-link {
@@ -180,8 +180,7 @@ body.wz-dark-theme,
   background: #343a40;
 }
 .wz-dark-theme .wz-panel-breadcrumb .breadcrumb a,
-.wz-dark-theme .wz-panel-breadcrumb .nav > li > button > .fa,
-.wz-dark-theme .wz-panel-breadcrumb .nav > li > button > .material-icons {
+.wz-dark-theme .wz-panel-breadcrumb .nav > li > button > .fa {
   color: #bdbdbd;
 }
 .wz-dark-theme .swagger-editor-toolbar a {
@@ -190,7 +189,7 @@ body.wz-dark-theme,
 .wz-dark-theme .breadcrumb-item.active,
 .wz-dark-theme .wz-panel-breadcrumb a:hover,
 .wz-dark-theme .wz-panel-breadcrumb .nav button:hover .fa,
-.wz-dark-theme .wz-theme-indicator .material-icons,
+.wz-dark-theme .wz-theme-indicator .fa,
 .wz-dark-theme .swagger-editor-toolbar a:hover {
   color: #ffffff;
 }

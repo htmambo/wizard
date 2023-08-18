@@ -67,11 +67,11 @@
                     <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
                     <td>
                         <a href="{{ wzRoute('admin:user', ['id' => $user->id]) }}">
-                            <i class="material-icons" title="管理">create</i>
+                            <i class="fa fa-user-md" title="管理"></i>
                         </a>
                         @canBeImpersonated($user)
                         <a href="#" wz-form-submit data-form="#form-impersonate-{{ $user->id }}">
-                            <i class="material-icons text-warning" title="扮演">transfer_within_a_station</i>
+                            <i class="fa fa-vcard text-warning" title="扮演"></i>
                             <form id="form-impersonate-{{ $user->id }}" method="post" style="display: none"
                                   action="{{ wzRoute('impersonate:start', ['id' => $user->id]) }}">
                                 {{ method_field('POST') }}{{ csrf_field() }}

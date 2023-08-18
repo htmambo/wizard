@@ -23,7 +23,7 @@
                     <button type="button"
                             data-href="{{ wzRoute('project:home', ['id' => $project->id] + (empty($pageItem) ? [] : ['p' => $pageItem->id])) }}"
                             class="btn btn-default bmd-btn-icon" id="wz-document-goback">
-                        <i class="material-icons">clear</i>
+                        <i class="fa fa-close"></i>
                     </button>
                 </li>
             </ul>
