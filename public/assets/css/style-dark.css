@@ -495,7 +495,7 @@ body.wz-dark-theme,
 .wz-dark-theme .swagger-ui table thead th,
 .wz-dark-theme .swagger-ui table tbody th {
   color: #ffffff;
-  border-color: #555;
+  border-color: #ddd;
 }
 .wz-dark-theme .swagger-ui .opblock .opblock-summary-description {
   color: #ffffff;
