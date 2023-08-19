@@ -1030,7 +1030,7 @@ function to_unicode($string)
 /**
  * 给图片添加水印
  *
- * @param $file1 图片文件
+ * @param string $file1 图片文件
  */
 function watermark($file1)
 {

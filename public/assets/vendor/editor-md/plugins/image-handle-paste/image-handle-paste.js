@@ -36,54 +36,33 @@
                             if (tmp[0].tagName == 'META' && tmp[1].tagName == 'IMG') {
                                 isPic = true;
                                 file = tmp[1].getAttribute('src');
-                                var imageBlob = createImageBlob(file);
-                                file = new File([imageBlob], 'image.png', { type: imageBlob.type });
-                                // // 判断浏览器是否支持 ClipboardItem
-                                // var supportsClipboardItem = typeof ClipboardItem !== 'undefined';
-                                // try {
-                                //     if (supportsClipboardItem) {
-                                //         // 使用 ClipboardItem 复制图片
-                                //         items = new ClipboardItem({
-                                //             [imageBlob.type]: imageBlob,
-                                //         });
-                                //         file = items[0].getAsFile();
-                                //     } else {
-                                //         // 使用 DataTransfer 复制图片
-                                //         // 创建一个隐藏的 img 元素，并将其 src 属性设置为要复制的图片的 URL
-                                //         // var img = document.createElement('img');
-                                //         // img.style.display = 'none';
-                                //         // img.src = file;
-                                //         // // 创建一个 DataTransfer 对象，并将 img 元素设置为其 dragImage
-                                //         // var dataTransfer = new DataTransfer();
-                                //         // dataTransfer.setDragImage(img, 0, 0);
-                                //
-                                //         file = new File([imageBlob], 'image.png', { type: imageBlob.type });
-                                //         // dataTransfer.items.add(file);
-                                //     }
-                                // } catch (error) {
-                                //     console.error("文本和图像复制失败", error);
-                                // }
                             }
                         }
                     }
                 }
                 //判断图片类型
                 if(isPic) {
-                    console.log(file);
-                    // 创建FormData对象进行ajax上传
-                    var forms = new FormData(document.forms[0]); //Filename
-                    forms.append(classPrefix + "image-file", file, "file_"+Date.parse(new Date())+".png"); // 文件
-                    _this.executePlugin("imageDialog", "image-dialog/image-dialog");
-                    _ajax(settings.imageUploadURL, forms, function(ret){
-                        if(ret.success == 1){
-                            var dialog = $("." + classPrefix + "image-dialog");
-                            dialog.find("input[data-url]").val(ret.url);
-                            // dialog.find('input[data-alt]').val(ret.url.split('/').pop());
-                            //cm.replaceSelection("![](" + ret.url  + ")");
-                        }
-                        console.log(ret.message);
-                    });
+                    createImageBlob(file, function(imageBlob) {
+                        console.log(imageBlob);
 
+                        file = new File([imageBlob], 'image.png', { type: imageBlob.type });
+
+                        var forms = new FormData(document.forms[0]);
+                        forms.append(classPrefix + "image-file", file, "file_"+Date.parse(new Date())+".png");
+
+                        // _this.executePlugin("imageDialog", "image-dialog/image-dialog");
+                        _ajax(settings.imageUploadURL, forms, function(ret) {
+                            // var dialog = $("." + classPrefix + "image-dialog");
+                            // 处理 ajax 返回结果
+                            if(ret.success == 1){
+                                // dialog.find("input[data-url]").val(ret.url);
+                                // dialog.find('input[data-alt]').val(ret.url.split('/').pop());
+                                cm.replaceSelection("![](" + ret.url  + ")");
+                                // dialog.find('button.editormd-cancel-btn').click();
+                            }
+                            console.log(ret.message);
+                        });
+                    });
                 }
                 else if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) != -1) {
                     var htmlText = obj.getData("text/html");
@@ -156,9 +135,10 @@
                 }
             })
         };
-        async function createImageBlob(url) {
+        async function createImageBlob(url, callback) {
             const response = await fetch(url);
-            return await response.blob();
+            const blob = await response.blob();
+            callback(blob);
         }
         // ajax上传图片 可自行处理
         var _ajax = function(url, data, callback) {
