@@ -37,36 +37,37 @@
                                 isPic = true;
                                 file = tmp[1].getAttribute('src');
                                 var imageBlob = createImageBlob(file);
-                                try {
-                                    const { ClipboardItem } = window;
-                                    var items = new ClipboardItem({
-                                        [imageBlob.type]: imageBlob,
-                                    });
-                                    navigator.clipboard.write([items]);
-                                    console.log("文本和图像复制成功");
-                                } catch (error) {
-                                    console.error("文本和图像复制失败", error);
-                                }
-                                return false;
+                                file = new File([imageBlob], 'image.png', { type: imageBlob.type });
+                                // // 判断浏览器是否支持 ClipboardItem
+                                // var supportsClipboardItem = typeof ClipboardItem !== 'undefined';
+                                // try {
+                                //     if (supportsClipboardItem) {
+                                //         // 使用 ClipboardItem 复制图片
+                                //         items = new ClipboardItem({
+                                //             [imageBlob.type]: imageBlob,
+                                //         });
+                                //         file = items[0].getAsFile();
+                                //     } else {
+                                //         // 使用 DataTransfer 复制图片
+                                //         // 创建一个隐藏的 img 元素，并将其 src 属性设置为要复制的图片的 URL
+                                //         // var img = document.createElement('img');
+                                //         // img.style.display = 'none';
+                                //         // img.src = file;
+                                //         // // 创建一个 DataTransfer 对象，并将 img 元素设置为其 dragImage
+                                //         // var dataTransfer = new DataTransfer();
+                                //         // dataTransfer.setDragImage(img, 0, 0);
+                                //
+                                //         file = new File([imageBlob], 'image.png', { type: imageBlob.type });
+                                //         // dataTransfer.items.add(file);
+                                //     }
+                                // } catch (error) {
+                                //     console.error("文本和图像复制失败", error);
+                                // }
                             }
                         }
                     }
                 }
                 //判断图片类型
-                if (items && items[0].type.indexOf('image') > -1) {
-                    file = items[0].getAsFile();
-                    isPic = true;
-                    /*生成blob
-                    var blobImg = URL.createObjectURL(file);
-                    */
-                    /*base64
-                    var reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = function (e) {
-                        var base64Img = e.target.result //图片的base64
-                    }
-                    */
-                }
                 if(isPic) {
                     console.log(file);
                     // 创建FormData对象进行ajax上传
