@@ -19,7 +19,15 @@
             var classPrefix = _this.classPrefix;
             var id          = _this.id;
             if(!settings.imageUpload || !settings.imageUploadURL){
-                console.log('你还未开启图片上传或者没有配置上传地址');
+                // 如果 layer 组件存在，则使用 layer 组件的 alert 提示用户
+                if (typeof layer !== 'undefined') {
+                    layer.alert('你还未开启图片上传或者没有配置上传地址', {
+                        icon: 2,
+                        title: '图片上传失败'
+                    });
+                } else {
+                    alert('你还未开启图片上传或者没有配置上传地址');
+                }
                 return false;
             }
             //监听粘贴板事件
@@ -28,7 +36,7 @@
                 var items = (e.clipboardData || e.originalEvent.clipboardData).items;
                 window.pasteObj = obj;
                 var isPic = false, file = '';
-                if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) != -1) {
+                if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) !== -1) {
                     var htmlText = obj.getData("text/html");
                     if (htmlText !== "") {
                         var tmp = $(htmlText);
@@ -42,8 +50,21 @@
                 }
                 //判断图片类型
                 if(isPic) {
+                    // 如果 layer 组件存在，则使用 layer 组件的加载动画
+                    var LoaderWindow = null;
+                    if (typeof layer !== 'undefined') {
+                        LoaderWindow = layer.load(2, { //icon0-2 加载中,页面显示不同样式
+                            shade: [0.4, '#000'], //0.4为透明度 ，#000 为颜色
+                            content: '正在复制并上传图片，请稍候...',
+                            success: function (layero) {
+                                layero.find('.layui-layer-content').css({
+                                    'padding-top': '40px',//图标与样式会重合，这样设置可以错开
+                                    'width': '300px'//文字显示的宽度
+                                });
+                            }
+                        });
+                    }
                     createImageBlob(file, function(imageBlob) {
-                        console.log(imageBlob);
 
                         file = new File([imageBlob], 'image.png', { type: imageBlob.type });
 
@@ -52,19 +73,27 @@
 
                         // _this.executePlugin("imageDialog", "image-dialog/image-dialog");
                         _ajax(settings.imageUploadURL, forms, function(ret) {
-                            // var dialog = $("." + classPrefix + "image-dialog");
+                            // 是否使用 layer 组件的加载动画，如果使用，则关闭
+                            if (typeof layer !== 'undefined')
+                            layer.close(LoaderWindow);
                             // 处理 ajax 返回结果
                             if(ret.success == 1){
-                                // dialog.find("input[data-url]").val(ret.url);
-                                // dialog.find('input[data-alt]').val(ret.url.split('/').pop());
-                                cm.replaceSelection("![](" + ret.url  + ")");
-                                // dialog.find('button.editormd-cancel-btn').click();
+                                cm.replaceSelection("![](" + ret.url  + ")  \n");
+                            } else {
+                                // 如果 layer 组件存在，则使用 layer 组件的 alert 提示用户
+                                if (typeof layer !== 'undefined') {
+                                    layer.alert('图片上传失败', {
+                                        icon: 2,
+                                        title: '图片上传失败' + ret.message
+                                    });
+                                } else {
+                                    alert('图片上传失败' + ret.message);
+                                }
                             }
-                            console.log(ret.message);
                         });
                     });
                 }
-                else if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) != -1) {
+                else if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) !== -1) {
                     var htmlText = obj.getData("text/html");
                     if (htmlText !== "") {
                         var referencelinkRegEx = /reference-link/;
@@ -155,7 +184,15 @@
                     callback(JSON.parse(ret));
                 },
                 error: function (err){
-                    console.log('请求失败')
+                    // 如果 layer 组件存在，则使用 layer 组件的 alert 提示用户
+                    if (typeof layer !== 'undefined') {
+                        layer.alert('图片上传失败', {
+                            icon: 2,
+                            title: '图片上传失败' + err
+                        });
+                    } else {
+                        alert('图片上传失败' + err);
+                    }
                 }
             })
         }
