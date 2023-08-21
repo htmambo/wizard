@@ -35,8 +35,6 @@
                 var obj = e.clipboardData || e.originalEvent.clipboardData;
                 var items = (e.clipboardData || e.originalEvent.clipboardData).items;
                 window.pasteObj = obj;
-                var isPic = false, file = '', imageBlob = '';
-                console.log(items.length);
                 if ($.inArray("Files", (e.clipboardData || e.originalEvent.clipboardData).types) !== -1) {
                     // 如果 layer 组件存在，则使用 layer 组件的加载动画
                     var LoaderWindow = null;
@@ -54,12 +52,10 @@
                     }
                     for(var i=0; i<items.length; i++){
                         var item = items[i];
-                        console.log(item, item.kind,item.type);
                         if(item.kind==='file'&&item.type.match(/^image\//i)){
                             //blob就是剪贴板中的二进制图片数据
-                            imageBlob = item.getAsFile();
-                            file = new File([imageBlob], 'image.png', { type: imageBlob.type });
-
+                            var imageBlob = item.getAsFile();
+                            var file = new File([imageBlob], 'image.png', { type: imageBlob.type });
                             var forms = new FormData(document.forms[0]);
                             forms.append(classPrefix + "image-file", file, "file_"+Date.parse(new Date())+".png");
 
@@ -71,9 +67,9 @@
                                 } else {
                                     // 如果 layer 组件存在，则使用 layer 组件的 alert 提示用户
                                     if (typeof layer !== 'undefined') {
-                                        layer.alert('图片上传失败', {
+                                        layer.alert('图片上传失败' + ret.message, {
                                             icon: 2,
-                                            title: '图片上传失败' + ret.message
+                                            title: '图片上传失败'
                                         });
                                     } else {
                                         alert('图片上传失败' + ret.message);
@@ -179,15 +175,10 @@
                     callback(JSON.parse(ret));
                 },
                 error: function (err){
-                    // 如果 layer 组件存在，则使用 layer 组件的 alert 提示用户
-                    if (typeof layer !== 'undefined') {
-                        layer.alert('图片上传失败', {
-                            icon: 2,
-                            title: '图片上传失败' + err
-                        });
-                    } else {
-                        alert('图片上传失败' + err);
-                    }
+                    callback({
+                        success: 0,
+                        message: err
+                    });
                 }
             })
         }
