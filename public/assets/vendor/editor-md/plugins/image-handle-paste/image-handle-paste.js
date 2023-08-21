@@ -35,21 +35,9 @@
                 var obj = e.clipboardData || e.originalEvent.clipboardData;
                 var items = (e.clipboardData || e.originalEvent.clipboardData).items;
                 window.pasteObj = obj;
-                var isPic = false, file = '';
-                if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) !== -1) {
-                    var htmlText = obj.getData("text/html");
-                    if (htmlText !== "") {
-                        var tmp = $(htmlText);
-                        if (tmp.length == 2) {
-                            if (tmp[0].tagName == 'META' && tmp[1].tagName == 'IMG') {
-                                isPic = true;
-                                file = tmp[1].getAttribute('src');
-                            }
-                        }
-                    }
-                }
-                //判断图片类型
-                if(isPic) {
+                var isPic = false, file = '', imageBlob = '';
+                console.log(items.length);
+                if ($.inArray("Files", (e.clipboardData || e.originalEvent.clipboardData).types) !== -1) {
                     // 如果 layer 组件存在，则使用 layer 组件的加载动画
                     var LoaderWindow = null;
                     if (typeof layer !== 'undefined') {
@@ -64,34 +52,41 @@
                             }
                         });
                     }
-                    createImageBlob(file, function(imageBlob) {
+                    for(var i=0; i<items.length; i++){
+                        var item = items[i];
+                        console.log(item, item.kind,item.type);
+                        if(item.kind==='file'&&item.type.match(/^image\//i)){
+                            //blob就是剪贴板中的二进制图片数据
+                            imageBlob = item.getAsFile();
+                            file = new File([imageBlob], 'image.png', { type: imageBlob.type });
 
-                        file = new File([imageBlob], 'image.png', { type: imageBlob.type });
+                            var forms = new FormData(document.forms[0]);
+                            forms.append(classPrefix + "image-file", file, "file_"+Date.parse(new Date())+".png");
 
-                        var forms = new FormData(document.forms[0]);
-                        forms.append(classPrefix + "image-file", file, "file_"+Date.parse(new Date())+".png");
-
-                        // _this.executePlugin("imageDialog", "image-dialog/image-dialog");
-                        _ajax(settings.imageUploadURL, forms, function(ret) {
-                            // 是否使用 layer 组件的加载动画，如果使用，则关闭
-                            if (typeof layer !== 'undefined')
-                            layer.close(LoaderWindow);
-                            // 处理 ajax 返回结果
-                            if(ret.success == 1){
-                                cm.replaceSelection("![](" + ret.url  + ")  \n");
-                            } else {
-                                // 如果 layer 组件存在，则使用 layer 组件的 alert 提示用户
-                                if (typeof layer !== 'undefined') {
-                                    layer.alert('图片上传失败', {
-                                        icon: 2,
-                                        title: '图片上传失败' + ret.message
-                                    });
+                            // _this.executePlugin("imageDialog", "image-dialog/image-dialog");
+                            _ajax(settings.imageUploadURL, forms, function(ret) {
+                                // 处理 ajax 返回结果
+                                if(ret.success == 1){
+                                    cm.replaceSelection("![](" + ret.url  + ")  \n");
                                 } else {
-                                    alert('图片上传失败' + ret.message);
+                                    // 如果 layer 组件存在，则使用 layer 组件的 alert 提示用户
+                                    if (typeof layer !== 'undefined') {
+                                        layer.alert('图片上传失败', {
+                                            icon: 2,
+                                            title: '图片上传失败' + ret.message
+                                        });
+                                    } else {
+                                        alert('图片上传失败' + ret.message);
+                                    }
                                 }
-                            }
-                        });
-                    });
+                            });
+                        }
+                    }
+                    if(LoaderWindow != null){
+                        layer.close(LoaderWindow);
+                        LoaderWindow = null;
+                    }
+                    return false;
                 }
                 else if ($.inArray("text/html", (e.clipboardData || e.originalEvent.clipboardData).types) !== -1) {
                     var htmlText = obj.getData("text/html");
