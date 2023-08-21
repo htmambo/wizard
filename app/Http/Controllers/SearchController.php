@@ -84,7 +84,8 @@ class SearchController extends Controller
 
         if (!empty($total)) {
             /** @var LengthAwarePaginator $paginate */
-            $paginate = $documentModel->paginate($perPage, ['*'], 'page', 1);
+            $paginate = $documentModel->paginate($perPage, ['*'], 'page', $page);
+/**
             $paginate = new LengthAwarePaginator(
                 $paginate->items(),
                 $total,
@@ -92,6 +93,7 @@ class SearchController extends Controller
                 $page,
                 $paginate->getOptions()
             );
+*/
         } else {
             /** @var LengthAwarePaginator $paginate */
             $paginate = $documentModel->paginate();
