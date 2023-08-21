@@ -42,7 +42,7 @@ class NullDriver implements Driver
                     }
                 });
             }
-            $ids = $documentModel->select('id')->get()->toArray();
+            $ids = $documentModel->select('id')->orderBy('updated_at', 'DESC')->get()->toArray();
             return new Result(array_column($ids, 'id'),
                 $keywords,
                 count($ids)
