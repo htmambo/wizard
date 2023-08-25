@@ -104,6 +104,7 @@
 
 <script>
     $(function () {
+        layer.config({skin:'wz-layer'});
         {{-- 页面提示消息（上一个页面操作的结果） --}}
         @if (session('alert.message.info'))
         $.wz.message("{{ session('alert.message') }}");
@@ -112,7 +113,6 @@
         @elseif (session('alert.message.error'))
         $.wz.message_failed("{{ session('alert.message.error') }}");
         @endif
-        layer.config({skin:'wz-layer'});
         // 功能开发中提示消息
         $('[wz-wait-develop]').on('click', function () {
             $.wz.alert('@lang('common.not_ready_for_use')');
