@@ -305,9 +305,14 @@ body.wz-dark-theme,
   color: #aeb0b2;
 }
 .wz-dark-theme .wz-userface-small,
-.wz-dark-theme .wz-project-main img,
-.wz-dark-theme .wz-project-main svg {
+.wz-dark-theme .wz-project-main img {
   background: #ccc;
+}
+.wz-dark-theme .mermaid svg .edgePath .path {
+  stroke: #ccc !important;
+}
+.wz-dark-theme .mermaid svg .arrowheadPath {
+  fill: #ccc !important;
 }
 .wz-dark-theme .text-muted,
 .wz-dark-theme .wz-project-main .wz-page-content table th,
