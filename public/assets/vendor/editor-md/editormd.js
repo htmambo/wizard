@@ -1283,7 +1283,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         infoDialogPosition: function () {
             var infoDialog = this.infoDialog;
 
@@ -2099,7 +2098,6 @@
          * @param   {String}    md     要传入的markdown源文档
          * @returns {editormd}         返回editormd的实例对象
          */
-
         setMarkdown: function (md) {
             this.cm.setValue(md || this.settings.markdown);
 
@@ -2112,7 +2110,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         getMarkdown: function () {
             return this.cm.getValue();
         },
@@ -2123,7 +2120,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         getValue: function () {
             return this.cm.getValue();
         },
@@ -2135,7 +2131,6 @@
          * @param   {String}     value   set code/value/string/text
          * @returns {editormd}           返回editormd的实例对象
          */
-
         setValue: function (value) {
             this.cm.setValue(value);
 
@@ -2148,7 +2143,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         clear: function () {
             this.cm.setValue("");
 
@@ -2161,7 +2155,6 @@
          *
          * @returns {String}               返回HTML源码
          */
-
         getHTML: function () {
             if (!this.settings.saveHTMLToTextarea) {
                 alert("Error: settings.saveHTMLToTextarea == false");
@@ -2178,7 +2171,6 @@
          *
          * @returns {String}           Return html code 返回HTML源码
          */
-
         getTextareaSavedHTML: function () {
             return this.getHTML();
         },
@@ -2189,7 +2181,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         getPreviewedHTML: function () {
             if (!this.settings.watch) {
                 alert("Error: settings.watch == false");
@@ -2206,7 +2197,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         watch: function (callback) {
             var settings = this.settings;
 
@@ -2248,7 +2238,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         unwatch: function (callback) {
             var settings = this.settings;
             this.state.watching = settings.watch = false;
@@ -2284,7 +2273,6 @@
          * @param   {Function} [callback=function()] 回调函数
          * @returns {editormd}                       返回editormd的实例对象
          */
-
         show: function (callback) {
             callback = callback || function () {
             };
@@ -2630,11 +2618,13 @@
     editormd.dialogShowMask = function (dialog) {
         var editor = this.editor;
         var settings = this.settings || {dialogShowMask: true};
-
-        dialog.css({
-            top: ($(window).height() - dialog.height()) / 2 + "px",
-            left: ($(window).width() - dialog.width()) / 2 + "px"
-        });
+        if(dialog.height()>10) {
+            //有可能dialog尚未真正初始化，这样直接修改显示位置会出错
+            dialog.css({
+                top: ($(window).height() - dialog.height()) / 2 + "px",
+                left: ($(window).width() - dialog.width()) / 2 + "px"
+            });
+        }
 
         if (settings.dialogShowMask) {
             editor.children("." + this.classPrefix + "mask").css("z-index", parseInt(dialog.css("z-index")) - 1).show();
@@ -4252,6 +4242,14 @@
         });
 
         var dialogPosition = function () {
+            console.log({
+                dialogHeight:dialog.height(),
+                dialogWidth:dialog.width(),
+                windowHeight:$(window).height(),
+                windowWidth: $(window).width(),
+                top: ($(window).height() - dialog.height()) / 2 + "px",
+                left: ($(window).width() - dialog.width()) / 2 + "px"
+            })
             dialog.css({
                 top: ($(window).height() - dialog.height()) / 2 + "px",
                 left: ($(window).width() - dialog.width()) / 2 + "px"
@@ -4264,7 +4262,6 @@
                 layui.form.render();
             }
         });
-
 
         $(window).resize(dialogPosition);
 
