@@ -308,10 +308,37 @@ body.wz-dark-theme,
 .wz-dark-theme .wz-project-main img {
   background: #ccc;
 }
+.wz-dark-theme .mermaid svg #compositionEnd,
+.wz-dark-theme .mermaid svg #compositionStart,
+.wz-dark-theme .mermaid svg #classDiagram-extensionEnd,
+.wz-dark-theme .mermaid svg #classDiagram-dependencyEnd,
+.wz-dark-theme .mermaid svg #classDiagram-compositionEnd,
+.wz-dark-theme .mermaid svg #classDiagram-aggregationEnd,
+.wz-dark-theme .mermaid svg #classDiagram-extensionStart,
+.wz-dark-theme .mermaid svg #classDiagram-dependencyStart,
+.wz-dark-theme .mermaid svg #classDiagram-compositionStart,
+.wz-dark-theme .mermaid svg #classDiagram-aggregationStart,
+.wz-dark-theme .mermaid svg .relation {
+  stroke-width: 2 !important;
+  stroke: #fff !important;
+}
+.wz-dark-theme .flowchart svg path,
 .wz-dark-theme .mermaid svg .edgePath .path {
   stroke: #ccc !important;
 }
+.wz-dark-theme .mermaid svg .edgeLabel rect {
+  opacity: 1 !important;
+}
+.wz-dark-theme .mermaid svg #classDiagram-extensionEnd,
+.wz-dark-theme .mermaid svg #classDiagram-dependencyEnd,
+.wz-dark-theme .mermaid svg #classDiagram-compositionEnd,
+.wz-dark-theme .mermaid svg #classDiagram-aggregationEnd,
+.wz-dark-theme .mermaid svg #classDiagram-extensionStart,
+.wz-dark-theme .mermaid svg #classDiagram-dependencyStart,
+.wz-dark-theme .mermaid svg #classDiagram-compositionStart,
+.wz-dark-theme .mermaid svg #classDiagram-aggregationStart,
 .wz-dark-theme .mermaid svg .arrowheadPath {
+  stroke: #ccc !important;
   fill: #ccc !important;
 }
 .wz-dark-theme .text-muted,
