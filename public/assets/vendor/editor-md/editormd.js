@@ -4242,14 +4242,6 @@
         });
 
         var dialogPosition = function () {
-            console.log({
-                dialogHeight:dialog.height(),
-                dialogWidth:dialog.width(),
-                windowHeight:$(window).height(),
-                windowWidth: $(window).width(),
-                top: ($(window).height() - dialog.height()) / 2 + "px",
-                left: ($(window).width() - dialog.width()) / 2 + "px"
-            })
             dialog.css({
                 top: ($(window).height() - dialog.height()) / 2 + "px",
                 left: ($(window).width() - dialog.width()) / 2 + "px"
