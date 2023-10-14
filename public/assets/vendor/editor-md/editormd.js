@@ -9,7 +9,6 @@
  * {@link       https://github.com/pandao/editor.md}
  * @updateTime  2015-06-09
  */
-
 ;(function (factory) {
     "use strict";
 
@@ -47,7 +46,6 @@
      * @param   {Object} options      配置选项 Key/Value
      * @returns {Object} editormd     返回editormd对象
      */
-
     var editormd = function (id, options) {
         return new editormd.fn.init(id, options);
     };
@@ -122,8 +120,8 @@
         dialogLockScreen: true,
         dialogShowMask: true,
         dialogDraggable: true,
-        dialogMaskBgColor: "#fff",
-        dialogMaskOpacity: 0.1,
+        dialogMaskBgColor: "#000",
+        dialogMaskOpacity: 0.5,
         fontSize: "13px",
         saveHTMLToTextarea: false,
         disabledKeyMaps: [],
@@ -362,7 +360,6 @@
          * @param   {Object}   [options={}]  配置选项 Key/Value
          * @returns {editormd}               返回editormd的实例对象
          */
-
         init: function (id, options) {
 
             options = options || {};
@@ -486,7 +483,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         loadQueues: function () {
             var _this = this;
             var settings = this.settings;
@@ -588,7 +584,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setTheme: function (theme) {
             var editor = this.editor;
             var oldTheme = this.settings.theme;
@@ -607,7 +602,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setEditorTheme: function (theme) {
             var settings = this.settings;
             settings.editorTheme = theme;
@@ -629,7 +623,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setCodeMirrorTheme: function (theme) {
             this.setEditorTheme(theme);
 
@@ -642,7 +635,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setPreviewTheme: function (theme) {
             var preview = this.preview;
             var oldTheme = this.settings.previewTheme;
@@ -661,7 +653,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setCodeMirror: function () {
             var settings = this.settings;
             var editor = this.editor;
@@ -727,7 +718,6 @@
          *
          * @returns {Mixed}                  return CodeMirror setting option value
          */
-
         getCodeMirrorOption: function (key) {
             return this.cm.getOption(key);
         },
@@ -738,7 +728,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setCodeMirrorOption: function (key, value) {
 
             this.cm.setOption(key, value);
@@ -752,7 +741,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         addKeyMap: function (map, bottom) {
             this.cm.addKeyMap(map, bottom);
 
@@ -765,7 +753,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         removeKeyMap: function (map) {
             this.cm.removeKeyMap(map);
 
@@ -779,7 +766,6 @@
          * @param   {String|Intiger}   line      line number or "first"|"last"
          * @returns {editormd}                   返回editormd的实例对象
          */
-
         gotoLine: function (line) {
 
             var settings = this.settings;
@@ -850,7 +836,6 @@
          *
          * @returns {editormd}                  this(editormd instance object.)
          */
-
         extend: function () {
             if (typeof arguments[1] !== "undefined") {
                 if (typeof arguments[1] === "function") {
@@ -875,7 +860,6 @@
          * @param   {String|Object}   value     option value
          * @returns {editormd}                  this(editormd instance object.)
          */
-
         set: function (key, value) {
 
             if (typeof value !== "undefined" && typeof value === "function") {
@@ -895,7 +879,6 @@
          * @param   {String|Object}   value     option value
          * @returns {editormd}                  this(editormd instance object.)
          */
-
         config: function (key, value) {
             var settings = this.settings;
 
@@ -921,7 +904,6 @@
          * @param   {Function}   callback       回调函数
          * @returns {editormd}                  this(editormd instance object.)
          */
-
         on: function (eventType, callback) {
             var settings = this.settings;
 
@@ -939,7 +921,6 @@
          * @param   {String}   eventType          event type
          * @returns {editormd}                    this(editormd instance object.)
          */
-
         off: function (eventType) {
             var settings = this.settings;
 
@@ -958,7 +939,6 @@
          * @param   {Function} [callback=function(){}] 回调函数
          * @returns {editormd}  返回editormd的实例对象
          */
-
         showToolbar: function (callback) {
             var settings = this.settings;
 
@@ -988,7 +968,6 @@
          * @param   {Function} [callback=function(){}] 回调函数
          * @returns {editormd}                         this(editormd instance object.)
          */
-
         hideToolbar: function (callback) {
             var settings = this.settings;
 
@@ -1008,7 +987,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setToolbarAutoFixed: function (fixed) {
 
             var state = this.state;
@@ -1056,7 +1034,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setToolbar: function () {
             var settings = this.settings;
 
@@ -1145,15 +1122,6 @@
             return this;
         },
 
-        /**
-         * 工具栏图标事件处理对象序列
-         * Get toolbar icons event handlers
-         *
-         * @param   {Object}   cm    CodeMirror的实例对象
-         * @param   {String}   name  要获取的事件处理器名称
-         * @returns {Object}         返回处理对象序列
-         */
-
         dialogLockScreen: function () {
             $.proxy(editormd.dialogLockScreen, this)();
 
@@ -1178,7 +1146,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         setToolbarHandler: function () {
             var _this = this;
             var settings = this.settings;
@@ -1233,7 +1200,6 @@
          * @param   {Object} options  配置项键值对 Key/Value
          * @returns {dialog}          返回创建的dialog的jQuery实例对象
          */
-
         createDialog: function (options) {
             return $.proxy(editormd.createDialog, this)(options);
         },
@@ -1244,7 +1210,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         createInfoDialog: function () {
             var _this = this;
             var editor = this.editor;
@@ -1306,7 +1271,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         showInfoDialog: function () {
 
             $("html,body").css("overflow-x", "hidden");
@@ -1340,7 +1304,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         hideInfoDialog: function () {
             $("html,body").css("overflow-x", "");
             this.infoDialog.hide();
@@ -1357,7 +1320,6 @@
          * @param   {Boolean}    lock    Boolean 布尔值，是否锁屏
          * @returns {editormd}           返回editormd的实例对象
          */
-
         lockScreen: function (lock) {
             editormd.lockScreen(lock);
             this.resize();
@@ -1371,7 +1333,6 @@
          *
          * @returns {editormd}  返回editormd的实例对象
          */
-
         recreate: function () {
             var _this = this;
             var editor = this.editor;
@@ -1425,7 +1386,6 @@
          *
          * @returns {editormd}             返回editormd的实例对象
          */
-
         flowChartAndSequenceDiagramRender: function () {
             var $this = this;
             var settings = this.settings;
@@ -1481,7 +1441,6 @@
          * @param   {Object}    keyMap      KeyMap key/value {"(Ctrl/Shift/Alt)-Key" : function(){}}
          * @returns {editormd}              return this
          */
-
         registerKeyMaps: function (keyMap) {
 
             var _this = this;
@@ -1554,7 +1513,6 @@
          *
          * @returns {editormd} return this
          */
-
         bindScrollEvent: function () {
 
             var _this = this;
@@ -1677,7 +1635,6 @@
          * @param   {Boolean}   recreate   是否为重建编辑器
          * @returns {editormd}             返回editormd的实例对象
          */
-
         loadedDisplay: function (recreate) {
 
             recreate = recreate || false;
@@ -1722,7 +1679,6 @@
          * @param   {Number|String} width  编辑器宽度值
          * @returns {editormd}             返回editormd的实例对象
          */
-
         width: function (width) {
 
             this.editor.css("width", (typeof width === "number") ? width + "px" : width);
@@ -1738,7 +1694,6 @@
          * @param   {Number|String} height  编辑器高度值
          * @returns {editormd}              返回editormd的实例对象
          */
-
         height: function (height) {
 
             this.editor.css("height", (typeof height === "number") ? height + "px" : height);
@@ -1755,7 +1710,6 @@
          * @param   {Number|String} [height=null] 编辑器高度值
          * @returns {editormd}                    返回editormd的实例对象
          */
-
         resize: function (width, height) {
 
             width = width || null;
@@ -1828,7 +1782,6 @@
          *
          * @returns {editormd}     返回editormd的实例对象
          */
-
         save: function () {
 
             var _this = this;
@@ -1959,7 +1912,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         focus: function () {
             this.cm.focus();
 
@@ -1973,7 +1925,6 @@
          * @param   {Object}    cursor 要设置的光标位置键值对象，例：{line:1, ch:0}
          * @returns {editormd}         返回editormd的实例对象
          */
-
         setCursor: function (cursor) {
             this.cm.setCursor(cursor);
 
@@ -1986,7 +1937,6 @@
          *
          * @returns {Cursor}         返回一个光标Cursor对象
          */
-
         getCursor: function () {
             return this.cm.getCursor();
         },
@@ -1999,7 +1949,6 @@
          * @param   {Object}    to     结束位置的光标键值对象，例：{line:1, ch:0}
          * @returns {editormd}         返回editormd的实例对象
          */
-
         setSelection: function (from, to) {
 
             this.cm.setSelection(from, to);
@@ -2013,7 +1962,6 @@
          *
          * @returns {String}         返回选中文本的字符串形式
          */
-
         getSelection: function () {
             return this.cm.getSelection();
         },
@@ -2025,7 +1973,6 @@
          * @param   {Array}    ranges  cursor selection ranges array
          * @returns {Array}            return this
          */
-
         setSelections: function (ranges) {
             this.cm.setSelections(ranges);
 
@@ -2038,7 +1985,6 @@
          *
          * @returns {Array}         return selection ranges array
          */
-
         getSelections: function () {
             return this.cm.getSelections();
         },
@@ -2050,7 +1996,6 @@
          * @param   {String}    value  要插入的字符值
          * @returns {editormd}         返回editormd的实例对象
          */
-
         replaceSelection: function (value) {
             this.cm.replaceSelection(value);
 
@@ -2067,7 +2012,6 @@
          * @param   {String}    value  要插入的字符值
          * @returns {editormd}         返回editormd的实例对象
          */
-
         insertValue: function (value) {
             this.replaceSelection(value);
 
@@ -2081,7 +2025,6 @@
          * @param   {String}    md     要追加的markdown源文档
          * @returns {editormd}         返回editormd的实例对象
          */
-
         appendMarkdown: function (md) {
             var settings = this.settings;
             var cm = this.cm;
@@ -2292,7 +2235,6 @@
          * @param   {Function} [callback=function()] 回调函数
          * @returns {editormd}                       返回editormd的实例对象
          */
-
         hide: function (callback) {
             callback = callback || function () {
             };
@@ -2311,7 +2253,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         previewing: function () {
 
             var _this = this;
@@ -2383,7 +2324,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         previewed: function () {
 
             var editor = this.editor;
@@ -2432,7 +2372,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         fullscreen: function () {
 
             var _this = this;
@@ -2484,7 +2423,6 @@
          *
          * @returns {editormd}         返回editormd的实例对象
          */
-
         fullscreenExit: function () {
 
             var editor = this.editor;
@@ -2520,7 +2458,6 @@
          * @param   {String}     path    plugin load path
          * @returns {editormd}           返回editormd的实例对象
          */
-
         executePlugin: function (name, path) {
 
             var _this = this;
@@ -2560,7 +2497,6 @@
          * @param   {String}     command    CodeMirror serach commands, "find, fintNext, fintPrev, clearSearch, replace, replaceAll"
          * @returns {editormd}              return this
          */
-
         search: function (command) {
             var settings = this.settings;
 
@@ -2597,7 +2533,6 @@
      *
      * @returns {void}
      */
-
     editormd.dialogLockScreen = function () {
         var settings = this.settings || {dialogLockScreen: true};
 
@@ -2614,7 +2549,6 @@
      * @param   {Object}     dialog    dialog jQuery object
      * @returns {void}
      */
-
     editormd.dialogShowMask = function (dialog) {
         var editor = this.editor;
         var settings = this.settings || {dialogShowMask: true};
@@ -3095,7 +3029,6 @@
      * @param   {String}    str            string
      * @returns {String}                   trimed string
      */
-
     var trim = function (str) {
         return (!String.prototype.trim) ? str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "") : str.trim();
     };
@@ -3109,7 +3042,6 @@
      * @param   {String}    str            string
      * @returns {String}                   string
      */
-
     var ucwords = function (str) {
         return str.toLowerCase().replace(/\b(\w)|\s(\w)/g, function ($1) {
             return $1.toUpperCase();
@@ -3125,7 +3057,6 @@
      * @param   {String}    str            string
      * @returns {String}                   string
      */
-
     var firstUpperCase = function (str) {
         return str.toLowerCase().replace(/\b(\w)/, function ($1) {
             return $1.toUpperCase();
@@ -3171,7 +3102,6 @@
      * @param   {Array}    markdownToC     传入用于接收TOC的数组
      * @returns {Renderer} markedRenderer  返回marked的Renderer自定义对象
      */
-
     editormd.markedRenderer = function (markdownToC, options) {
         var defaults = {
             toc: true,           // Table of contents
@@ -3618,7 +3548,6 @@
      * @param   {Integer}  startLevel      Hx 起始层级
      * @returns {Object}   tocContainer    返回ToC列表容器层的jQuery对象元素
      */
-
     editormd.markdownToCRenderer = function (toc, container, tocDropdown, startLevel) {
 
         var html = "";
@@ -3677,7 +3606,6 @@
      * @param   {String}   tocTitle        ToC title
      * @returns {Object}                   return toc-menu object
      */
-
     editormd.tocDropdownMenu = function (container, tocTitle) {
 
         tocTitle = tocTitle || "Table of Contents";
@@ -3739,7 +3667,6 @@
      * @param   {String}   filters       要过滤的标签
      * @returns {String}   html          返回过滤的HTML
      */
-
     editormd.filterHTMLTags = function (html, filters) {
 
         if (typeof html !== "string") {
@@ -3816,7 +3743,6 @@
      * @param   {Object}   [options={}]  配置选项，可选
      * @returns {Object}   div           返回jQuery对象元素
      */
-
     editormd.markdownToHTML = function (id, options) {
         var defaults = {
             gfm: true,
@@ -4001,7 +3927,6 @@
      * @param {Function} [callback=function()] 加载成功后执行的回调函数
      * @param {String}   [into="head"]         嵌入页面的位置
      */
-
     editormd.loadPlugin = function (fileName, callback, into) {
         callback = callback || function () {
         };
@@ -4020,7 +3945,6 @@
      * @param {Function} [callback=function()] 加载成功后执行的回调函数
      * @param {String}   [into="head"]         嵌入页面的位置
      */
-
     editormd.loadCSS = function (fileName, callback, into) {
         into = into || "head";
         callback = callback || function () {
@@ -4054,7 +3978,6 @@
      * @param {Function} [callback=function()] 加载成功后执行的回调函数
      * @param {String}   [into="head"]         嵌入页面的位置
      */
-
     editormd.loadScript = function (fileName, callback, into) {
 
         into = into || "head";
@@ -4106,7 +4029,6 @@
      *
      * @param {Function} [callback=function()]  加载成功后执行的回调函数
      */
-
     editormd.loadKaTeX = function (callback) {
         editormd.loadCSS(editormd.katexURL.css, function () {
             editormd.loadScript(editormd.katexURL.js, callback || function () {
@@ -4132,7 +4054,6 @@
      * @param   {Boolean}   lock   Boolean 布尔值，是否锁屏
      * @returns {void}
      */
-
     editormd.lockScreen = function (lock) {
         $("html,body").css("overflow", (lock) ? "hidden" : "");
     };
@@ -4144,7 +4065,6 @@
      * @param   {Object} options 配置项键值对 Key/Value
      * @returns {dialog} 返回创建的dialog的jQuery实例对象
      */
-
     editormd.createDialog = function (options) {
         var defaults = {
             name: "",
@@ -4156,8 +4076,8 @@
             content: "",
             mask: true,
             maskStyle: {
-                backgroundColor: "#fff",
-                opacity: 0.1
+                backgroundColor: "#000",
+                opacity: 0.5
             },
             lockScreen: true,
             footer: true,
@@ -4387,7 +4307,6 @@
      * @param   {String} [touchEventType="touchend"] 供选择的触摸事件
      * @returns {String} EventType                   返回事件类型名称
      */
-
     editormd.mouseOrTouch = function (mouseEventType, touchEventType) {
         mouseEventType = mouseEventType || "click";
         touchEventType = touchEventType || "touchend";
