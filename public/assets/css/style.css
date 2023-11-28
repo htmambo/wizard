@@ -277,7 +277,21 @@ a:hover {
     right: 8px;
     color: #ccc;
 }
+.pull-right {
+  float: right;
+}
 
+.pull-left {
+  float: left;
+}
+
+.fa.pull-left {
+  margin-right: .3em;
+}
+
+.fa.pull-right {
+  margin-left: .3em;
+}
 .wz-box-tag.pull-right {
     right: 8px;
 }
@@ -1624,4 +1638,4 @@ pre.prettyprint *,
 }
 
 .dropdown-menu .dropdown-item {padding-top: 0;padding-bottom: 0;}
-.wz-score-opt .fa {font-size: 48px;}
+.wz-score-opt .fa, .wz-score-opt .far {font-size: 48px;}

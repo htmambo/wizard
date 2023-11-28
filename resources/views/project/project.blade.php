@@ -132,15 +132,15 @@
                 @if (!Auth::guest())
                     <fieldset {{ Auth::guest() ? 'disabled':'' }}>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 1 ? 'active' : '' }} bmd-btn-fab" style="color: #21b351" data-type="1"><i class="fa fa-smile-o"></i></button>
+                            <button type="button" class="btn btn-default {{ $user_score_type == 1 ? 'active' : '' }} bmd-btn-fab" style="color: #21b351" data-type="1"><i class="far fa-smile"></i></button>
                             <p>{{ $scores[1] ?? '' }} 很赞</p>
                         </div>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 2 ? 'active' : '' }} bmd-btn-fab" style="color: #989898" data-type="2"><i class="fa fa-di">sentiment_very_dissatisfied</i></button>
+                            <button type="button" class="btn btn-default {{ $user_score_type == 2 ? 'active' : '' }} bmd-btn-fab" style="color: #989898" data-type="2"><i class="far fa-face-dizzy fa-shake"></i></button>
                             <p>{{ $scores[2] ?? '' }} 看不懂</p>
                         </div>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 3 ? 'active' : '' }} bmd-btn-fab" style="color: #fed612" data-type="3"><i class="fa fa-frown-o"></i></button>
+                            <button type="button" class="btn btn-default {{ $user_score_type == 3 ? 'active' : '' }} bmd-btn-fab" style="color: #fed612" data-type="3"><i class="far fa-frown"></i></button>
                             <p>{{ $scores[3] ?? '' }} 潦草</p>
                         </div>
                     </fieldset>

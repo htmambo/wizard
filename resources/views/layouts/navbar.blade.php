@@ -61,7 +61,7 @@
         @endImpersonating
     @endif
     <button type="button" class="wz-hide-small-screen btn bmd-btn-icon wz-theme-indicator ml-2" data-toggle="tooltip" title="切换主题">
-        <i class="fa fa-sun-o"></i>
+        <i class="far fa-sun"></i>
     </button>
 </div>
 
@@ -81,11 +81,11 @@
                     currentTheme = '{{ config('wizard.theme') }}';
                 }
 
-                var themeIndicator = $('.wz-theme-indicator .fa');
+                var themeIndicator = $('.wz-theme-indicator .far');
                 if(currentTheme === 'dark') {
-                    themeIndicator.removeClass('fa-sun-o').addClass('fa-moon-o');
+                    themeIndicator.removeClass('fa-sun').addClass('fa-moon');
                 } else {
-                    themeIndicator.removeClass('fa-moon-o').addClass('fa-sun-o');
+                    themeIndicator.removeClass('fa-moon').addClass('fa-sun');
                 }
 
                 $('.wz-theme-indicator').on('click', function () {
@@ -125,9 +125,9 @@
                         }
                     }
                     if(currentTheme === 'dark') {
-                        themeIndicator.removeClass('fa-sun-o').addClass('fa-moon-o');
+                        themeIndicator.removeClass('fa-sun').addClass('fa-moon');
                     } else {
-                        themeIndicator.removeClass('fa-moon-o').addClass('fa-sun-o');
+                        themeIndicator.removeClass('fa-moon').addClass('fa-sun');
                     }
                     $.wz.setCookie('wizard-theme', currentTheme, 365);
                     store.set('wizard-theme', currentTheme);
