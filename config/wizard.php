@@ -261,4 +261,8 @@ return [
          */
         'size' => env('WIZARD_WATERMARK_FONT_SIZE', 48),
     ],
+    /**
+     * Gotenberg 配置
+     */
+    'gotenberg_url' => env('WIZARD_GOTENBERG_URL', ''),
 ];

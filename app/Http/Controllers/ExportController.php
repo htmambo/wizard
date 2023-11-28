@@ -14,6 +14,8 @@ use App\Repositories\Project;
 use Illuminate\Http\Request;
 use Log;
 use Mpdf\Mpdf;
+use Gotenberg\Gotenberg;
+use Gotenberg\Exceptions\GotenbergApiErroed;
 
 class ExportController extends Controller
 {
@@ -29,7 +31,7 @@ class ExportController extends Controller
     {
         return response()->streamDownload(function () use ($request) {
             $url = rtrim(config('app.url', '/'));
-            echo preg_replace('/\!\[(.*?)\]\(\/storage\/(.*?).(jpg|png|jpeg|gif)(.*?)\)/',
+            echo preg_replace('/!\[(.*?)]\(\/storage\/(.*?).(jpg|png|jpeg|gif)(.*?)\)/',
                 '![$1](' . $url . '/storage/$2.$3$4)', $request->input('content'));
         }, $filename);
     }
@@ -130,6 +132,10 @@ class ExportController extends Controller
      */
     public function gotenberg(Request $request, $id, $page_id)
     {
+        $gotenbergUrl = trim(config('wizard.gotenberg_url'));
+        if(!$gotenbergUrl) {
+            abort(403, '未配置Gotenberg服务地址');
+        }
         /** @var Project $project */
         $project = Project::query()->findOrFail($id);
         $policy  = new ProjectPolicy();
@@ -138,6 +144,16 @@ class ExportController extends Controller
         }
         $token = genReadToken($id, $page_id);
         $url = wzRoute('project:doc:read', ['id' => $id, 'page_id' => $page_id, 'token' => $token ]);
-        echo '<a href="' . $url . '" target="_blank">' . $url . '</a>';
+        $url = rtrim(config('app.url'), '/') . $url;
+        $request = Gotenberg::chromium($gotenbergUrl)
+	        ->url($url);
+        try {
+            $response = Gotenberg::send($request);
+            return $response;
+        } catch (GotenbergApiErroed $e) {
+            return $e->getResponse();
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 }

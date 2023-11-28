@@ -134,8 +134,27 @@ $.wz.mdEditor = function (editor_id, params) {
                     lockScreen: true,
                     buttons: {
                         enter: [config.lang.confirmBtn, function () {
-
+                            var docTitle = $('#editor-title').val();
+                            var parentId = $('#form-pid').val();
+                            var parentTitle = $('#form-pid option:selected').text();
+                            var content = config.templateSelected(this);
+                            if(docTitle) {
+                                content = content.replaceAll('[DOC_TITLE]', docTitle);
+                            }
+                            if(parentId) {
+                                content = content.replaceAll('[PARENT_ID]', parentId);
+                            }
+                            if(parentTitle) {
+                                content = content.replaceAll('[PARENT_TITLE]', parentTitle);
+                            }
+                            // 获取光标所在行
+                            var cursor = cm.getCursor();
+                            var currentLine = cursor.line + 1;
                             cm.replaceSelection(config.templateSelected(this));
+                            // 跳转到替换前的行，使用编辑器动作来实现预览窗的位置同步
+                            mdEditor.gotoLine(currentLine);
+                            // 这里主要实现的是跳转到插入前的列
+                            cm.setCursor(cursor);
                             this.hide().lockScreen(false).hideMask();
 
                             return false;

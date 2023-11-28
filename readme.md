@@ -13,6 +13,18 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 
 > 在Wizard中，正在编辑的文档会定时自动保存到本地的 Local Storage 中，避免错误关闭页面而造成编辑内容丢失。
 
+### 需要解决的：
+```
+Package adldap2/adldap2 is abandoned, you should avoid using it. No replacement was suggested.
+Package adldap2/adldap2-laravel is abandoned, you should avoid using it. No replacement was suggested.
+Package jakub-onderka/php-console-color is abandoned, you should avoid using it. Use php-parallel-lint/php-console-color instead.
+Package jakub-onderka/php-console-highlighter is abandoned, you should avoid using it. Use php-parallel-lint/php-console-highlighter instead.
+Package swiftmailer/swiftmailer is abandoned, you should avoid using it. Use symfony/mailer instead.
+Package symfony/debug is abandoned, you should avoid using it. Use symfony/error-handler instead.
+Package yzalis/identicon is abandoned, you should avoid using it. No replacement was suggested.
+Package fzaninotto/faker is abandoned, you should avoid using it. No replacement was suggested.
+Package phpunit/php-token-stream is abandoned, you should avoid using it. No replacement was suggested.
+```
 目前主要包含以下功能
 
 - Swagger，Markdown，[Table](https://github.com/mylxsw/wizard/wiki/%E8%A1%A8%E6%A0%BC%E7%B1%BB%E5%9E%8B%E6%96%87%E6%A1%A3%E6%94%AF%E6%8C%81) 类型的文档管理
