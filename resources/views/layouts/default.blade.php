@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <meta name="description" content="@if(isset($description)){{ $description }}@else{{ env('APP_DESCRIPTION') }}@endif">
-    <meta name="author" content="@if(isset($author)){{ $author }}@else{{ env('APP_AUTHOR')}}@endif">
+    <meta name="description" content="@if($__env->yieldContent('description'))@yield('description')@else{{ env('APP_DESCRIPTION') }}@endif">
+    <meta name="author" content="@if($__env->yieldContent('author'))@yield('author')@else{{ env('APP_AUTHOR')}}@endif">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- 网站icon，来自于Google开源图标 -->
     <link rel="icon" type="image/png" href="{{ cdn_resource('/favorite.png') }}">
 
-    <title>@if(!isset($title) || empty(trim($title)) || trim($title) == '首页'){{ config('app.name', 'Wizard API') }}@else{{ $title }} - {{ config('app.name', 'Wizard API') }}@endif</title>
+    <title>@if(!empty(trim($__env->yieldContent('title'))) && trim($__env->yieldContent('title')) !== '首页')@yield('title') - @endif{{ config('app.name', 'Wizard API') }}</title>
 
     <link href="{{ cdn_resource('/assets/css/normalize.css') }}" rel="stylesheet">
     <link href="{{ cdn_resource('/assets/css/tagmanager.css') }}" rel="stylesheet">
