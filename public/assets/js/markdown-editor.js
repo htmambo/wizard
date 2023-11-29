@@ -150,7 +150,7 @@ $.wz.mdEditor = function (editor_id, params) {
                             // 获取光标所在行
                             var cursor = cm.getCursor();
                             var currentLine = cursor.line + 1;
-                            cm.replaceSelection(config.templateSelected(this));
+                            cm.replaceSelection(content);
                             // 跳转到替换前的行，使用编辑器动作来实现预览窗的位置同步
                             mdEditor.gotoLine(currentLine);
                             // 这里主要实现的是跳转到插入前的列
