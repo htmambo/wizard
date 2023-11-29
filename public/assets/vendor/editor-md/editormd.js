@@ -3370,7 +3370,7 @@
             // if (level === 2) {
             //     headingHTML += "<i class='fa fa-thumb-tack mr-2'></i>";
             // } else if (level === 3) {
-                headingHTML += "<i class='fa fa-slack mr-2'></i>";
+                headingHTML += "<i class='fa fa-hashtag mr-2'></i>";
             // }
             // Wizard 添加样式 END
 
