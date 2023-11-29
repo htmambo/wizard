@@ -12,8 +12,8 @@
  * @param mode  0-自动 1-全部展开 2-全部折叠
  */
 $.wz.navigator_tree = function (left_nav, mode) {
-    var icon_close = 'fa fa-folder-o';
-    var icon_open = 'fa fa-folder-open-o';
+    var icon_close = 'fa fa-folder';
+    var icon_open = 'fa fa-folder-open';
     mode = mode || 0;
 
     var childrenShow = function (elementLi) {
@@ -102,7 +102,7 @@ $.wz.navigator_tree = function (left_nav, mode) {
     // 当前选中元素的下级元素自动展开
     childrenShow(left_nav.find('li.active'));
     left_nav.find('li:not(.wz-has-child)').map(function () {
-        var nav_icon = ($(this).data('type') === 'swagger' ? 'fa-code' : ($(this).data('type') === 'markdown' ? 'fa-file-text-o' : ($(this).data('type') === 'html' ? 'fa-html5' : 'fa-table')));
+        var nav_icon = ($(this).data('type') === 'swagger' ? 'fa-code' : ($(this).data('type') === 'markdown' ? 'fa-file-lines' : ($(this).data('type') === 'html' ? 'fa-brands fa-html5' : 'fa-table')));
         $(this).prepend('<a class="fa ' + nav_icon + ' wz-nav-fold" href="javascript:;"></a>');
     });
 

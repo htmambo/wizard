@@ -302,7 +302,7 @@
         @endif
 
         var documentIsEmpty = {{ trim($pageItem->content ?? '') === '' ? 'true' : 'false' }};
-        if ($('.markdown-body .wz-nav-container-in-doc').length > 0) {
+        if ($('.markdown-body .wz-nav-container-in-doc').length > 0 && $('.wz-has-child.active').children('ul').length>0) {
             $('.markdown-body .wz-nav-container-in-doc').replaceWith("<div class='wz-nav-normalize'>" + $('.wz-has-child.active').children('ul').html() + "</div>");
         } else {
             if (documentIsEmpty && $('.wz-has-child.active') !== null && $('.wz-has-child.active').children('ul') !== null && $('.wz-has-child.active').children('ul').html() != null) {
