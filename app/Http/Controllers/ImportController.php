@@ -101,7 +101,7 @@ class ImportController extends Controller
         return $this->createDocument(
             $project,
             Document::TYPE_DOC,
-            basename($file->getClientOriginalName(), ".{$file->getClientOriginalExtension()}"),
+            $this->_basename($file->getClientOriginalName(), ".{$file->getClientOriginalExtension()}"),
             file_get_contents($file->getRealPath()),
             $pid
         );
@@ -120,7 +120,7 @@ class ImportController extends Controller
         return $this->createDocument(
             $project,
             Document::TYPE_SWAGGER,
-            basename($file->getClientOriginalName(), ".{$file->getClientOriginalExtension()}"),
+            $this->_basename($file->getClientOriginalName(), ".{$file->getClientOriginalExtension()}"),
             file_get_contents($file->getRealPath()),
             $pid
         );
@@ -166,7 +166,7 @@ class ImportController extends Controller
             }
 
 
-            $filePath = rtrim($prefix, '/') . '/' . basename($name, '.' . pathinfo($name)['extension']);
+            $filePath = rtrim($prefix, '/') . '/' . $this->_basename($name, '.' . pathinfo($name)['extension']);
             return [
                 'name' => isset($navigatorsMap[$filePath]) ? null : $name,
                 'pid'  => $navigatorsMap["/{$dir}"] ?? null,
@@ -180,9 +180,9 @@ class ImportController extends Controller
             $stream = $zipArch->getStream($file['name']);
             try {
                 $content = stream_get_contents($stream);
-                $basenameL = strtolower(basename($file['name']));
+                $basenameL = strtolower($this->_basename($file['name']));
                 $type = Str::endsWith($basenameL, ['.md', '.markdown']) ? Document::TYPE_DOC : Document::TYPE_SWAGGER;
-                $title = basename($file['name'], '.' . pathinfo($file['name'])['extension']);
+                $title = $this->_basename($file['name'], '.' . pathinfo($file['name'])['extension']);
 
                 $this->createDocument($project, $type, $title, $content, $file['pid']);
             } finally {
@@ -299,7 +299,7 @@ class ImportController extends Controller
         $validFiles = [];
         for ($i = 0; $i < $zipArch->numFiles; $i++) {
             $name = $zipArch->getNameIndex($i);
-            $basename = basename($name);
+            $basename = $this->_basename($name);
 
             if (Str::startsWith($basename, '.')) {
                 continue;
@@ -313,5 +313,16 @@ class ImportController extends Controller
             $validFiles[] = $name;
         }
         return $validFiles;
+    }
+    private function _basename($name, $ext = null) {
+        // basename 不支持中文路径，所以需要替代一下
+        $name = str_replace('\\', '/', $name);
+        $name = preg_replace('/\/+/', '/', $name);
+        $name = explode('/', $name);
+        $name = end($name);
+        if (!empty($ext)) {
+            $name = str_replace($ext, '', $name);
+        }
+        return $name;
     }
 }
