@@ -13,7 +13,7 @@
                     <i class="fa fa-dashboard mr-2"></i> 仪表盘
                 </a>
                 <a class="nav-link {{ $op == 'groups' ? 'active':'' }}" href="{{ wzRoute('admin:groups') }}">
-                    <i class="fa fa-group mr-2"></i>用户组管理
+                    <i class="fa fa-user-group mr-2"></i>用户组管理
                 </a>
                 <a class="nav-link {{ $op == 'users' ? 'active':'' }}" href="{!! wzRoute('admin:users') !!}">
                     <i class="fa fa-user mr-2"></i> 用户管理
