@@ -143,7 +143,7 @@ class ExportController extends Controller
             abort(403, '您没有访问该项目的权限');
         }
         $token = genReadToken($id, $page_id);
-        $url = wzRoute('project:doc:read', ['id' => $id, 'page_id' => $page_id, 'token' => $token ]);
+        $url = wzRoute('project:doc:read', ['id' => $id, 'page_id' => $page_id, 'token' => $token, 'topdf' => 1]);
         $url = rtrim(config('app.url'), '/') . $url;
         $request = Gotenberg::chromium($gotenbergUrl)
 	        ->url($url);

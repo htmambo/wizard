@@ -570,6 +570,7 @@ class DocumentController extends Controller
             'pageItem' => $page,
             'type'     => $type,
             'noheader' => true,
+            'topdf'    => $request->input('topdf', 0) ? 'topdf' : '',
             'hash'     => ''
         ]);
     }

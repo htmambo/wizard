@@ -12,7 +12,7 @@
     <hr />
     @endif
 </nav>
-<div class="markdown-body" id="markdown-body">
+<div class="markdown-body {{ $topdf }}" id="markdown-body">
     @if($type == 'html')
         {{ print_r($pageItem->content) }}
     @endif
