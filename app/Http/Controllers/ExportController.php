@@ -145,11 +145,19 @@ class ExportController extends Controller
         $token = genReadToken($id, $page_id);
         $url = wzRoute('project:doc:read', ['id' => $id, 'page_id' => $page_id, 'token' => $token, 'topdf' => 1]);
         $url = rtrim(config('app.url'), '/') . $url;
-        $request = Gotenberg::chromium($gotenbergUrl)
-	        ->url($url);
+        // 获取页面标题
+        $doc = Document::query()->where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $title = $doc->title;
+        $title = preg_replace('/[^\p{L}\p{N}\-]+/u', '', $title);
+        // 移除连续的破折号
+        $title = preg_replace('/-+/', '-', $title);
         try {
-            $response = Gotenberg::send($request);
-            return $response;
+            // 调用Gotenberg导出PDF
+            return  Gotenberg::send(
+                Gotenberg::chromium($gotenbergUrl)
+                ->outputFilename($title)
+                ->url($url)
+            );
         } catch (GotenbergApiErroed $e) {
             return $e->getResponse();
         } catch (\Exception $e) {
