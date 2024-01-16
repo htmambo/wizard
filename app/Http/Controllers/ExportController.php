@@ -151,9 +151,17 @@ class ExportController extends Controller
         $title = preg_replace('/[^\p{L}\p{N}\-]+/u', '', $title);
         // 移除连续的破折号
         $title = preg_replace('/-+/', '-', $title);
+        // 移除首尾的破折号
+        $title = trim($title, '-');
+        // 如果标题为空，则使用页面ID作为标题
+        if(empty($title)) {
+            $title = 'page-'. $page_id;
+        }
+        // 限制标题长度
+        $title = mb_substr($title, 0, 100, 'utf-8');
         try {
             // 调用Gotenberg导出PDF
-            return  Gotenberg::send(
+            return Gotenberg::send(
                 Gotenberg::chromium($gotenbergUrl)
                 ->outputFilename($title)
                 ->url($url)
