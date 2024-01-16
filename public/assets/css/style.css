@@ -1639,3 +1639,7 @@ pre.prettyprint *,
 
 .dropdown-menu .dropdown-item {padding-top: 0;padding-bottom: 0;}
 .wz-score-opt .fa, .wz-score-opt .far {font-size: 48px;}
+
+.topdf .copy-button {
+    display: none;
+}
