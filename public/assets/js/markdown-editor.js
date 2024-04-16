@@ -91,7 +91,7 @@ $.wz.mdEditor = function (editor_id, params) {
         flowChart: true,
         sequenceDiagram: true,
         imageUpload: true,
-        imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "svg"],
+        imageFormats: ["webp", "jpg", "jpeg", "gif", "png", "bmp", "svg"],
         imageUploadURL: "/upload",
         htmlDecode: true,
         toolbarIconsClass: {

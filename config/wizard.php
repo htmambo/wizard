@@ -151,7 +151,7 @@ return [
          * 支持的文件扩展名列表，使用,分割
          */
         'support_extensions' => env('WIZARD_ATTACHMENTS_SUPPORT_EXTENSIONS',
-            'jpg,jpeg,gif,png,bmp,zip,rar,war,mwb,xmind,itmz,mindnode,svg,md,vsd,vsdx,txt,doc,docx,xls,xlsx,ppt,pptx,pdf,sql'),
+            'webp,jpg,jpeg,gif,png,bmp,zip,rar,war,mwb,xmind,itmz,mindnode,svg,md,vsd,vsdx,txt,doc,docx,xls,xlsx,ppt,pptx,pdf,sql'),
     ],
     /**
      * 全文搜索
