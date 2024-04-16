@@ -3373,7 +3373,7 @@
                 headingHTML += "<i class='fa fa-hashtag mr-2'></i>";
             // }
             // Wizard 添加样式 END
-
+            text = text.replace(/<\/?.+?>/g,"").replace(/ /g,"");
             headingHTML += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
             headingHTML += "<span class=\"header-link octicon octicon-link\"></span>";
             headingHTML += (hasLinkReg) ? this.atLink(this.emoji(linkText)) : this.atLink(this.emoji(text));
