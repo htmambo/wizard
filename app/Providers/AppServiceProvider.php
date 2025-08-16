@@ -20,6 +20,9 @@ use Carbon\Carbon;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use App\Guards\TokenGuard;
+// use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,6 +36,14 @@ class AppServiceProvider extends ServiceProvider
         // 用于解决某些版本的mysql下，由于默认编码为utf8mb4而导致出现错误
         // Syntax error or access violation: 1071 Specified key was too long; max key length is 767 bytes
         Schema::defaultStringLength(191);
+        // 注册自定义 Token Guard
+        Auth::extend('wizard_token', function ($app, $name, array $config) {
+            return new TokenGuard(
+                Auth::createUserProvider($config['provider']),
+                $app->make('request'),
+                $config['input_key'] ?? 'api_token'
+            );
+        });
 
         $this->addProjectExistRules('project_exist');
         $this->addPageExistRules('page_exist');
@@ -43,12 +54,12 @@ class AppServiceProvider extends ServiceProvider
         $this->addInvitationCodeRules('invitation_code');
 
         // 在日志中输出sql历史
-       \DB::listen(function (QueryExecuted $query) {
-           \Log::debug('sql_execute', [
-               'sql'   => $query->sql,
-               'binds' => $query->bindings,
-           ]);
-       });
+        \DB::listen(function (QueryExecuted $query) {
+            \Log::debug('sql_execute', [
+                'sql'   => $query->sql,
+                'binds' => $query->bindings,
+            ]);
+        });
     }
 
     /**

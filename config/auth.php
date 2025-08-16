@@ -40,6 +40,12 @@ return [
             'driver'   => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver'   => 'wizard_token',
+            'provider' => 'users',
+            'input_key' => 'api_token', // 认证时使用的输入字段
+            'hash'     => false,
+        ],
     ],
 
     /*
