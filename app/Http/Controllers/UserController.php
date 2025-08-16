@@ -242,8 +242,8 @@ class UserController extends Controller
     {
         try {
             $token = jwt_parse_token($request->input('token'));
-            $user_id = $token->getClaim('uid');
-            $email = $token->getClaim('email');
+            $user_id = $token->claims()->get('uid');
+            $email = $token->claims()->get('email');
 
             /** @var User $user */
             $user = User::findOrFail($user_id);

@@ -12,10 +12,10 @@ use App\Policies\ProjectPolicy;
 use App\Repositories\Document;
 use App\Repositories\Project;
 use Illuminate\Http\Request;
-use Log;
+use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Gotenberg\Gotenberg;
-use Gotenberg\Exceptions\GotenbergApiErroed;
+use Gotenberg\Exceptions\GotenbergApiErrored;
 
 class ExportController extends Controller
 {
@@ -93,7 +93,6 @@ class ExportController extends Controller
         $mpdf->WriteHTML($header);
 
         $html = "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$content}</div>";
-//        echo $header.$html;exit;
         $mpdf->Bookmark($title, 0);
         try {
             $pages = explode('<hr style="page-break-after:always;" class="page-break editormd-page-break">', $html);
@@ -144,9 +143,12 @@ class ExportController extends Controller
         }
         $token = genReadToken($id, $page_id);
         $url = wzRoute('project:doc:read', ['id' => $id, 'page_id' => $page_id, 'token' => $token, 'topdf' => 1]);
-        $url = rtrim(config('app.url'), '/') . $url;
+        // $url = rtrim(config('app.url'), '/') . $url;
+        $url = 'https://doc.imzhp.com' . $url; // TODO: 临时使用外网地址，后续需要改为内网地址
         // 获取页面标题
         $doc = Document::query()->where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $tags = $doc->tags()->pluck('name')->toArray();
+        $tags = implode(',', $tags);
         $title = $doc->title;
         $title = preg_replace('/[^\p{L}\p{N}\-]+/u', '', $title);
         // 移除连续的破折号
@@ -159,14 +161,28 @@ class ExportController extends Controller
         }
         // 限制标题长度
         $title = mb_substr($title, 0, 100, 'utf-8');
+        $metadata = [
+            'Title' => $title,
+            'author' => $doc->user->name,
+            'subject' => $title,
+            'Producer' => 'Gotenberg PHP Client',
+            'creator' => config('app.name') ?: 'Wizard',
+            'CreateDate' => $doc->created_at->format('Y-m-d H:i:s'),
+            'ModifyDate' => $doc->updated_at->format('Y-m-d H:i:s')
+        ];
+        if($tags) {
+            $metadata['keywords'] = $tags;
+        }
         try {
             // 调用Gotenberg导出PDF
             return Gotenberg::send(
                 Gotenberg::chromium($gotenbergUrl)
-                ->outputFilename($title)
-                ->url($url)
+                    ->pdf()
+                    ->metadata($metadata)
+                    ->outputFilename($title)
+                    ->url($url)
             );
-        } catch (GotenbergApiErroed $e) {
+        } catch (GotenbergApiErrored $e) {
             return $e->getResponse();
         } catch (\Exception $e) {
             return $e->getMessage();

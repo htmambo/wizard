@@ -40,7 +40,7 @@ class UserActivate extends Mailable
 
         // 这里要用route函数，不能用wzRoute!!!
         $link = route('user:activate', [
-            'token' => (string)$token
+            'token' => $token->toString()
         ]);
 
         return $this->subject('用户账号激活')

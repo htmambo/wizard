@@ -260,6 +260,7 @@ return [
          * 文字水印所使用的字号
          */
         'size' => env('WIZARD_WATERMARK_FONT_SIZE', 48),
+        'border_size' => env('WIZARD_WATERMARK_BORDER_SIZE', 2),
     ],
     /**
      * Gotenberg 配置

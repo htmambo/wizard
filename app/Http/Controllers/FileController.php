@@ -41,7 +41,11 @@ class FileController extends Controller
 
         $path = $file->storePublicly(sprintf('public/%s', date('Y/m-d')));
         $file1 = public_path('storage/' . substr($path, 7));
-        watermark($file1);
+        try {
+            watermark($file1);
+        } catch (\Exception $e) {
+            $path = $file->storePublicly(sprintf('public/%s', date('Y/m-d')));
+        }
         return $this->response(true, __('common.upload.success'), \Storage::url($path));
     }
 
