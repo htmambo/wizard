@@ -17,23 +17,23 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
-
-/**
- * 生成路由url
- *
- * @param string $name
- * @param array  $parameters
- * @param bool   $absolute
- *
- * @return string
- */
-function wzRoute($name, $parameters = [], $absolute = false)
-{
-    foreach ($parameters as $k => $v) {
-        $parameters[$k] = urlencode($v);
+if(!function_exists('wzRoute')) {
+    /**
+     * 生成路由url
+     *
+     * @param string $name
+     * @param array  $parameters
+     * @param bool   $absolute
+     *
+     * @return string
+     */
+    function wzRoute($name, $parameters = [], $absolute = false)
+    {
+        foreach ($parameters as $k => $v) {
+            $parameters[$k] = urlencode($v);
+        }
+        return route($name, $parameters, $absolute);
     }
-    return route($name, $parameters, $absolute);
-}
 
 /**
  * 文档类型标识转换
@@ -1177,4 +1177,5 @@ function checkReadToken($id, $page_id, $token)
     }
     $tmp = shulz($id, $page_id, $pre);
     return $token === $tmp && $pre >= date('ymdHis') - $life;
+}
 }
