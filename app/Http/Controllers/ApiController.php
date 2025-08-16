@@ -49,7 +49,7 @@ class ApiController extends Controller
     protected function getMethodFromPath($path){
         // 将路径转换为方法名，支持多级路径
         $segments = explode('/', trim($path, '/'));
-        $method   = 'get';
+        $method   = '';
         foreach ($segments as $segment) {
             // 跳过参数占位符
             if (strpos($segment, '{') === false) {
@@ -74,7 +74,7 @@ class ApiController extends Controller
     /**
      * 获取版本信息
      */
-    private function getVersion(Request $request){
+    private function Version(Request $request){
         // 返回应用的版本信息
         return $this->success([
                                     'version'         => config('wizard.version', '1.0.0'),
@@ -88,30 +88,17 @@ class ApiController extends Controller
     /**
      * 搜索功能
      */
-    private function getSearch(Request $request){
+    private function Search(Request $request){
         $query = $request->get('q', '');
         $type  = $request->get('type', 'all'); // all, project, document
         $limit = min($request->get('limit', 20), 100);
 
         if (empty($query)) {
-            return response()->json([
-                                        'success' => false,
-                                        'error'   => 'Search query is required',
-                                    ], 400);
+            return $this->error('Search query is required', 400);
         }
 
         try {
             $results = [];
-
-            if ($type === 'all' || $type === 'project') {
-                $projects = Project::where('name', 'like', "%{$query}%")
-                                   ->orWhere('description', 'like', "%{$query}%")
-                                   ->limit($limit)
-                                   ->get(['id', 'name', 'description']);
-
-                $results['projects'] = $projects;
-            }
-
             if ($type === 'all' || $type === 'document') {
                 $documents = Document::where('title', 'like', "%{$query}%")
                                      ->orWhere('content', 'like', "%{$query}%")
@@ -120,21 +107,13 @@ class ApiController extends Controller
 
                 $results['documents'] = $documents;
             }
-
-            return response()->json([
-                                        'success' => true,
-                                        'data'    => $results,
-                                        'meta'    => [
-                                            'query' => $query,
-                                            'type'  => $type,
-                                            'limit' => $limit,
-                                        ],
-                                    ]);
+            return $this->success($results, 'Search results', [
+                'query' => $query,
+                'type'  => $type,
+                'limit' => $limit,
+            ]);
         } catch (\Exception $e) {
-            return response()->json([
-                                        'success' => false,
-                                        'error'   => 'Search failed',
-                                    ], 500);
+            return $this->error(config('app.debug')?$e->getMessage():'Search failed', 500);
         }
     }
 }

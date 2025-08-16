@@ -37,12 +37,12 @@ class DocumentController extends ApiController
     public function view(Request $request, $id){
         $document = Document::find($id);
         if (!$document) {
-            return response()->json(['error' => 'Document not found'], 404);
+            return $this->error('Document not found', 404);
         }
 
         // 检查权限
         if (!Auth::user()->can('project-view', $document->project)) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error('Unauthorized', 403);
         }
         if($document->isMarkdown() && $request->input('format', 'raw') === 'html') {
             $parser = new CommonMarkConverter([
@@ -60,13 +60,13 @@ class DocumentController extends ApiController
         //     // 如果是流程图文档，并且请求格式为XML，则转换为XML
         //     $document->content = Formatter::make($document->content, Formatter::XML)->toArray();
         }
-
-        return response()->json([
+        $document = [
             'id' => $document->id,
             'title' => $document->title,
             'content' => $document->content,
             'created_at' => $document->created_at->toIso8601String(),
             'updated_at' => $document->updated_at->toIso8601String(),
-        ]);
+        ];
+        return $this->success($document);
     }
 }

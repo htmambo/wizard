@@ -6,11 +6,6 @@ use App\Repositories\Catalog;
 
 class CatalogController extends ApiController
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     /**
      * 获取目录列表
      *

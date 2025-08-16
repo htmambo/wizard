@@ -21,32 +21,30 @@ use App\Http\Api\ProjectController;
 */
 
 // 需要认证的用户信息路由（保持原有的）
-// Route::middleware('auth:api')
-//      ->get('/user', function (Request $request) {
-//          return $request->user();
-//      });
+Route::middleware('auth:api')
+     ->get('/user', function (Request $request) {
+         return $request->user();
+     });
 
 // 需要认证的API路由组
 Route::middleware('auth:api')->group(function () {
     // 用户相关，控制器：Api\UserController
     Route::prefix('user')->group(function () {
         Route::any('{path}', [UserController::class, 'handleRequest'])
-             ->where('path', '.*')
-             ->name('user.fallback');
+             ->where('path', '.*');
     });
 
     // 目录相关，控制器：Api\CatalogController
     Route::prefix('catalog')->group(function () {
         Route::any('{path}', [CatalogController::class, 'handleRequest'])
-             ->where('path', '.*')
-             ->name('catalog.fallback');
+             ->where('path', '.*');
     });
 
     // 项目相关，控制器：Api\ProjectController
     Route::prefix('project')->group(function () {
+        Route::get('{id}', [ProjectController::class, 'documents']);
         Route::any('{path}', [ProjectController::class, 'handleRequest'])
-             ->where('path', '.*')
-             ->name('project.fallback');
+             ->where('path', '.*');
     });
 
     // 文档管理，控制器：Api\DocumentController
@@ -54,12 +52,8 @@ Route::middleware('auth:api')->group(function () {
         // 文档详情
         Route::get('{id}', [DocumentController::class, 'view']);
         Route::any('{path}', [DocumentController::class, 'handleRequest'])
-             ->where('path', '.*')
-             ->name('document.fallback');
+             ->where('path', '.*');
     });
-
-    // 搜索
-    Route::get('search', [ApiController::class, 'handleRequest'])->defaults('path', 'search');
 
     // 操作日志
     Route::get('operation/logs', [ApiController::class, 'handleRequest'])->defaults('path', 'operation/logs');
@@ -67,5 +61,4 @@ Route::middleware('auth:api')->group(function () {
 
 // 动态路由处理器（作为后备选项）
 Route::any('{path}', [ApiController::class, 'handleRequest'])
-     ->where('path', '.*')
-     ->name('api.fallback');
+     ->where('path', '.*');
