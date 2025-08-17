@@ -571,7 +571,7 @@ class DocumentController extends Controller
             'type'     => $type,
             'noheader' => true,
             'topdf'    => $request->input('topdf', 0) ? 'topdf' : '',
-            'hash'     => ''
+            'hash'     => $token
         ]);
     }
 
