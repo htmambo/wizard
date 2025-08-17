@@ -19,7 +19,8 @@
                                 deleteTagsOnBackspace: true,
                                 tagsContainer: null,
                                 tagCloseIcon: '<span class="fa fa-close" style="color: #545454;"></span>',
-                                tagClass: 'tm-tag-success',
+                                tagClass: 'tm-tag-success tm-tag-warning tm-tag-error' +
+                                    ' tm-tag-info tm-tag-inverse',
                                 validator: null,
                                 onlyTagList: false
                             });

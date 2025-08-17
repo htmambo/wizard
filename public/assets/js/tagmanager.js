@@ -151,7 +151,7 @@
         newTagRemoveId = $self.data("tm_rndid") + '_Remover_' + tagId;
         escaped = $("<span/>").text(tag).html();
 
-        html = '<span class="' + privateMethods.tagClasses.call($self) + '" id="' + newTagId + '">';
+        html = '<span class="' + privateMethods.tagClasses.call($self, tagId) + '" id="' + newTagId + '">';
         html += '<span>' + escaped + '</span>';
         html += '<a href="#" class="tm-tag-remove" id="' + newTagRemoveId + '" TagIdToRemove="' + tagId + '">';
         html += opts.tagCloseIcon + '</a></span> ';
@@ -260,7 +260,7 @@
       }
     },
 
-    tagClasses: function () {
+    tagClasses: function (tagId) {
       var $self = $(this), opts = $self.data('opts'), tagBaseClass = opts.tagBaseClass,
       inputBaseClass = opts.inputBaseClass, cl;
       // 1) default class (tm-tag)
@@ -274,7 +274,11 @@
         });
       }
       // 3) tags from tagClass option
-      cl += (opts.tagClass ? ' ' + opts.tagClass : '');
+      if(opts.tagClass) {
+        var allClasses = opts.tagClass.split(' ');
+        // 根据tagId选取一个class(使用tagId模除以所有class的数量)
+        cl += ' ' + allClasses[tagId % allClasses.length];
+      }
       return cl;
     },
 

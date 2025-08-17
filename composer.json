@@ -14,6 +14,7 @@
         "greenlion/php-sql-parser": "^4.7",
         "guzzlehttp/guzzle": "^7.9",
         "intervention/image": "^3.11",
+        "j0k3r/php-readability": "^2.0",
         "lab404/laravel-impersonate": "*",
         "laravel/framework": "^12",
         "laravel/tinker": "*",
