@@ -4466,7 +4466,6 @@
             prettyPrint();
             // 编辑状态下不添加复制按钮
             if(!obj.hasClass("editormd-preview-container")) {
-                console.log(location.href.endsWith('markdown.pdf'));
                 const codeBlock = new CodeBlock(this.options);
                 codeBlock.addCopyButtonToCode();
             }

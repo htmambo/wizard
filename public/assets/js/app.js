@@ -104,5 +104,9 @@ $(function () {
             });
         }
     });
-    
+    window.addEventListener('pageshow', function (event) {
+        if(event.persisted || window.performance && window.performance.navigation.type == 2){
+            console.log('back to this page'); typeof(layer)==='object' && layer.hasOwnProperty('closeAll') && layer.closeAll();
+        }
+    },false);
 });
