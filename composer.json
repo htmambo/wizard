@@ -15,14 +15,14 @@
         "guzzlehttp/guzzle": "^7.9",
         "intervention/image": "^3.11",
         "lab404/laravel-impersonate": "*",
-        "laravel/framework": "^12.24.0",
+        "laravel/framework": "^12",
         "laravel/tinker": "*",
         "lcobucci/jwt": "^5.5",
-        "maennchen/zipstream-php": "^3.2",
+        "maennchen/zipstream-php": "*",
         "mpdf/mpdf": "^8.2",
         "php-http/guzzle7-adapter": "^1.1",
         "psr/http-factory-implementation": "*",
-        "sebastian/diff": "^7.0",
+        "sebastian/diff": "*",
         "soapbox/laravel-formatter": "^2.0",
         "symfony/psr-http-message-bridge": "^7.3",
         "yzalis/identicon": "^2.0"
@@ -33,7 +33,7 @@
         "fzaninotto/faker": "^1.5",
         "laravel/ui": "^4.6",
         "mockery/mockery": "^1.6",
-        "phpunit/phpunit": "^12.3"
+        "phpunit/phpunit": "*"
     },
     "autoload": {
         "classmap": [

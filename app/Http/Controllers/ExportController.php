@@ -151,8 +151,8 @@ class ExportController extends Controller
         }
         $token = genReadToken($id, $page_id);
         $url = wzRoute('project:doc:read', ['id' => $id, 'page_id' => $page_id, 'token' => $token, 'topdf' => 1]);
-        // $url = rtrim(config('app.url'), '/') . $url;
-        $url = 'https://doc.imzhp.com' . $url; // TODO: 临时使用外网地址，后续需要改为内网地址
+        $url = rtrim(config('app.url'), '/') . $url;
+        // $url = 'https://doc.imzhp.com' . $url; // TODO: 临时使用外网地址，后续需要改为内网地址
         // 获取页面标题
         $doc = Document::query()->where('project_id', $id)->where('id', $page_id)->firstOrFail();
         $tags = $doc->tags()->pluck('name')->toArray();

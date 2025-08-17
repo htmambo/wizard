@@ -561,6 +561,12 @@ class DocumentController extends Controller
         if (!$hasPriv) {
             abort(403, '您没有访问该项目的权限');
         }
+        /**
+         * 如果没有传入token，则生成一个新的token（用于阅读模式，这似乎是升级到12后的一个BUG?）
+         */
+        if(!$token) {
+            $token = genReadToken($id, $page_id);
+        }
 
         $page = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
         $type = documentType($page->type);
