@@ -13,7 +13,7 @@ class AddPageHtmlCode extends Migration
      */
     public function up()
     {
-        Schema::table('wz_pages', function (Blueprint $table) {
+        Schema::table('pages', function (Blueprint $table) {
             $table->longText('html_code')->nullable()->comment('Markdown渲染后的HTML内容');
         });
     }
@@ -25,7 +25,7 @@ class AddPageHtmlCode extends Migration
      */
     public function down()
     {
-        Schema::table('wz_pages', function (Blueprint $table) {
+        Schema::table('pages', function (Blueprint $table) {
             $table->dropColumn(['html_code']);
         });
     }

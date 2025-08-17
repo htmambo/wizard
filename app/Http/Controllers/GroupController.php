@@ -135,7 +135,7 @@ class GroupController extends Controller
         $this->validate(
             $request,
             [
-                'name' => 'required|unique:wz_groups,name',
+                'name' => 'required|unique:groups,name',
             ],
             [
                 'name.required' => '分组名称不能为空',
@@ -168,7 +168,7 @@ class GroupController extends Controller
             [
                 'name' => [
                     'required',
-                    Rule::unique('wz_groups', 'name')->ignore($id),
+                    Rule::unique('groups', 'name')->ignore($id),
                 ]
             ],
             [

@@ -82,7 +82,7 @@ class Document extends Repository
      */
     const STATUS_OUTDATED = 2;
 
-    protected $table = 'wz_pages';
+    protected $table = 'pages';
     protected $fillable
         = [
             'pid',
@@ -207,7 +207,7 @@ class Document extends Repository
      */
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'wz_page_tag', 'page_id', 'tag_id');
+        return $this->belongsToMany(Tag::class, 'page_tag', 'page_id', 'tag_id');
     }
 
     /**

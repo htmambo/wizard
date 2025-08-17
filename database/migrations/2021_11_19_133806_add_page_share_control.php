@@ -13,7 +13,7 @@ class AddPageShareControl extends Migration
      */
     public function up()
     {
-        Schema::table('wz_page_share', function (Blueprint $table) {
+        Schema::table('page_share', function (Blueprint $table) {
             $table->string('password', 32)->default('')->comment('是否需要使用密码打开');
         });
     }
@@ -25,7 +25,7 @@ class AddPageShareControl extends Migration
      */
     public function down()
     {
-        Schema::table('wz_page_share', function (Blueprint $table) {
+        Schema::table('page_share', function (Blueprint $table) {
             $table->dropColumn(['password']);
         });
     }

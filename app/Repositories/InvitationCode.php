@@ -21,7 +21,7 @@ namespace App\Repositories;
  */
 class InvitationCode extends Repository
 {
-    protected $table = 'wz_invitation_code';
+    protected $table = 'invitation_code';
     protected $fillable = [
         'code',
         'expired_at',

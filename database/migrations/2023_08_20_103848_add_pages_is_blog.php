@@ -14,7 +14,7 @@ class AddPagesIsBlog extends Migration
      */
     public function up()
     {
-        Schema::table('wz_pages', function (Blueprint $table) {
+        Schema::table('pages', function (Blueprint $table) {
             $table->tinyInteger('is_blog', false, false)->default(0)->comment('是否设置为博客');
         });
     }
@@ -26,7 +26,7 @@ class AddPagesIsBlog extends Migration
      */
     public function down()
     {
-        Schema::table('wz_pages', function (Blueprint $table) {
+        Schema::table('pages', function (Blueprint $table) {
             $table->dropColumn(['is_blog']);
         });
     }

@@ -13,7 +13,7 @@ class InvitationCode extends Migration
      */
     public function up()
     {
-        Schema::create('wz_invitation_code', function (Blueprint $table) {
+        Schema::create('invitation_code', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('code', 128)->comment('注册邀请码')->unique();
             $table->dateTime('expired_at')->nullable()->comment('邀请码有效期限');
@@ -30,6 +30,6 @@ class InvitationCode extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('wz_invitation_code');
+        Schema::dropIfExists('invitation_code');
     }
 }

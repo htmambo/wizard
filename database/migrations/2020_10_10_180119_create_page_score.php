@@ -13,7 +13,7 @@ class CreatePageScore extends Migration
      */
     public function up()
     {
-        Schema::create('wz_page_score', function (Blueprint $table) {
+        Schema::create('page_score', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('page_id')->comment('页面 ID');
             $table->unsignedInteger('user_id')->comment('用户 ID');
@@ -30,6 +30,6 @@ class CreatePageScore extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('wz_page_score');
+        Schema::dropIfExists('page_score');
     }
 }

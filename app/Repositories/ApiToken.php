@@ -4,8 +4,6 @@ namespace App\Repositories;
 
 class ApiToken extends Repository
 {
-    protected $table = 'wz_api_tokens';
-
     protected $fillable = [
         'user_id',
         'token',

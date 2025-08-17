@@ -25,7 +25,7 @@ class DocumentScore extends Repository
     const SCORE_NO_USE = 3;
     const SCORE_GARBAGE = 4;
 
-    protected $table = 'wz_page_score';
+    protected $table = 'page_score';
     protected $fillable
         = [
             'page_id',

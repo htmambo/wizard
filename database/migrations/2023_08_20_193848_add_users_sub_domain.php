@@ -14,7 +14,7 @@ class AddUsersSubDomain extends Migration
      */
     public function up()
     {
-        Schema::table('wz_users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->string('sub_domain', 20)->nullable()->comment('用户自定义子域名');
         });
     }
@@ -26,7 +26,7 @@ class AddUsersSubDomain extends Migration
      */
     public function down()
     {
-        Schema::table('wz_users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['sub_domain']);
         });
     }
