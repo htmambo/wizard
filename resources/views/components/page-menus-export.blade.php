@@ -141,7 +141,7 @@
                     if(tags.length) {
                         tagsHtml = '<br /><div class="wz-tags">标签：<span>' + tags.join(',') + '</span></div>';
                         if(contentBody.find('.markdown-toc-list').length)
-                            contentBody.find('.markdown-toc-list').append(tagsHtml);
+                            contentBody.find('.markdown-toc-list').after(tagsHtml);
                         else
                             contentBody.prepend(tagsHtml);
                     }
