@@ -139,7 +139,7 @@
                     var tags = [];
                     $('.tm-tag').each(function(a,b){tags.push($(b).text());})
                     if(tags.length) {
-                        tagsHtml = '<span>标签：' + tags.join(',') + '</span>';
+                        tagsHtml = '<br /><div class="wz-tags">标签：<span>' + tags.join(',') + '</span></div>';
                         if(contentBody.find('.markdown-toc-list').length)
                             contentBody.find('.markdown-toc-list').append(tagsHtml);
                         else
