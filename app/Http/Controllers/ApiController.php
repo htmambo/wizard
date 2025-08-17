@@ -82,6 +82,7 @@ class ApiController extends Controller
                                     'laravel_version' => app()->version(),
                                     'timestamp'       => now()->toISOString(),
                                     'environment'     => app()->environment(),
+                                    'php_version'     => phpversion(),
                                 ]);
     }
 
