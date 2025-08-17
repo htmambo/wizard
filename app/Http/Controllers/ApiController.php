@@ -15,6 +15,7 @@ use App\Repositories\Project;
 use App\Repositories\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\ApiToken;
 
 class ApiController extends Controller
 {
@@ -71,6 +72,54 @@ class ApiController extends Controller
         return $path;
     }
 
+    private function token(Request $request){
+        $username = $request->get('username', '');
+        $password = $request->get('password', '');
+        $grandtType = $request->get('grant_type', 'password');
+        $clientId = $request->get('client_id', config('wizard.client_id', 'default_client'));
+        $clientSecret = $request->get('client_secret');
+        if ($grandtType !== 'password') {
+            return $this->error('Unsupported grant type', 400);
+        }
+        if (empty($username) || empty($password)) {
+            return $this->error('Username and password are required', 400);
+        }
+        if (empty($clientSecret)) {
+            return $this->error('Client secret is required', 400);
+        }
+        // 验证客户端ID和密钥
+        if ($clientId !== config('wizard.client_id', 'default_client') || $clientSecret !== config('wizard.client_secret', 'default_secret')) {
+            // return $this->error('Invalid client credentials', 401);
+        }
+        // 验证用户凭据
+        if (!Auth::attempt(['email' => $username, 'password' => $password])) {
+            return $this->error('Invalid username or password', 401);
+        }
+        $user = Auth::user();
+        if (!$user) {
+            return $this->error('Unauthorized', 401);
+        }
+        // 检查用户是否已存在token
+        $apiToken = ApiToken::where('user_id', $user->id)->first();
+        if (!$apiToken) {
+            // 创建新的token
+            $apiToken = new ApiToken();
+            $apiToken->user_id = $user->id;
+            $apiToken->token = bin2hex(random_bytes(40)); // 生成新的token
+        }
+        $apiToken->expires_at = now()->addSeconds(10);
+        $apiToken->save();
+        // 返回token信息
+        return $this->success([
+            'token' => $apiToken->token,
+            'user'  => [
+                'id'       => $user->id,
+                'name'     => $user->name,
+                'email'    => $user->email
+            ],
+            'expires_in' => 10, // 1小时有效期
+        ]);
+    }
     /**
      * 获取版本信息
      */

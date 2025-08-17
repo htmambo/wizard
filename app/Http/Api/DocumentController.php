@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Api;
 
+use Readability\Readability;
 use App\Http\Controllers\ApiController;
 use App\Events\DocumentCreated;
 use App\Events\DocumentDeleted;
@@ -24,6 +25,68 @@ use SoapBox\Formatter\Formatter;
 
 class DocumentController extends ApiController
 {
+    public function add(Request $request){
+        $this->validate($request, [
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            // 'url' => 'required|url',
+            // 'project_id' => 'required|integer|exists:projects,id',
+        ]);
+        $url = $request->input('url');
+        $content = $request->input('content');
+        $readability = new Readability($content, $url, 'libxml', false);
+        $result = $readability->init();
+
+        if ($result) {
+            $content = $readability->getContent()->innerHTML;
+        }
+        // 将内容转换为Markdown格式
+        if ($request->input('format', 'raw') === 'markdown') {
+            $parser = new CommonMarkConverter([
+                'html_input' => 'strip',
+                'allow_unsafe_links' => false,
+            ]);
+            $content = $parser->convert($content)->getContent();
+        }
+
+        // 根据project_id、sync_url来检查是否已经存在该文档
+        $document = Document::where('sync_url', $url)
+            ->where('project_id', 1) // 假设项目ID为1
+            ->first();
+        if ($document) {
+            // 如果文档已存在，更新内容和标题
+            $document->title = $request->input('title');
+            $document->content = $content;
+            $document->updated_at = Carbon::now();
+        } else {
+            $document = new Document();
+            $document->title = $request->input('title');
+            $document->content = $content;
+            $document->project_id = 1;
+            $document->type = Document::TYPE_HTML; // 默认类型为HTML
+            $document->user_id = Auth::id();
+            $document->created_at = Carbon::now();
+            $document->updated_at = Carbon::now();
+            $document->status = Document::STATUS_NORMAL;
+            $document->sync_url = $url ?: null;
+
+        }
+        $document->save();
+
+        // 触发文档创建事件
+        event(new DocumentCreated($document));
+        $result = [
+            'id' => $document->id,
+            'is_starred' => false,
+            'is_archived' => false,
+            'title' => $document->title,
+            'url' => '/project/1?p=' . $document->id,
+            'tags' => [],
+            'domain_name' => parse_url($document->url, PHP_URL_HOST),
+            'preview_picture' => null,
+        ];
+        return $this->success($result);
+    }
 
     /**
      * 获取文档详情
