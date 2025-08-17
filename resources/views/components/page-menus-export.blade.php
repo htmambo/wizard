@@ -117,7 +117,8 @@
                         icon: 16, shade: 0.01, time: 50000
                     });
                     var contentBody = $('#markdown-body').clone();
-                    contentBody.addClass('wz-pdf-content');
+                    contentBody.html("<div>" + contentBody.html() + "</div>");
+                    contentBody.find('.copy-button').remove();
                     contentBody.find('textarea').remove();
                     contentBody.find('.bmd-form-group').remove();
                     //移除可能配置了的目录
@@ -128,7 +129,6 @@
                     } else if(contentBody.find('.markdown-toc-list').length) {
                         contentBody.find('.markdown-toc-list').prepend('<li><h1>目录</h1></li>')
                     }
-
                     //移除可能存在的SQL_CREATE的多余部分
                     if($('.wz-sql-create').length) {
                         contentBody.find('nav').remove();

@@ -63,6 +63,8 @@ class ExportController extends Controller
         $mpdf->SetHeader($title);
         $mpdf->SetFooter('{PAGENO} / {nbpg}');
         $mpdf->SetTitle($title);
+        $mpdf->SetCreator(config('app.name') ?: 'Wizard');
+        $mpdf->SetSubject($title);
 
         $mpdf->allow_charset_conversion = true;
         $mpdf->useAdobeCJK              = true;
@@ -92,7 +94,7 @@ class ExportController extends Controller
         $header .= '<link href="/assets/css/pdf.css" rel="stylesheet">';
         $mpdf->WriteHTML($header);
 
-        $html = "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$content}</div>";
+        $html = "<div class='markdown-body wz-markdown-style-fix'>{$content}</div>";
         $mpdf->Bookmark($title, 0);
         try {
             $pages = explode('<hr style="page-break-after:always;" class="page-break editormd-page-break">', $html);
