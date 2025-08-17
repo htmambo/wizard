@@ -139,8 +139,8 @@
                     var tags = [];
                     $('.tm-tag').each(function(a,b){tags.push($(b).text());})
                     if(tags.length) {
-                        tags = '<span>' + tags.join(',') + '</span>';
-                        contentBody.prepend(tags);
+                        tagsHtml = '<span>' + tags.join(',') + '</span>';
+                        contentBody.prepend(tagsHtml);
                     }
                     //标题
                     var title = $('h1.wz-page-title').clone();
@@ -155,7 +155,8 @@
                             '{{ wzRoute('export:pdf', ['type' => documentType($pageItem->type)]) }}',
                             {
                                 "html": contentBody.html(),
-                                "title": "{{ $pageItem->title }}"
+                                "title": "{{ $pageItem->title }}",
+                                "tags": tags.join(','),
                             }
                         );
                     }

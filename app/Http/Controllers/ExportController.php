@@ -49,6 +49,7 @@ class ExportController extends Controller
         $content = $request->input('html');
         $title   = $request->input('title');
         $author  = $request->input('author');
+        $tags    = $request->input('tags');
 
         // 修正 Docker 运行模式下，导出pdf图片无法展示的问题
         $imageRoot = rtrim(config('filesystems.disks.public.root'), '/');
@@ -65,6 +66,11 @@ class ExportController extends Controller
         $mpdf->SetTitle($title);
         $mpdf->SetCreator(config('app.name') ?: 'Wizard');
         $mpdf->SetSubject($title);
+        if($tags) {
+            $mpdf->SetKeywords($tags);
+        } else {
+            $mpdf->SetKeywords('wizard, documentation, pdf');
+        }
 
         $mpdf->allow_charset_conversion = true;
         $mpdf->useAdobeCJK              = true;
