@@ -135,16 +135,19 @@
                         contentBody.find('.tab-pane.show').removeClass('tab-pane');
                         contentBody.find('.tab-pane').remove();
                     }
-                    //标题
-                    var title = $('h1.wz-page-title').clone();
-                    contentBody.prepend(title);
                     //标签
                     var tags = [];
                     $('.tm-tag').each(function(a,b){tags.push($(b).text());})
                     if(tags.length) {
                         tagsHtml = '<span>标签：' + tags.join(',') + '</span>';
-                        contentBody.prepend(tagsHtml);
+                        if(contentBody.find('.markdown-toc-list').length)
+                            contentBody.find('.markdown-toc-list').append(tagsHtml);
+                        else
+                            contentBody.prepend(tagsHtml);
                     }
+                    //标题
+                    var title = $('h1.wz-page-title').clone();
+                    contentBody.prepend(title);
                     if(maxlen && contentBody.html().length>maxlen) {
                         //太长，不允许
                         $.wz.alert('渲染后内容太长了(当前渲染内容长度：'+contentBody.html().length+'，最大支持长度：'+maxlen+')，暂不支持导出', function(){$('#markdown-body').html(origHtml);});
