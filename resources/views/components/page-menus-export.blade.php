@@ -117,6 +117,7 @@
                         icon: 16, shade: 0.01, time: 50000
                     });
                     var contentBody = $('#markdown-body').clone();
+                    contentBody.addClass('wz-pdf-content');
                     contentBody.find('textarea').remove();
                     contentBody.find('.bmd-form-group').remove();
                     //移除可能配置了的目录
