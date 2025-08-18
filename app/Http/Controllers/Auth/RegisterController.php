@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Events\UserCreated;
 use App\Repositories\User;
 use App\Http\Controllers\Controller;
+use App\Traits\UserActivateChannel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 

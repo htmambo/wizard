@@ -6,7 +6,7 @@
  * @copyright 管宜尧 <mylxsw@aicode.cc>
  */
 
-namespace App\Policies;
+namespace App\Traits;
 
 
 use App\Repositories\Project;

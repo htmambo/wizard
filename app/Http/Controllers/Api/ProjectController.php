@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Api;
+namespace App\Http\Controllers\Api;
 
 use App\Events\DocumentCreated;
 use App\Events\DocumentDeleted;
@@ -12,6 +12,7 @@ use App\Repositories\DocumentScore;
 use App\Repositories\PageShare;
 use App\Repositories\Project;
 use Carbon\Carbon;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,12 +20,9 @@ use Illuminate\Support\Str;
 use League\CommonMark\CommonMarkConverter;
 use SoapBox\Formatter\Formatter;
 
-class ProjectController extends ApiController
+#[Group('项目相关', '项目相关API', 3)]
+class ProjectController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
 
     /**
      * 获取项目文档

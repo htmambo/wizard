@@ -6,57 +6,17 @@
  * @copyright 管宜尧 <mylxsw@aicode.cc>
  */
 
-namespace App\Http\Api;
+namespace App\Http\Controllers\Api;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use App\Repositories\Catalog;
-use App\Repositories\Document;
-use App\Repositories\OperationLogs;
-use App\Repositories\Project;
-use App\Repositories\User;
+use Illuminate\Http\Request;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\Parameter;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Repositories\ApiToken;
+use App\Repositories\Document;
 
 #[Group('基础接口', 'API相关接口', 1)]
-class ApiController extends BaseController
+class ApiController extends Controller
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
-    /**
-     * 返回成功响应
-     *
-     * @param array  $data    返回的数据
-     * @param string $message 成功消息
-     * @param array  $meta    附加元数据
-     * @return \Illuminate\Http\JsonResponse
-     */
-    final function success($data = [], $message = '', $meta = []){
-        return response()->json([
-                                    // 是否成功
-                                    'status' => true,
-                                    // 成功消息
-                                    'message' => $message?:'Success',
-                                    // 返回的数据
-                                    'data'    => $data,
-                                    // 额外数据
-                                    'meta'    => $meta,
-                                ]);
-    }
-
-    final function error($message = 'Error', $code = 500){
-        return response()->json([
-                                    // 是否成功
-                                    'status' => false,
-                                // 错误消息
-                                    'error'   => $message,
-                                ], $code);
-    }
 
     /**
      * 获取API Token

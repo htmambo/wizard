@@ -11,6 +11,7 @@ namespace App\Policies;
 use App\Repositories\Group;
 use App\Repositories\Project;
 use App\Repositories\User;
+use App\Traits\GroupHasProjectPrivilege;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 /**

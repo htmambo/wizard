@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Api;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Validation\ValidationException;
 use Readability\Readability;
@@ -29,8 +29,8 @@ use Dedoc\Scramble\Attributes\Group;
  *
  * @package App\Http\Api
  */
-#[Group('文档', '文档相关API', 1)]
-class DocumentController extends ApiController
+#[Group('文档相关', '文档相关API', 4)]
+class DocumentController extends Controller
 {
 
     /**

@@ -1,37 +1,19 @@
 
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Api\ApiController;
-use App\Http\Api\DocumentController;
-use App\Http\Api\CatalogController;
-use App\Http\Api\UserController;
-use App\Http\Api\ProjectController;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-// 需要认证的用户信息路由（保持原有的）
-Route::middleware('auth:api')
-     ->get('/user', function (Request $request) {
-         return $request->user();
-     });
+use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\CatalogController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ProjectController;
 
 // 需要认证的API路由组
 Route::middleware('auth:api')->group(function () {
     // 用户相关，控制器：Api\UserController
     Route::prefix('user')->group(function () {
         // 获取用户信息
-        Route::get('info', [UserController::class, 'info']);
+        Route::get('profile', [UserController::class, 'profile']);
         // 更新用户信息
         Route::put('update', [UserController::class, 'update']);
         // 修改密码

@@ -1,11 +1,11 @@
 <?php
-namespace App\Http\Api;
+namespace App\Http\Controllers\Api;
 
 use App\Repositories\Catalog;
 use Dedoc\Scramble\Attributes\Group;
 
-#[Group('目录','目录相关API',1)]
-class CatalogController extends ApiController
+#[Group('目录相关', '目录相关接口', 2)]
+class CatalogController extends Controller
 {
     /**
      * 获取目录列表

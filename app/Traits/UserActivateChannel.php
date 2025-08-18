@@ -6,7 +6,7 @@
  * @copyright 管宜尧 <mylxsw@aicode.cc>
  */
 
-namespace App\Http\Controllers\Auth;
+namespace App\Traits;
 
 
 use App\Mail\UserActivate;
