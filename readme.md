@@ -15,8 +15,6 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 
 ### 需要解决的：
 ```
-Package adldap2/adldap2 is abandoned, you should avoid using it. No replacement was suggested.
-Package adldap2/adldap2-laravel is abandoned, you should avoid using it. No replacement was suggested.
 Package jakub-onderka/php-console-color is abandoned, you should avoid using it. Use php-parallel-lint/php-console-color instead.
 Package jakub-onderka/php-console-highlighter is abandoned, you should avoid using it. Use php-parallel-lint/php-console-highlighter instead.
 Package swiftmailer/swiftmailer is abandoned, you should avoid using it. Use symfony/mailer instead.
@@ -32,7 +30,6 @@ Package phpunit/php-token-stream is abandoned, you should avoid using it. No rep
 - [文档修改差异对比](https://github.com/mylxsw/wizard/wiki/%E6%96%87%E6%A1%A3%E5%B7%AE%E5%BC%82%E5%AF%B9%E6%AF%94%E4%BB%A5%E5%8F%8A%E5%8E%86%E5%8F%B2%E6%96%87%E6%A1%A3)
 - 用户权限管理
 - 项目分组管理
-- LDAP 统一身份认证
 - 文档搜索，标签搜索
 - 阅读模式
 - 文档评论
@@ -60,7 +57,6 @@ Package phpunit/php-token-stream is abandoned, you should avoid using it. No rep
 - **文档差异对比** 在团队协助中，经常会出现很多人修改同一份文档，为了避免冲突，文档修改后，其它人在提交旧的历史版本时，系统会提示用户文档内容发生了变更，用户可以通过文档比对功能找出文档中有哪些内容发生了修改。
 - **阅读模式** 当使用投影仪展示文档来过技术方案的时候，为了减少不必要的干扰，使用阅读模式，只展示文档内容部分，提供更好的展示体验。
 - **文档搜索** 通过搜索功能快速查找需要的文档，目前支持通过文档标题来搜素文档，后续会增加全文检索功能。
-- **LDAP支持** 很多公司都会使用 LDAP 来统一的管理公司员工的账号，员工的在公司内部的所有系统中都是用同一套帐号来登录各种系统比如 Jira，Wiki，Gitlab 等，Wizard 也提供了对 LDAP 的支持，只需要简单的几个配置，就可以快速的接入公司的统一帐号体系。
 - **文档附件**，**文档分享**，**统计**，**文档排序**，**模板管理**，**文档评论** ...
 
 
@@ -176,7 +172,6 @@ Package phpunit/php-token-stream is abandoned, you should avoid using it. No rep
     - Ctype PHP Extension
     - JSON PHP Extension
     - BCMath PHP Extension
-    - LDAP PHP Extension
     - Zlib PHP Extension （PDF 导出功能需要用到）
 - composer.phar
 - MySQL 5.7 + / MariaDB （需要支持ARCHIVE存储引擎，MariaDB 10.0+ 默认没有启用参考 **FAQ 3**）

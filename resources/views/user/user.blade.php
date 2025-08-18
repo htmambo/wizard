@@ -42,17 +42,8 @@
                         <div class="form-group">
                             <label for="editor-username" class="bmd-label-floating">@lang('common.username')</label>
                             <input type="text" class="form-control" value="{{ $user->name }}" id="editor-username"
-                                   name="username" {{ ($user->id == Auth::user()->id || ldap_enabled()) ? 'readonly':'' }}>
+                                   name="username" {{ ($user->id == Auth::user()->id) ? 'readonly':'' }}>
                         </div>
-
-                        @if(ldap_enabled())
-                            <div class="form-group">
-                                <label for="editor-objectguid" class="bmd-label-floating">LDAP 对象ID</label>
-                                <input type="text" class="form-control" value="{{ $user->objectguid }}" id="editor-objectguid"
-                                       name="objectguid" readonly>
-                            </div>
-                        @endif
-
                         <div class="form-group">
                             <label class="bmd-label-floating">角色</label>
                             <div class="radio mt-2">

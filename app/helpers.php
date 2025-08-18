@@ -485,21 +485,6 @@ if (!function_exists('wzRoute')) {
         );
     }
 
-
-    /**
-     * 是否启用了LDAP支持
-     *
-     * @return bool
-     */
-    function ldap_enabled(): bool{
-        static $enabled = NULL;
-        if (is_null($enabled)) {
-            $enabled = (bool)config('wizard.ldap.enabled');
-        }
-
-        return $enabled;
-    }
-
     /**
      * 是否启用注册功能支持
      *
@@ -600,10 +585,10 @@ if (!function_exists('wzRoute')) {
 <table class="table table-hover">
     <thead>
         <tr>
-           <th>字段</th> 
-           <th>类型</th> 
-           <th>空</th> 
-           <th>说明</th> 
+           <th>字段</th>
+           <th>类型</th>
+           <th>空</th>
+           <th>说明</th>
         </tr>
     </thead>
     <tbody>{$html}</tbody>

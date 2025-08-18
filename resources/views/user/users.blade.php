@@ -35,7 +35,7 @@
             <tr>
                 <th>#</th>
                 <th>真实姓名</th>
-                <th>账号{{ ldap_enabled() ? ' / LDAP':'' }}</th>
+                <th>账号</th>
                 <th>角色</th>
                 <th>状态</th>
                 <th>注册时间</th>
@@ -49,10 +49,6 @@
                     <td>{{ $user->name }}</td>
                     <td>
                         <a href="{{ wzRoute('admin:user', ['id' => $user->id]) }}">{{ $user->email }}</a>
-                        @if(ldap_enabled())
-                            <br/>
-                            {{ $user->objectguid ?? '-' }}
-                        @endif
                     </td>
                     <td>{{ $user->isAdmin() ? '管理员':'普通' }}</td>
                     <td>

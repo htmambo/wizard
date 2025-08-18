@@ -8,17 +8,11 @@
 
 namespace App\Providers;
 
-use Adldap\Laravel\Events\Importing;
-use Adldap\Laravel\Events\Synchronized;
-use Adldap\Laravel\Events\Synchronizing;
 use App\Events\CommentCreated;
 use App\Events\DocumentMarkModified;
 use App\Events\UserCreated;
 use App\Listeners\CommentCreatedListener;
 use App\Listeners\DocumentMarkModifiedListener;
-use App\Listeners\LdapImportingListener;
-use App\Listeners\LdapSynchronizedListener;
-use App\Listeners\LdapSynchronizingListener;
 use App\Listeners\UserCreatedListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -60,17 +54,6 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserCreated::class             => [
             UserCreatedListener::class,
-        ],
-
-        // LDAP
-        Synchronizing::class           => [
-            LdapSynchronizingListener::class,
-        ],
-        Importing::class               => [
-            LdapImportingListener::class,
-        ],
-        Synchronized::class            => [
-            LdapSynchronizedListener::class,
         ],
     ];
 

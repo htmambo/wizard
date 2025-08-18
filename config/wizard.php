@@ -86,22 +86,6 @@ return [
     ],
 
     /**
-     * LDAP
-     */
-    'ldap'                       => [
-        /**
-         * 是否启用ldap
-         */
-        'enabled'        => env('WIZARD_USE_LDAP', false),
-
-        /**
-         * 允许登录的成员，为空则不限制
-         * 比如： 'CN=technology-products,CN=Users,DC=example,DC=com'
-         */
-        'only_member_of' => env('WIZARD_LDAP_ONLY_MEMBER_OF', ''),
-    ],
-
-    /**
      * Markdown 配置
      */
     'markdown'                   => [

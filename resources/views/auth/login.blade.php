@@ -41,17 +41,15 @@
             @lang('common.login')
         </button>
 
-        @if (!ldap_enabled())
-            @if(register_enabled())
-            <a class="btn btn-link" href="{{ wzRoute('register') }}">
-                @lang('common.register')
-            </a>
-            @endif
-
-            <a class="btn btn-link" href="{{ wzRoute('password.request') }}">
-                @lang('common.password_back')?
-            </a>
+        @if(register_enabled())
+        <a class="btn btn-link" href="{{ wzRoute('register') }}">
+            @lang('common.register')
+        </a>
         @endif
+
+        <a class="btn btn-link" href="{{ wzRoute('password.request') }}">
+            @lang('common.password_back')?
+        </a>
 
         <p class="mt-5 mb-3 text-muted">&copy; {{ date('Y') }} {{ config('wizard.copyright', 'IMZHP.COM') }}</p>
     </form>

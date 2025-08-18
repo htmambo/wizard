@@ -67,7 +67,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => env('WIZARD_USE_LDAP', false) ? 'ldap' : 'eloquent',
+            'driver' => 'eloquent',
             'model'  => App\Repositories\User::class,
         ],
 
