@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @package App\Repositories
  */
-class Widget extends Repository
+class Widget extends Model
 {
     use SoftDeletes;
 

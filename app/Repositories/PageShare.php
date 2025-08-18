@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class PageShare
@@ -32,7 +33,7 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereUserId($value)
  */
-class PageShare extends Repository
+class PageShare extends Model
 {
     protected $table = 'page_share';
     protected $fillable

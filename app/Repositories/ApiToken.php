@@ -2,7 +2,9 @@
 
 namespace App\Repositories;
 
-class ApiToken extends Repository
+use Illuminate\Database\Eloquent\Model;
+
+class ApiToken extends Model
 {
     protected $fillable = [
         'user_id',

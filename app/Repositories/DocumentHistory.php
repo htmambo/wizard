@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class DocumentHistory
@@ -47,7 +48,7 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereUserId($value)
  */
-class DocumentHistory extends Repository
+class DocumentHistory extends Model
 {
     protected $table = 'page_histories';
     protected $fillable

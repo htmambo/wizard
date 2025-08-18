@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * Class Tag
  *
@@ -14,7 +16,7 @@ namespace App\Repositories;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageTag wherePageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageTag whereTagId($value)
  */
-class PageTag extends Repository
+class PageTag extends Model
 {
     protected $table = 'page_tag';
     public $timestamps = false;

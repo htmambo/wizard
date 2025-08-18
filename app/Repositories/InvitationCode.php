@@ -8,6 +8,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * 注册邀请码
  *
@@ -19,7 +21,7 @@ namespace App\Repositories;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  */
-class InvitationCode extends Repository
+class InvitationCode extends Model
 {
     protected $table = 'invitation_code';
     protected $fillable = [

@@ -8,6 +8,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * 项目目录
  *
@@ -28,7 +30,7 @@ namespace App\Repositories;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Catalog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Catalog whereUserId($value)
  */
-class Catalog extends Repository
+class Catalog extends Model
 {
     /**
      * 在首页展示

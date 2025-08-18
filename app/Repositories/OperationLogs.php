@@ -8,6 +8,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Repositories\OperationLogs
@@ -28,7 +29,7 @@ namespace App\Repositories;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs whereProjectId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs whereUserId($value)
  */
-class OperationLogs extends Repository
+class OperationLogs extends Model
 {
     protected $table = 'operation_logs';
     protected $fillable

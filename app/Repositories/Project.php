@@ -8,7 +8,7 @@
 
 namespace App\Repositories;
 
-
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -49,7 +49,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Project whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Project whereVisibility($value)
  */
-class Project extends Repository
+class Project extends Model
 {
 
     use SoftDeletes;

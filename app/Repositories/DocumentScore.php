@@ -8,6 +8,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * 文档评价模型
  *
@@ -18,7 +20,7 @@ namespace App\Repositories;
  *
  * @package App\Repositories
  */
-class DocumentScore extends Repository
+class DocumentScore extends Model
 {
     const SCORE_USEFUL = 1;
     const SCORE_HARD_TO_READ = 2;

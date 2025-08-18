@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Group
@@ -29,7 +30,7 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Group whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Group whereUserId($value)
  */
-class Group extends Repository
+class Group extends Model
 {
     protected $table = 'groups';
     protected $fillable

@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Template
@@ -24,7 +25,6 @@ use Carbon\Carbon;
  * @property Carbon  $created_at
  * @property Carbon  $updated_at
  * @package App\Repositories
- * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereDescription($value)
@@ -36,7 +36,7 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereUserId($value)
  */
-class Template extends Repository
+class Template extends Model
 {
     const TYPE_SWAGGER = 1;
     const TYPE_DOC     = 2;

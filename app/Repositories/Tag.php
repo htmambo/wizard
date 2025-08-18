@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Tag
@@ -19,7 +20,7 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Tag whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Tag whereUpdatedAt($value)
  */
-class Tag extends Repository
+class Tag extends Model
 {
     protected $table = 'tags';
     protected $fillable = ['name'];
