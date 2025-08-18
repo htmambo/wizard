@@ -242,7 +242,7 @@ if (!function_exists('wzRoute')) {
         $result = [];
 
         $setCurrent = function ($prefix, $type) use (&$result){
-            if (ends_with($prefix, '.[]')) {
+            if (Str::endsWith($prefix, '.[]')) {
                 $result[substr($prefix, 0, -3)] = "array({$type})";
             } else {
                 $result[$prefix] = $type;

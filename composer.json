@@ -31,7 +31,6 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
         "filp/whoops": "^2.18",
-        "fzaninotto/faker": "^1.5",
         "laravel/ui": "^4.6",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "*"

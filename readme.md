@@ -15,13 +15,8 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 
 ### 需要解决的：
 ```
-Package jakub-onderka/php-console-color is abandoned, you should avoid using it. Use php-parallel-lint/php-console-color instead.
-Package jakub-onderka/php-console-highlighter is abandoned, you should avoid using it. Use php-parallel-lint/php-console-highlighter instead.
-Package swiftmailer/swiftmailer is abandoned, you should avoid using it. Use symfony/mailer instead.
-Package symfony/debug is abandoned, you should avoid using it. Use symfony/error-handler instead.
 Package yzalis/identicon is abandoned, you should avoid using it. No replacement was suggested.
 Package fzaninotto/faker is abandoned, you should avoid using it. No replacement was suggested.
-Package phpunit/php-token-stream is abandoned, you should avoid using it. No replacement was suggested.
 ```
 目前主要包含以下功能
 
