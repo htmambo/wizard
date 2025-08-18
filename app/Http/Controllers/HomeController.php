@@ -76,8 +76,7 @@ class HomeController extends Controller
         $projectModel->withCount('pages');
         if (!empty($name)) {
             $projectModel->where('name', 'like', "%{$name}%");
-        }
-        else {
+        } else {
             if (empty($catalogId)) {
                 // 首页默认只查询不属于任何目录的项目
                 $projectModel->where(function ($query) {
@@ -88,11 +87,9 @@ class HomeController extends Controller
                 // 在分页查询的第一页之外，不展示目录
                 if ($page === 1) {
                     /** @var Collection $catalogs */
-                    $catalogs = Catalog::withCount('projects')->where('show_in_home',
-                        Catalog::SHOW_IN_HOME)->orderBy('sort_level', 'ASC')->get();
+                    $catalogs = Catalog::withCount('projects')->where('show_in_home', Catalog::SHOW_IN_HOME)->orderBy('sort_level', 'ASC')->get();
                 }
-            }
-            else {
+            } else {
                 $catalog = Catalog::where('id', $catalogId)->firstOrFail();
                 $projectModel->where('catalog_id', intval($catalogId));
             }
@@ -102,8 +99,7 @@ class HomeController extends Controller
         if (!empty($user) && $user->isAdmin() && config('wizard.admin_see_all')) {
             /** @var LengthAwarePaginator $projects */
             $projects = $projectModel->orderBy('sort_level', 'ASC')->paginate($perPage);
-        }
-        else {
+        } else {
             $userGroups = empty($user) ? null : $user->groups->pluck('id')->toArray();
             $projectModel->where(function ($query) use ($user, $userGroups) {
                 $query->where('visibility', Project::VISIBILITY_PUBLIC);
@@ -132,8 +128,7 @@ class HomeController extends Controller
                     $user->favoriteProjects()->where('catalog_id', $catalogId)->withCount('pages')
                         ->with('catalog')
                         ->get();
-            }
-            else {
+            } else {
                 $favorites =
                     $user->favoriteProjects()->withCount('pages')->with('catalog')->get();
             }

@@ -16,6 +16,7 @@ namespace App\Repositories;
  */
 class PageTag extends Repository
 {
+    protected $table = 'page_tag';
     public $timestamps = false;
     protected $fillable = ['page_id', 'tag_id'];
 }

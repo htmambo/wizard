@@ -30,7 +30,7 @@ namespace App\Repositories;
  */
 class OperationLogs extends Repository
 {
-
+    protected $table = 'operation_logs';
     protected $fillable
         = [
             'user_id',
@@ -79,10 +79,8 @@ class OperationLogs extends Repository
 
         if (isset($context['page_id'])) {
             $data['page_id'] = $context['page_id'];
-        } else {
-            if (isset($context['doc_id'])) {
-                $data['page_id'] = $context['doc_id'];
-            }
+        } else if (isset($context['doc_id'])) {
+            $data['page_id'] = $context['doc_id'];
         }
 
         return self::create($data);

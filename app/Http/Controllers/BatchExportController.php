@@ -215,39 +215,31 @@ class BatchExportController extends Controller
                 $lastModifiedUser = $doc->lastModifiedUser->name ?? '-';
                 $updatedTime = $doc->updated_at ?? '-';
 
-                if ($doc->type == Document::TYPE_HTML) {
+                if ($doc->isHtml()) {
                     $title = '<h1> ' . $doc->title . '</h1>';
-                    $intro =
-                        "<p class='wz-document-header'>该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。</p>";
+                    $intro = "<p class='wz-document-header'>该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。</p>";
                     $html = $title . $intro;
-                    $html .=
-                        "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$doc->content}</div>";
-                } else if ($doc->type == Document::TYPE_DOC) {
+                    $html .= "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$doc->content}</div>";
+                } else if ($doc->isMarkdown()) {
                     if ($doc->html_code && config('wizard.markdown.direct_save_html')) {
                         $title = '<h1>* ' . $doc->title . '</h1>';
-                        $intro =
-                            "<p class='wz-document-header'>该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。</p>";
+                        $intro = "<p class='wz-document-header'>该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。</p>";
                         $html = $title . $intro;
-                        $html .=
-                            "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$doc->html_code}</div>";
+                        $html .= lass='markdown-body wz-markdown-style-fix wz-pdf-content'>{$doc->html_code}</div>";
                     } else {
                         $title = "* {$doc->title}";
-                        $intro =
-                            "该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。\n\n";
+                        $intro = "该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。\n\n";
                         $raw = "# {$title}\n\n{$intro}" . $doc->content;
                         $html = (new \Parsedown())->text($raw);
-                        $html =
-                            "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$html}</div>";
+                        $html = "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$html}</div>";
                     }
                 } else {
                     $title = "* {$doc->title}";
-                    $intro =
-                        "该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。\n\n";
+                    $intro = "该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。\n\n";
                     $raw = "# {$title}\n\n{$intro}暂不支持该类型的文档。";
 
                     $html = (new \Parsedown())->text($raw);
-                    $html =
-                        "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$html}</div>";
+                    $html = "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$html}</div>";
                 }
 
 
