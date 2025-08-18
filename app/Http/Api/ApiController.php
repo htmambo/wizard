@@ -6,78 +6,91 @@
  * @copyright 管宜尧 <mylxsw@aicode.cc>
  */
 
-namespace App\Http\Controllers;
+namespace App\Http\Api;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use App\Repositories\Catalog;
 use App\Repositories\Document;
 use App\Repositories\OperationLogs;
 use App\Repositories\Project;
 use App\Repositories\User;
+use Dedoc\Scramble\Attributes\Group;
+use Dedoc\Scramble\Attributes\Parameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\ApiToken;
 
-class ApiController extends Controller
+#[Group('基础接口', 'API相关接口', 1)]
+class ApiController extends BaseController
 {
-    final function success($data = [], $message = 'Success', $meta = []){
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    /**
+     * 返回成功响应
+     *
+     * @param array  $data    返回的数据
+     * @param string $message 成功消息
+     * @param array  $meta    附加元数据
+     * @return \Illuminate\Http\JsonResponse
+     */
+    final function success($data = [], $message = '', $meta = []){
         return response()->json([
-                                    'success' => true,
+                                    // 是否成功
+                                    'status' => true,
+                                    // 成功消息
+                                    'message' => $message?:'Success',
+                                    // 返回的数据
                                     'data'    => $data,
-                                    'message' => $message,
+                                    // 额外数据
                                     'meta'    => $meta,
                                 ]);
     }
 
     final function error($message = 'Error', $code = 500){
         return response()->json([
-                                    'success' => false,
+                                    // 是否成功
+                                    'status' => false,
+                                // 错误消息
                                     'error'   => $message,
                                 ], $code);
     }
-    public function handleRequest($path, Request $request){
-        // 处理路径中的参数
-        $path = $this->processPathParameters($path, $request);
 
-        // 根据$path动态调用不同的方法
-        $method = $this->getMethodFromPath($path);
-
-        if (method_exists($this, $method)) {
-            return $this->$method($request);
-        }
-        return $this->error('Method not found', 404);
-    }
-
-    protected function getMethodFromPath($path){
-        // 将路径转换为方法名，支持多级路径
-        $segments = explode('/', trim($path, '/'));
-        $method   = '';
-        foreach ($segments as $segment) {
-            // 跳过参数占位符
-            if (strpos($segment, '{') === false) {
-                $method .= ucfirst(str_replace('-', '', $segment));
-            }
-        }
-        return lcfirst($method);
-    }
-
-    protected function processPathParameters($path, Request $request){
-        // 处理路径中的参数，如 {id}
-        $route = $request->route();
-        if ($route) {
-            $parameters = $route->parameters();
-            foreach ($parameters as $key => $value) {
-                $path = str_replace('{' . $key . '}', $value, $path);
-            }
-        }
-        return $path;
-    }
-
-    private function token(Request $request){
+    /**
+     * 获取API Token
+     *
+     * @unauthenticated
+     * @requestMediaType multipart/form-data
+     * @requestMediaType application/json
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Random\RandomException
+     */
+    public function token(Request $request){
+        $this->validate(
+            $request, [
+                // 账号或邮箱
+                'username'     => 'required|string',
+                // 密码
+                'password'     => 'required|string',
+                // 授权类型
+                'grant_type'   => 'required|string|in:password',
+                // 客户端ID
+                'client_id'    => 'required|string',
+                // 客户端密钥
+                'client_secret' => 'required|string',
+            ]
+        );
         $username = $request->get('username', '');
         $password = $request->get('password', '');
         $grandtType = $request->get('grant_type', 'password');
-        $clientId = $request->get('client_id', config('wizard.client_id', 'default_client'));
-        $clientSecret = $request->get('client_secret');
+        $clientId = $request->get('client_id', '');
+        $clientSecret = $request->get('client_secret', '');
         if ($grandtType !== 'password') {
             return $this->error('Unsupported grant type', 400);
         }
@@ -107,7 +120,7 @@ class ApiController extends Controller
             $apiToken->user_id = $user->id;
             $apiToken->token = bin2hex(random_bytes(40)); // 生成新的token
         }
-        $apiToken->expires_at = now()->addSeconds(10);
+        $apiToken->expires_at = now()->addHour();
         $apiToken->save();
         // 返回token信息
         return $this->success([
@@ -117,13 +130,15 @@ class ApiController extends Controller
                 'name'     => $user->name,
                 'email'    => $user->email
             ],
-            'expires_in' => 10, // 1小时有效期
+            'expires_in' => 3600, // 1小时有效期
         ]);
     }
+
     /**
      * 获取版本信息
+     * @unauthenticated
      */
-    private function Version(Request $request){
+    public function version(Request $request){
         // 返回应用的版本信息
         return $this->success([
                                     'version'         => config('wizard.version', '1.0.0'),
@@ -138,7 +153,7 @@ class ApiController extends Controller
     /**
      * 搜索功能
      */
-    private function Search(Request $request){
+    public function Search(Request $request){
         $query = $request->get('q', '');
         $type  = $request->get('type', 'all'); // all, project, document
         $limit = min($request->get('limit', 20), 100);

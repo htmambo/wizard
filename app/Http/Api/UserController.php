@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Api;
 
-use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

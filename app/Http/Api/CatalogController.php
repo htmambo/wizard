@@ -1,15 +1,15 @@
 <?php
 namespace App\Http\Api;
 
-use App\Http\Controllers\ApiController;
 use App\Repositories\Catalog;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('目录','目录相关API',1)]
 class CatalogController extends ApiController
 {
     /**
      * 获取目录列表
      *
-     * @param int $projectId
      * @return \Illuminate\Http\JsonResponse
      */
     public function lists(){

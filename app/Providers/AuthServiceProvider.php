@@ -32,6 +32,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::define('viewApiDocs', function (\App\Repositories\User $user) {
+            // return in_array($user->email, ['admin@app.com']);
+            return true; // 允许所有用户查看 API 文档
+        });
         // 检查用户是否具有创建项目权限
         Gate::define('project-create', ProjectPolicy::class . '@create');
         // 检查用户是否有对项目的编辑权限

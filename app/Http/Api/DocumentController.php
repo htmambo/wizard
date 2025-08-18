@@ -1,8 +1,8 @@
 <?php
 namespace App\Http\Api;
 
+use Illuminate\Validation\ValidationException;
 use Readability\Readability;
-use App\Http\Controllers\ApiController;
 use App\Events\DocumentCreated;
 use App\Events\DocumentDeleted;
 use App\Events\DocumentMarkModified;
@@ -22,14 +22,36 @@ use Illuminate\Support\Str;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Exception\CommonMarkException;
 use SoapBox\Formatter\Formatter;
+use Dedoc\Scramble\Attributes\Group;
 
+/**
+ * 文档相关API
+ *
+ * @package App\Http\Api
+ */
+#[Group('文档', '文档相关API', 1)]
 class DocumentController extends ApiController
 {
-    public function add(Request $request){
+
+    /**
+     * 创建或更新文档
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     * @throws CommonMarkException
+     * @throws ValidationException
+     */
+    public function create(Request $request){
         $this->validate($request, [
+            // 标题
             'title' => 'required|string|max:255',
+            // 内容
             'content' => 'required|string',
-            // 'url' => 'required|url',
+            // 来源网址
+            'url' => 'required|url',
+            // 格式，raw或markdown
+            'format' => 'in:raw,markdown',
             // 'project_id' => 'required|integer|exists:projects,id',
         ]);
         $url = $request->input('url');

@@ -21,6 +21,9 @@ use Illuminate\Support\ServiceProvider;
 use App\Guards\TokenGuard;
 // use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use Dedoc\Scramble\Scramble;
+use Dedoc\Scramble\Support\Generator\OpenApi;
+use Dedoc\Scramble\Support\Generator\SecurityScheme;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +34,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Scramble::configure()
+                ->withDocumentTransformers(function (OpenApi $openApi) {
+                    // 定义安全方案
+                    $openApi->secure(
+                        SecurityScheme::http('Bearer', 'JWT')
+                    );
+                });
+
         // 用于解决某些版本的mysql下，由于默认编码为utf8mb4而导致出现错误
         // Syntax error or access violation: 1071 Specified key was too long; max key length is 767 bytes
         Schema::defaultStringLength(191);

@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Api;
 
-use App\Http\Controllers\ApiController;
 use App\Events\DocumentCreated;
 use App\Events\DocumentDeleted;
 use App\Events\DocumentMarkModified;
