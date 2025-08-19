@@ -33,7 +33,7 @@ class Result
      * @param array    $words
      * @param int|null $total
      */
-    public function __construct(array $ids, array $words, int $total = null)
+    public function __construct(array $ids, array $words, ?int $total = null)
     {
         $this->ids   = $ids;
         $this->words = $words;

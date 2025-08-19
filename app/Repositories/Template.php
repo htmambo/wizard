@@ -67,7 +67,7 @@ class Template extends Model
      *
      * @return array
      */
-    public static function queryForShow($type, User $user = null)
+    public static function queryForShow($type, ？User $user = null)
     {
         $templates = self::where('type', $type)
             ->where('status', self::STATUS_NORMAL)

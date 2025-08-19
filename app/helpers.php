@@ -197,7 +197,7 @@ if (!function_exists('wzRoute')) {
      *
      * @return array
      */
-    function wzTemplates($type = Template::TYPE_DOC, $user = NULL): array{
+    function wzTemplates($type = Template::TYPE_DOC, ?User $user = NULL): array{
         if ($user == NULL && !Auth::guest()) {
             $user = Auth::user();
         }

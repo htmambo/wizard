@@ -157,7 +157,7 @@ class ProjectPolicy
      *
      * @return bool
      */
-    public function create(User $user = null)
+    public function create(?User $user = null)
     {
         if (empty($user)) {
             return false;
@@ -174,7 +174,7 @@ class ProjectPolicy
      *
      * @return bool
      */
-    public function sortLevel(User $user = null, $project = null)
+    public function sortLevel(?User $user = null, ?Project $project = null)
     {
         if (empty($user) || !$user->isActivated()) {
             return false;

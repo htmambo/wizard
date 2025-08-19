@@ -176,7 +176,7 @@ class Project extends Model
      *
      * @return bool
      */
-    public function isFavoriteByUser(User $user = null)
+    public function isFavoriteByUser(?User $user = null)
     {
         if (empty ($user)) {
             return false;

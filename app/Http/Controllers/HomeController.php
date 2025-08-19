@@ -14,7 +14,6 @@ use App\Repositories\Tag;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Intervention\Image\Facades\Image;
 
 class HomeController extends Controller
 {
