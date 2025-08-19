@@ -588,8 +588,9 @@ class DocumentController extends Controller
      *
      * @param $id
      * @param $page_id
+     *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Illuminate\Auth\Access\AuthorizationException|\GuzzleHttp\Exception\GuzzleException
      */
     public function syncFromRemote($id, $page_id)
     {

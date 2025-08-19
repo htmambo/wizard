@@ -8,17 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Tag
  *
- * @property integer $id
- * @property string  $name
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
  * @package App\Repositories
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Document[] $pages
+ * @property int $id
+ * @property string $name 标签名称
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Document> $pages
+ * @property-read int|null $pages_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereUpdatedAt($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Tag whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Tag whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Tag whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Tag whereUpdatedAt($value)
  */
 class Tag extends Model
 {

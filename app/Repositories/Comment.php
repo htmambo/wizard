@@ -16,32 +16,33 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Class Comment
  *
- * @property integer $id
- * @property integer $page_id
- * @property integer $user_id
- * @property string  $content
- * @property integer $reply_to_id
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property Carbon  $deleted_at
  * @package App\Repositories
- * @property-read \App\Repositories\Document $document
- * @property-read \App\Repositories\Comment $replyComment
- * @property-read \App\Repositories\User $user
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Comment onlyTrashed()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Comment withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Comment withoutTrashed()
+ * @property int $id
+ * @property int $page_id 页面ID
+ * @property int $user_id 评论人
+ * @property string|null $content 评论内容
+ * @property int $reply_to_id 回复的ID
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Repositories\Document|null $document
+ * @property-read Comment|null $replyComment
+ * @property-read \App\Repositories\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment wherePageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereReplyToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment withoutTrashed()
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Comment whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Comment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Comment whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Comment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Comment wherePageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Comment whereReplyToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Comment whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Comment whereUserId($value)
  */
 class Comment extends Model
 {

@@ -14,39 +14,45 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class DocumentHistory
  *
- * @property integer                     $id
- * @property integer                     $page_id
- * @property integer                     $pid
- * @property string                      $title
- * @property string                      $description
- * @property string                      $content
- * @property integer                     $project_id
- * @property integer                     $user_id
- * @property string                      $type
- * @property string                      $status
- * @property integer                     $sort_level
- * @property string                      $sync_url
- * @property Carbon                      $last_sync_at
- * @property integer                     $operator_id
- * @property string                      $created_at
- * @property string                      $updated_at
  * @package App\Repositories
- * @property-read \App\Repositories\User $operator
- * @property-read \App\Repositories\User $user
+ * @property int $id
+ * @property int $page_id 文档ID
+ * @property int|null $pid 上级页面ID
+ * @property string|null $title 页面标题
+ * @property string|null $description 页面描述
+ * @property string|null $content 页面内容
+ * @property int|null $project_id 项目ID
+ * @property int|null $type 页面内容
+ * @property int|null $status 页面状态
+ * @property int|null $user_id 用户ID
+ * @property int|null $operator_id 操作用户ID
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $sort_level 项目排序，排序值越大越靠后
+ * @property string|null $sync_url 文档同步地址：swagger专用
+ * @property string|null $last_sync_at 文档最后同步时间
+ * @property-read \App\Repositories\User|null $operator
+ * @property-read \App\Repositories\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereLastSyncAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereOperatorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory wherePageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory wherePid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereProjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereSortLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereSyncUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentHistory whereUserId($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereOperatorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory wherePageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory wherePid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereProjectId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\DocumentHistory whereUserId($value)
  */
 class DocumentHistory extends Model
 {

@@ -225,7 +225,7 @@ class BatchExportController extends Controller
                         $title = '<h1>* ' . $doc->title . '</h1>';
                         $intro = "<p class='wz-document-header'>该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。</p>";
                         $html = $title . $intro;
-                        $html .= lass='markdown-body wz-markdown-style-fix wz-pdf-content'>{$doc->html_code}</div>";
+                        $html .= "<div class='markdown-body wz-markdown-style-fix wz-pdf-content'>{$doc->html_code}</div>";
                     } else {
                         $title = "* {$doc->title}";
                         $intro = "该文档由 {$author} 创建于 {$createdTime} ， {$lastModifiedUser} 在 {$updatedTime} 修改了该文档。\n\n";

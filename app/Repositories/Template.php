@@ -14,27 +14,31 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Template
  *
- * @property integer $id
- * @property string  $name
- * @property string  $description
- * @property string  $content
- * @property string  $user_id
- * @property string  $type
- * @property string  $status
- * @property string  $scope
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
  * @package App\Repositories
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereScope($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Template whereUserId($value)
+ * @property int $id
+ * @property string $name 模板标题
+ * @property string|null $description 模板简述
+ * @property string|null $content 文档模板内容
+ * @property int|null $user_id 创建用户ID
+ * @property int $type 模板类型：1-swagger 2-markdown
+ * @property int $status 模板状态: 1-正常；2-禁用
+ * @property int $scope 可用范围：1-全局可用；2-个人
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereScope($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Template whereUserId($value)
+ * @mixin \Eloquent
  */
 class Template extends Model
 {
@@ -67,7 +71,7 @@ class Template extends Model
      *
      * @return array
      */
-    public static function queryForShow($type, ？User $user = null)
+    public static function queryForShow($type, ?User $user = null)
     {
         $templates = self::where('type', $type)
             ->where('status', self::STATUS_NORMAL)

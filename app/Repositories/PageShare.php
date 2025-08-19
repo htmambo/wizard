@@ -14,24 +14,29 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class PageShare
  *
- * @property string  $code
- * @property integer $project_id
- * @property integer $page_id
- * @property integer $user_id
- * @property Carbon  $expired_at
  * @package App\Repositories
- * @mixin \Eloquent
  * @property int $id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereExpiredAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare wherePageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereProjectId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\PageShare whereUserId($value)
+ * @property string $code 分享标识
+ * @property int $project_id 项目ID
+ * @property int $page_id 页面ID
+ * @property int $user_id 分享人ID
+ * @property string|null $expired_at 过期时间
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $password 是否需要使用密码打开
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare whereExpiredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare wherePageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare whereProjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PageShare whereUserId($value)
+ * @mixin \Eloquent
  */
 class PageShare extends Model
 {

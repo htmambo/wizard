@@ -25,8 +25,8 @@ trait GroupHasProjectPrivilege
      */
     protected function groupHasProjectPrivilege(
         Project $project,
-        User $user = null,
-        $privilege = Project::PRIVILEGE_WR
+        ?User $user = null,
+        int $privilege = Project::PRIVILEGE_WR
     ): bool {
         $groupHasPrivilege = false;
         $userGroups        = $user->groups->pluck('id')->toArray();

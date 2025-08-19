@@ -14,21 +14,26 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Group
  *
- * @property integer $id
- * @property string  $name
- * @property integer $user_id
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
  * @package App\Repositories
- * @property-read \App\Repositories\User $creator
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Project[] $projects
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\User[] $users
+ * @property int $id
+ * @property string $name 组名称
+ * @property int|null $user_id 创建者ID
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Repositories\User|null $creator
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Project> $projects
+ * @property-read int|null $projects_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\User> $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Group newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Group newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Group query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereUserId($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Group whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Group whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Group whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Group whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Group whereUserId($value)
  */
 class Group extends Model
 {

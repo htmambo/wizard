@@ -17,33 +17,45 @@ use Lab404\Impersonate\Services\ImpersonateManager;
 /**
  * Class User
  *
- * @property integer $id
- * @property string $name
- * @property string $password
- * @property integer $role
- * @property integer $status
- * @property string $objectguid
- * @property Carbon $created_at
- * @property Carbon $updated_at
  * @package App\Repositories
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Project[] $favoriteProjects
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Group[] $groups
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\DocumentHistory[] $histories
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Document[] $pages
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Project[] $projects
- * @mixin \Eloquent
+ * @property int $id
+ * @property string|null $objectguid
+ * @property string $name
  * @property string $email
+ * @property string $password
  * @property string|null $remember_token
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User whereRole($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\User whereUpdatedAt($value)
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $role 用户角色：1-普通用户，2-管理员
+ * @property int|null $status 用户状态：0-未激活，1-已激活，2-已禁用
+ * @property string|null $sub_domain 用户自定义子域名
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Project> $favoriteProjects
+ * @property-read int|null $favorite_projects_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Group> $groups
+ * @property-read int|null $groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\DocumentHistory> $histories
+ * @property-read int|null $histories_count
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Document> $pages
+ * @property-read int|null $pages_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Project> $projects
+ * @property-read int|null $projects_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereObjectguid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSubDomain($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class User extends Authenticatable
 {

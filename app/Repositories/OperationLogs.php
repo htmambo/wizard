@@ -13,21 +13,24 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Repositories\OperationLogs
  *
- * @property mixed $context
- * @mixin \Eloquent
  * @property int $id
  * @property int|null $user_id 操作用户ID
  * @property string|null $message 日志消息内容
+ * @property string|null $context 记录日志时候的上下文信息
  * @property string $created_at 创建时间
  * @property int|null $project_id 关联的项目ID
  * @property int|null $page_id 关联的文档ID
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs whereContext($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs whereMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs wherePageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs whereProjectId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\OperationLogs whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs whereContext($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs whereMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs wherePageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs whereProjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationLogs whereUserId($value)
+ * @mixin \Eloquent
  */
 class OperationLogs extends Model
 {

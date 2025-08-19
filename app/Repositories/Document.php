@@ -15,53 +15,64 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Class Page
  *
- * @property integer                                                                      $id
- * @property integer                                                                      $pid
- * @property string                                                                       $title
- * @property string                                                                       $description
- * @property string                                                                       $content
- * @property string                                                                       $html_code
- * @property integer                                                                      $project_id
- * @property integer                                                                      $user_id
- * @property integer                                                                      $last_modified_uid
- * @property integer                                                                      $history_id
- * @property integer                                                                      $type
- * @property integer                                                                      $status
- * @property integer                                                                      $sort_level
- * @property string                                                                       $sync_url
- * @property Carbon                                                                       $last_sync_at
- * @property Carbon                                                                       $created_at
- * @property Carbon                                                                       $updated_at
  * @package App\Repositories
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Attachment[] $attachments
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Comment[]    $comments
- * @property-read \App\Repositories\User                                                  $lastModifiedUser
- * @property-read \App\Repositories\Document                                              $parentPage
- * @property-read \App\Repositories\Project                                               $project
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Document[]   $subPages
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Tag[]        $tags
- * @property-read \App\Repositories\User                                                  $user
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Document onlyTrashed()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Document withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Document withoutTrashed()
+ * @property int $id
+ * @property int|null $pid 上级页面ID
+ * @property string $title 页面标题
+ * @property string|null $description 页面描述
+ * @property string|null $content 页面内容
+ * @property int|null $project_id 项目ID
+ * @property int|null $user_id 用户ID
+ * @property int $type 页面内容
+ * @property int $status 页面状态
+ * @property int|null $last_modified_uid 最后修改的用户ID
+ * @property int|null $history_id 对应的历史版本ID，用于版本控制
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $sort_level 项目排序，排序值越大越靠后
+ * @property string|null $sync_url 文档同步地址：swagger专用
+ * @property string|null $last_sync_at 文档最后同步时间
+ * @property string|null $html_code Markdown渲染后的HTML内容
+ * @property int $is_blog 是否设置为博客
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Attachment> $attachments
+ * @property-read int|null $attachments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Comment> $comments
+ * @property-read int|null $comments_count
+ * @property-read \App\Repositories\User|null $lastModifiedUser
+ * @property-read Document|null $parentPage
+ * @property-read \App\Repositories\Project|null $project
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Document> $subPages
+ * @property-read int|null $sub_pages_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Repositories\Tag> $tags
+ * @property-read int|null $tags_count
+ * @property-read \App\Repositories\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereHistoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereHtmlCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereIsBlog($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereLastModifiedUid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereLastSyncAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document wherePid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereProjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereSortLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereSyncUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document withoutTrashed()
  * @mixin \Eloquent
- * @property \Carbon\Carbon|null                                                          $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereHistoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereLastModifiedUid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document wherePid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereProjectId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Document whereUserId($value)
  */
 class Document extends Model
 {

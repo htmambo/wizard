@@ -65,10 +65,10 @@ class ApiController extends Controller
             // return $this->error('Invalid client credentials', 401);
         }
         // 验证用户凭据
-        if (!Auth::attempt(['email' => $username, 'password' => $password])) {
+        if (!\Auth::attempt(['email' => $username, 'password' => $password])) {
             return $this->error('Invalid username or password', 401);
         }
-        $user = Auth::user();
+        $user = \Auth::user();
         if (!$user) {
             return $this->error('Unauthorized', 401);
         }

@@ -16,34 +16,35 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Class Attachment
  *
- * @property integer $id
- * @property string  $name
- * @property string  $path
- * @property integer $page_id
- * @property integer $project_id
- * @property integer $user_id
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property Carbon  $deleted_at
  * @package App\Repositories
- * @property-read \App\Repositories\Document $page
- * @property-read \App\Repositories\Project $project
- * @property-read \App\Repositories\User $user
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Attachment onlyTrashed()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Attachment withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Repositories\Attachment withoutTrashed()
+ * @property int $id
+ * @property string $name 附件名称
+ * @property string $path 存储路径
+ * @property int $user_id 上传人ID
+ * @property int|null $page_id 附件对应的文档ID
+ * @property int|null $project_id 附件对应的项目ID
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Repositories\Document|null $page
+ * @property-read \App\Repositories\Project|null $project
+ * @property-read \App\Repositories\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment wherePageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment wherePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment whereProjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment withoutTrashed()
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment wherePageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment wherePath($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment whereProjectId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Repositories\Attachment whereUserId($value)
  */
 class Attachment extends Model
 {

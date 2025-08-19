@@ -19,10 +19,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use League\CommonMark\CommonMarkConverter;
-use League\CommonMark\Exception\CommonMarkException;
 use SoapBox\Formatter\Formatter;
 use Dedoc\Scramble\Attributes\Group;
+use League\HTMLToMarkdown\HtmlConverter;
 
 /**
  * 文档相关API
@@ -39,7 +38,6 @@ class DocumentController extends Controller
      * @param Request $request
      *
      * @return JsonResponse
-     * @throws CommonMarkException
      * @throws ValidationException
      */
     public function create(Request $request){
@@ -51,7 +49,7 @@ class DocumentController extends Controller
             // 来源网址
             'url' => 'required|url',
             // 格式，raw或markdown
-            'format' => 'in:raw,markdown',
+            'format' => 'in:html,markdown',
             // 'project_id' => 'required|integer|exists:projects,id',
         ]);
         $url = $request->input('url');
@@ -63,12 +61,9 @@ class DocumentController extends Controller
             $content = $readability->getContent()->innerHTML;
         }
         // 将内容转换为Markdown格式
-        if ($request->input('format', 'raw') === 'markdown') {
-            $parser = new CommonMarkConverter([
-                'html_input' => 'strip',
-                'allow_unsafe_links' => false,
-            ]);
-            $content = $parser->convert($content)->getContent();
+        if ($request->input('format', 'html') === 'html') {
+            $converter = new HtmlConverter();
+            $content = $converter->convert($content);
         }
 
         // 根据project_id、sync_url来检查是否已经存在该文档
@@ -85,15 +80,18 @@ class DocumentController extends Controller
             $document->title = $request->input('title');
             $document->content = $content;
             $document->project_id = 1;
-            $document->type = Document::TYPE_HTML; // 默认类型为HTML
+            $document->type = Document::TYPE_DOC; // 默认类型为HTML
             $document->user_id = Auth::id();
             $document->created_at = Carbon::now();
             $document->updated_at = Carbon::now();
             $document->status = Document::STATUS_NORMAL;
             $document->sync_url = $url ?: null;
-
+        }
+        if($url) {
+            $document->last_sync_at = Carbon::now();
         }
         $document->save();
+        DocumentHistory::write($document);
 
         // 触发文档创建事件
         event(new DocumentCreated($document));
