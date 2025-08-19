@@ -46,11 +46,19 @@
                 showinfobar: false,
                 lang: 'zh',
                 mode: 'edit',
+                row: '{{ config("wizard.spreedsheet.max_rows") }}',
+                column: '{{ config("wizard.spreedsheet.max_cols") }}',
+                allowEdit: true,
+                allowEditFormula: true,
+                enableAddRow: false,
+                enableAddBackTop: false,
+                enableAddSheet: false,
             };
-
-            var data = JSON.parse(savedContent);
-            if(data) options = data;
-            var sheet = luckysheet.create(options);
+            if(savedContent) {
+                var data = JSON.parse(savedContent);
+                if(data) options = data;
+            }
+            luckysheet.create(options);
 
             // 获取编辑器中的内容
             $.global.getEditorContent = function () {
@@ -65,7 +73,10 @@
             // 更新编辑器内容
             $.global.updateEditorContent = function (content) {
                 var data = JSON.parse(content);
-                luckysheet.create(data);
+                if(data) {
+                    window['tableData'] = data;
+                    // luckysheet.create(data);
+                }
             };
 
         });
