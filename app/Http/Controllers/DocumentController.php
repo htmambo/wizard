@@ -140,7 +140,7 @@ class DocumentController extends Controller
                 ]);
             }
 
-            // $content = $this->processTableRequest($content);
+            $content = $this->processTableRequest($content);
         }
         else if ($type === 'markdown') {
             $content_html = $request->input('editormd-html-code', '');
@@ -245,7 +245,7 @@ class DocumentController extends Controller
                     'content' => ['页面内容不合法，表格页面必须为合法的json格式'],
                 ]);
             }
-            // $content = $this->processTableRequest($content);
+            $content = $this->processTableRequest($content);
         }
         else if ($pageItem->isMarkdown()) {
             $orig_content = trim($pageItem->content);

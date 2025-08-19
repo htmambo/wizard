@@ -718,6 +718,10 @@ HEADER;
      * @return string
      */
     function processSpreedSheet(string $content): string{
+        if(config('wizard.spreedsheet.disabled', true)){
+            // 如果禁用表格功能，则直接返回内容
+            return $content;
+        }
         if (empty($content)) {
             $content = '[{"name":"sheet1","cols":{"len":25},"rows":{"len":100}}]';
         }

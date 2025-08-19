@@ -10,8 +10,8 @@
             @include('components.doc-edit', ['project' => $project, 'pageItem' => $pageItem ?? null, 'navigator' => $navigator])
             <input type="hidden" name="type" value="table" />
 
-            <div id="xspreadsheet-content" style="display: none;">{{ $pageItem->content ?? '' }}</div>
-            <div class="col-row" id="xspreadsheet"></div>
+            <div id="xspreadsheet-content" style="display: none;">{{ base64_encode(processSpreedSheet($pageItem->content ?? '')) }}</div>
+            <div class="col-row" id="x-spreadsheet"></div>
         </form>
     </div>
 @endsection
@@ -39,10 +39,15 @@
         $(function() {
 
             var savedContent = $('#xspreadsheet-content').html();
-            $('#xspreadsheet').height(document.documentElement.clientHeight - $('#xspreadsheet').offset().top - $('.footer').height() - 45);
-            $('#xspreadsheet').width(document.documentElement.clientWidth - 20);
+            if (savedContent === '') {
+                savedContent = "{}";
+            } else {
+                savedContent = Base64.decode(savedContent);
+            }
+            $('#x-spreadsheet').height(document.documentElement.clientHeight - $('#x-spreadsheet').offset().top - $('.footer').height() - 45);
+            $('#x-spreadsheet').width(document.documentElement.clientWidth - 20);
             var options = {
-                container: 'xspreadsheet', // 设定DOM容器的id
+                container: 'x-spreadsheet', // 设定DOM容器的id
                 showinfobar: false,
                 lang: 'zh',
                 mode: 'edit',
@@ -56,7 +61,7 @@
             };
             if(savedContent) {
                 var data = JSON.parse(savedContent);
-                if(data) options = data;
+                if(data.hasOwnProperty('data')) options.data = data.data;
             }
             luckysheet.create(options);
 
@@ -75,7 +80,7 @@
                 var data = JSON.parse(content);
                 if(data) {
                     window['tableData'] = data;
-                    // luckysheet.create(data);
+                    luckysheet.create(data);
                 }
             };
 
