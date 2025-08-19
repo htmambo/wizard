@@ -68,7 +68,12 @@
     </footer>
 @endif
 
-<script src="{{ cdn_resource('/assets/vendor/jquery.min.js') }}"></script>
+<script>
+    // 检查 jQuery 是否已经加载
+    if (typeof jQuery === 'undefined') {
+        document.write('<script src="{{ cdn_resource('/assets/vendor/jquery.min.js') }}"><\/script>');
+    }
+</script>
 <script src="{{ cdn_resource('/assets/vendor/store.everything.min.js') }}"></script>
 <script>
     var currentTheme = '{{ config('wizard.theme') }}';

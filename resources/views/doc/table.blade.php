@@ -10,7 +10,7 @@
             @include('components.doc-edit', ['project' => $project, 'pageItem' => $pageItem ?? null, 'navigator' => $navigator])
             <input type="hidden" name="type" value="table" />
 
-            <div id="xspreadsheet-content" style="display: none;">{{ base64_encode(processSpreedSheet($pageItem->content ?? '')) }}</div>
+            <div id="xspreadsheet-content" style="display: none;">{{ $pageItem->content ?? '' }}</div>
             <div class="col-row" id="xspreadsheet"></div>
         </form>
     </div>
@@ -21,69 +21,40 @@
 @endpush
 
 @push('stylesheet')
-    <link rel="stylesheet" href="{{ cdn_resource('/assets/vendor/x-spreadsheet/xspreadsheet.css') }}">
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/css/pluginsCss.css' />
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/plugins.css' />
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css' />
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css' />
     <style>
-        #xspreadsheet * {
-            box-sizing: initial;
-        }
-
-        #xspreadsheet {
-            border: 1px dashed #159e92;
-        }
+        #luckysheet-icon-font-size {display:inline;}
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
 @endpush
 
 @push('script')
     <script src="{{ cdn_resource('/assets/vendor/base64.min.js') }}"></script>
-    <script src="{{ cdn_resource('/assets/vendor/x-spreadsheet/xspreadsheet.js') }}"></script>
-{{--    <script src="{{ cdn_resource('/assets/vendor/x-spreadsheet/locale/zh-cn.js') }}"></script>--}}
 
     <script>
         $(function() {
 
             var savedContent = $('#xspreadsheet-content').html();
-            if (savedContent === '') {
-                savedContent = "[{\"name\":\"sheet1\",\"cols\":{\"len\":25},\"rows\":{\"len\":100}}]";
-            } else {
-                savedContent = Base64.decode(savedContent);
-            }
-
+            $('#xspreadsheet').height(document.documentElement.clientHeight - $('#xspreadsheet').offset().top - $('.footer').height() - 45);
+            $('#xspreadsheet').width(document.documentElement.clientWidth - 20);
             var options = {
+                container: 'xspreadsheet', // 设定DOM容器的id
+                showinfobar: false,
+                lang: 'zh',
                 mode: 'edit',
-                showToolbar: true,
-                showGrid: true,
-                showContextmenu: true,
-                view: {
-                    height: () => document.documentElement.clientHeight - 20,
-                    width: () => document.documentElement.clientWidth - 20,
-                },
-                row: {
-                    len: {{ config('wizard.spreedsheet.max_rows') }},
-                    height: 25,
-                },
-                col: {
-                    len: {{ config('wizard.spreedsheet.max_cols') }},
-                    width: 100,
-                    indexWidth: 60,
-                    minWidth: 60,
-                },
             };
 
-            // x.spreadsheet.locale('zh-cn');
-
-            var sheet = x.spreadsheet('#xspreadsheet', options);
             var data = JSON.parse(savedContent);
-            for (var i in data) {
-                data[i].cols.len = options.col.len;
-                data[i].rows.len = options.row.len;
-            }
-
-            sheet.loadData(data);
+            if(data) options = data;
+            var sheet = luckysheet.create(options);
 
             // 获取编辑器中的内容
             $.global.getEditorContent = function () {
-                // return window.editor.specSelectors.specStr();
-                return JSON.stringify(sheet.getData());
+                return JSON.stringify(luckysheet.toJson());
             };
 
             // 获取swagger编辑器本次存储内容的key
@@ -94,12 +65,7 @@
             // 更新编辑器内容
             $.global.updateEditorContent = function (content) {
                 var data = JSON.parse(content);
-                for (var i in data) {
-                    data[i].cols.len = options.col.len;
-                    data[i].rows.len = options.row.len;
-                }
-
-                sheet.loadData(data);
+                luckysheet.create(data);
             };
 
         });
