@@ -53,8 +53,6 @@
                 mode: 'edit',
                 row: '{{ config("wizard.spreedsheet.max_rows") }}',
                 column: '{{ config("wizard.spreedsheet.max_cols") }}',
-                allowEdit: true,
-                allowEditFormula: true,
                 enableAddRow: false,
                 enableAddBackTop: false,
                 enableAddSheet: false,
