@@ -56,7 +56,7 @@ class CompareController extends Controller
 
         $act = $request->input('act', 'diff');
         if ($act === 'diff') {
-            $differ = new Differ(new UnifiedDiffOutputBuilder("--- Original\n+++ New\n", true));
+            $differ = new Differ(new UnifiedDiffOutputBuilder("--- {$doc1title}\n+++ {$doc2title}\n", true));
 
             if (isJson($doc1) && isJson($doc2)) {
                 $doc1 = json_encode(json_decode($doc1), JSON_PRETTY_PRINT);
