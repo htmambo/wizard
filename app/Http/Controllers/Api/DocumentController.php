@@ -117,17 +117,19 @@ class DocumentController extends Controller
         }
         $document->title = $request->input('title');
         $document->content = $content;
-        if($url) {
-            $document->last_sync_at = Carbon::now();
-            $document->sync_url = $url;
-        }
-        $document->updated_at = Carbon::now();
-        $document->last_modified_uid = Auth::id();
-        $document->save();
-        DocumentHistory::write($document);
+        if($document->isDirty()) {
+            if($url) {
+                $document->last_sync_at = Carbon::now();
+                $document->sync_url = $url;
+            }
+            $document->updated_at = Carbon::now();
+            $document->last_modified_uid = Auth::id();
+            $document->save();
+            DocumentHistory::write($document);
 
-        // 触发文档创建事件
-        event(new DocumentCreated($document));
+            // 触发文档创建事件
+            event(new DocumentCreated($document));
+        }
         $result = [
             'id' => $document->id,
             'is_starred' => false,
