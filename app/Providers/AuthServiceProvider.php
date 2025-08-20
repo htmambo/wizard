@@ -32,7 +32,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('viewApiDocs', function (\App\Repositories\User $user) {
+        Gate::define('viewApiDocs', function (?\App\Repositories\User $user) {
             // return in_array($user->email, ['admin@app.com']);
             return true; // 允许所有用户查看 API 文档
         });
