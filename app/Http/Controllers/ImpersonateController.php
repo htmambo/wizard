@@ -42,7 +42,7 @@ class ImpersonateController extends Controller
         Auth::user()->impersonate($user);
 
         $this->alertSuccess("您现在扮演的是 {$user->name}");
-        return redirect()->home();
+        return redirect()->to('/');
     }
 
     /**

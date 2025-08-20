@@ -108,6 +108,7 @@ class ShareController extends Controller
                         'type'     => $type,
                         'code'     => $hash,
                         'noheader' => true,
+                        'topdf'    => $request->input('topdf', ''),
                     ]);
                 } else {
                     Cookie::queue('share-page-' . $share->id, $inppwd, 24*60);
@@ -124,6 +125,7 @@ class ShareController extends Controller
             'type'     => $type,
             'code'     => $hash,
             'noheader' => true,
+            'topdf'    => $request->input('topdf', ''),
         ]);
     }
 

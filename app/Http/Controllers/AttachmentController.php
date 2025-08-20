@@ -14,6 +14,7 @@ use App\Repositories\Attachment;
 use App\Repositories\Document;
 use App\Repositories\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AttachmentController extends Controller
 {
@@ -106,7 +107,7 @@ class AttachmentController extends Controller
      */
     private function getSaveAsName($file, $ext): string
     {
-        if (ends_with($file, $ext)) {
+        if (Str::endsWith($file, $ext)) {
             return $file->hashName();
         }
 
