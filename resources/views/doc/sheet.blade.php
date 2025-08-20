@@ -8,7 +8,7 @@
               action="{{ $newPage ? wzRoute('project:doc:new:show', ['id' => $project->id]) : wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
 
             @include('components.doc-edit', ['project' => $project, 'pageItem' => $pageItem ?? null, 'navigator' => $navigator])
-            <input type="hidden" name="type" value="table" />
+            <input type="hidden" name="type" value="sheet" />
 
             <div id="xspreadsheet-content" style="display: none;">{{ base64_encode(processSpreedSheet($pageItem->content ?? '')) }}</div>
             <div class="col-row" id="x-spreadsheet"></div>
