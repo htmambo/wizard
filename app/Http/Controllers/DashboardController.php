@@ -48,15 +48,18 @@ class DashboardController extends Controller
         $catalogCount  = Catalog::count();
 
         // 文档统计
+        $total = 0;
         $documentCounts = Document::groupBy('type')
             ->select(\DB::raw('type, count(id) as document_count'))
             ->get()
-            ->mapWithKeys(function ($item) {
+            ->mapWithKeys(function ($item) use (&$total) {
                 $type = documentType($item['type']);
+                $total += $item['document_count'];
                 return [
                     $type => $item['document_count']
                 ];
             });
+        $documentCounts['total'] = $total;
 
         // 评论统计
         $commentCount = Comment::count();

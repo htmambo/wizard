@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 $config['input_key'] ?? 'api_token'
             );
         });
-
+        \Illuminate\Pagination\Paginator::useBootstrap();
         $this->addProjectExistRules('project_exist');
         $this->addPageExistRules('page_exist');
         $this->addTemplateUniqueRules('template_unique');

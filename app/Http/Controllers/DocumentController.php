@@ -298,7 +298,7 @@ class DocumentController extends Controller
         }
         // 只有文档内容发生修改才进行保存
         if ($pageItem->isDirty()) {
-            $pageItem->last_modified_uid = \Auth::user()->id;
+            $pageItem->last_modified_uid = Auth::user()->id;
             $pageItem->save();
 
             // 记录文档变更历史

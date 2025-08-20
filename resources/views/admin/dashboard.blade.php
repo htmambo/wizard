@@ -43,11 +43,12 @@
                     <h4 class="my-0 font-weight-normal">文档</h4>
                 </div>
                 <div class="card-body">
-                    <h1 class="card-title pricing-card-title">{{ ($document['counts']['swagger'] ?? 0) + ($document['counts']['markdown'] ?? 0) }}</h1>
+                    <h1 class="card-title pricing-card-title">{{ ($document['counts']['total'] ?? 0) }}</h1>
                     <ul class="list-unstyled mt-3 mb-4">
                         <li>{{ $document['counts']['swagger'] ?? 0 }} 个 Swagger</li>
                         <li>{{ $document['counts']['markdown'] ?? 0 }} 个 Markdown</li>
-                        <li>{{ $document['counts']['table'] ?? 0 }} 个 Table</li>
+                        <li>{{ $document['counts']['html'] ?? 0 }} 个 HTML 文档</li>
+                        <li>{{ ($document['counts']['table'] ?? 0) + ($document['counts']['sheet'] ?? 0) }} 个 Table</li>
                         <li>{{ $document['comment_count'] ?? 0 }} 条评论</li>
                     </ul>
                 </div>

@@ -18,7 +18,8 @@
     <link href="{{ cdn_resource('/assets/css/tagmanager.css') }}" rel="stylesheet">
 
     <!-- Bootstrap core CSS -->
-    {{--<link href="{{ cdn_resource('/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">--}}
+    <link href="{{ cdn_resource('/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ cdn_resource('/assets/vendor/bootstrap-material-design/css/bootstrap-material-design.min.css') }}">
     <link href="{{ cdn_resource('/assets/vendor/font-awesome6/css/all.min.css') }}" rel="stylesheet">
 
