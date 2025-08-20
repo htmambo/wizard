@@ -23,7 +23,7 @@
             <textarea id="append-test" style="display:none;">{{ $pageItem->content }}</textarea>
 {{--        @endif--}}
     @endif
-    @if($type == 'table')
+    @if($type == 'table' || $type == 'sheet')
         <textarea id="x-spreadsheet-content" class="d-none">{{ processSpreedSheet($pageItem->content) }}</textarea>
         <div id="x-spreadsheet"></div>
     @endif

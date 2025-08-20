@@ -8,7 +8,6 @@
 
 return [
     'document'    => '文档',
-    'html'        => 'HTML',
     'markdown'    => 'Markdown',
     'swagger'     => 'Swagger',
     'project'     => '项目',

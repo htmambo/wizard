@@ -23,7 +23,7 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-left" aria-labelledby="new-document" style="min-width: 13rem; overflow: hidden;">
                             <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'html', 'pid' => $pageID]) !!}" class="dropdown-item">
-                                <i class="fa fa-book mr-2"></i> 创建 @lang('common.html')
+                                <i class="fa fa-book mr-2"></i> 创建 HTML 文档
                             </a>
                             <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'pid' => $pageID]) !!}" class="dropdown-item">
                                 <i class="fa fa-book mr-2"></i> 创建 @lang('common.markdown')
@@ -31,7 +31,7 @@
                             <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'swagger', 'pid' => $pageID]) !!}" class="dropdown-item">
                                 <i class="fa fa-code mr-2"></i> 创建 @lang('common.swagger')
                             </a>
-                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'table', 'pid' => $pageID]) !!}" class="dropdown-item">
+                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'sheet', 'pid' => $pageID]) !!}" class="dropdown-item">
                                 <i class="fa fa-table mr-2"></i> 创建 表格
                             </a>
                             <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'flowchart', 'pid' => $pageID]) !!}" class="dropdown-item">

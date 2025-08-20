@@ -1,20 +1,15 @@
 @push('stylesheet')
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/css/pluginsCss.css' />
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/plugins.css' />
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css' />
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css' />
-    <style>
-        #luckysheet-icon-font-size {display:inline;}
-        .xluckysheet-wa-functionbox {
+    <link rel="stylesheet" href="{{ cdn_resource('/assets/vendor/x-spreadsheet/xspreadsheet.css') }}">
+    <style type="text/css">
+        #x-spreadsheet {
+            /*border: 1px dashed #159e92;*/
+            margin-left: 10px;
+        }
+
+        .x-spreadsheet-icon-img.add {
             display: none;
         }
-        #xluckysheet-functionbox-container {
-            left: 100px;
-        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
-
 @endpush
 
 @push('script')
@@ -25,35 +20,91 @@
             if (savedContent === '') {
                 savedContent = "{}";
             }
-            // var savedContent = $('#xspreadsheet-content').html();
-            $('#x-spreadsheet').height(document.documentElement.clientHeight - $('#x-spreadsheet').offset().top - $('.footer').height() - 45);
-            $('#x-spreadsheet').width($('#x-spreadsheet').width() - 20);
-            var options = {
-                container: 'x-spreadsheet', // 设定DOM容器的id
-                showinfobar: false,
-                showtoolbar: false,
-                showtoolbarConfig: false,
-                showstatisticBar: false,
-                allowEditStatus: false,
-                allowCopy: false,
-                allowUpdate: false,
-                sheetFormulaBar: false,
-                lang: 'zh',
-                mode: 'read',
-                row: '{{ config("wizard.spreedsheet.max_rows") }}',
-                column: '{{ config("wizard.spreedsheet.max_cols") }}',
-                allowEdit: false,
-                allowEditFormula: false,
-                enableAddRow: false,
-                enableAddBackTop: false,
-                enableAddSheet: false,
-            };
-            if(savedContent) {
-                var data = JSON.parse(savedContent);
-                if(data.hasOwnProperty('data')) options.data = data.data;
-            }
-            luckysheet.create(options);
 
+            var sheetData = [];
+            var tableHeight = 0;
+            var tableWidth = 0;
+
+            try {
+                sheetData = JSON.parse(savedContent);
+                tableHeight = (function (sheetData) {
+                    var customHeightCount = 0;
+                    var height = 0;
+
+                    for (var i in sheetData[0].rows) {
+                        if (!/^\d+$/.test(i)) {
+                            continue;
+                        }
+
+                        if (sheetData[0].rows[i]["height"] !== undefined) {
+                            customHeightCount++;
+                            height += sheetData[0].rows[i]["height"];
+                        }
+                    }
+
+
+                    for (var i = 0; i < sheetData[0].rows.len - customHeightCount; i++) {
+                        height += 25;
+                    }
+
+                    return height + 46 + 35;
+                })(sheetData);
+
+                tableWidth = (function (sheetData) {
+                    var width = 0;
+                    var customWidthCount = 0;
+
+                    for (var i in sheetData[0].cols) {
+                        if (!/^\d+$/.test(i)) {
+                            continue;
+                        }
+
+                        if (sheetData[0].cols[i]["width"] === undefined) {
+                            continue;
+                        }
+
+                        width += sheetData[0].cols[i]["width"];
+                        customWidthCount++;
+                    }
+
+
+                    for (var i = 0; i < sheetData[0].cols.len - customWidthCount; i++) {
+                        width += 100;
+                    }
+
+                    var bottomToolLength = 61 + 87 + 66.5 * sheetData.length;
+                    width = width + 61;
+                    return width > bottomToolLength ? width : bottomToolLength;
+                })(sheetData);
+            } catch (e) {
+                console.log(e);
+            }
+
+            var options = {
+                mode: 'read',
+                showToolbar: false,
+                showGrid: true,
+                showContextmenu: false,
+                view: {
+                    height: () => {
+                        return tableHeight;
+                    },
+                    width: () => {
+                        var sheetSelector = $('#x-spreadsheet');
+                        var boxWidth = sheetSelector.width();
+                        var width = boxWidth > tableWidth ? tableWidth : boxWidth;
+                        sheetSelector.width(width);
+                        $('.wz-spreadsheet').width(width + 18);
+                        return width;
+                    },
+                }
+            };
+
+            // x.spreadsheet.locale('zh-cn');
+            var sheet = x.spreadsheet('#x-spreadsheet', options);
+            sheet.loadData(sheetData);
+            sheet.change(function (data) {
+            });
         });
     </script>
 @endpush

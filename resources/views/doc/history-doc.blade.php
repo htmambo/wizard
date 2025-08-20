@@ -52,7 +52,7 @@
             @if($type == 'markdown')
                 <textarea id="append-test" style="display:none;">{{ $history->content }}</textarea>
             @endif
-            @if($type === 'table')
+            @if($type === 'table' || $type === 'sheet')
                 <textarea id="x-spreadsheet-content" class="d-none">{{ processSpreedSheet($history->content) }}</textarea>
                 <div class="wz-spreadsheet">
                     <div id="x-spreadsheet"></div>

@@ -43,7 +43,7 @@ class DocumentController extends Controller
     {
         $this->validate(
             $request,
-            ['type' => 'in:swagger,markdown,table,html,flowchart,mindmapping', 'pid' => 'integer|min:0']
+            ['type' => 'in:swagger,markdown,table,html,flowchart,mindmapping,sheet', 'pid' => 'integer|min:0']
         );
 
         /** @var Project $project */
