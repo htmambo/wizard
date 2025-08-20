@@ -43,7 +43,7 @@ class DocumentController extends Controller
     {
         $this->validate(
             $request,
-            ['type' => 'in:swagger,markdown,table,html,flowchart,mindmapping,sheet', 'pid' => 'integer|min:0']
+            ['type' => 'in:markdown,swagger,table,html,sheet', 'pid' => 'integer|min:0']
         );
 
         /** @var Project $project */
@@ -107,7 +107,7 @@ class DocumentController extends Controller
             [
                 'project_id' => "required|integer|min:1|in:{$id}|project_exist",
                 'title'      => 'required|between:1,255',
-                'type'       => 'required|in:markdown,swagger,table,html',
+                'type'       => 'required|in:markdown,swagger,table,html,sheet',
                 'pid'        => 'integer|min:0',
                 'sort_level' => 'integer',
                 'sync_url'   => 'nullable|url',
