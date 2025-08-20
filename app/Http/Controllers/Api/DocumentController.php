@@ -32,6 +32,42 @@ use League\HTMLToMarkdown\HtmlConverter;
 class DocumentController extends Controller
 {
 
+    public function update(Request $request, $id){
+        $document = Document::find($id);
+        if (!$document) {
+            return $this->error('Document not found', 404);
+        }
+
+        // 检查权限
+        if (!Auth::user()->can('project-edit', $document->project)) {
+            return $this->error('Unauthorized', 403);
+        }
+        $title = $request->input('title');
+        if($title) {
+            $document->title = $title;
+        }
+        if($document->isDirty()) {
+            $document->updated_at = Carbon::now();
+            $document->last_sync_at = Carbon::now();
+            $document->last_modified_uid = Auth::id();
+            $document->save();
+            DocumentHistory::write($document);
+
+            // 触发文档更新事件
+            event(new DocumentModified($document));
+        }
+
+
+        return $this->success([
+            'id' => $document->id,
+            'title' => $document->title,
+            'url' => '/project/1?p=' . $document->id,
+            'tags' => [],
+            'domain_name' => parse_url($document->url, PHP_URL_HOST),
+            'preview_picture' => null,
+        ]);
+    }
+
     /**
      * 创建或更新文档
      *
@@ -70,26 +106,23 @@ class DocumentController extends Controller
         $document = Document::where('sync_url', $url)
             ->where('project_id', 1) // 假设项目ID为1
             ->first();
-        if ($document) {
-            // 如果文档已存在，更新内容和标题
-            $document->title = $request->input('title');
-            $document->content = $content;
-            $document->updated_at = Carbon::now();
-        } else {
+        if (!$document) {
             $document = new Document();
-            $document->title = $request->input('title');
-            $document->content = $content;
             $document->project_id = 1;
             $document->type = Document::TYPE_DOC; // 默认类型为HTML
             $document->user_id = Auth::id();
             $document->created_at = Carbon::now();
             $document->updated_at = Carbon::now();
             $document->status = Document::STATUS_NORMAL;
-            $document->sync_url = $url ?: null;
         }
+        $document->title = $request->input('title');
+        $document->content = $content;
         if($url) {
             $document->last_sync_at = Carbon::now();
+            $document->sync_url = $url;
         }
+        $document->updated_at = Carbon::now();
+        $document->last_modified_uid = Auth::id();
         $document->save();
         DocumentHistory::write($document);
 

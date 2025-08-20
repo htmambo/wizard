@@ -18,6 +18,19 @@ use App\Repositories\Document;
 class ApiController extends Controller
 {
 
+    public function tags(Request $request)
+    {
+        return $this->success([
+            'tags' => [
+                '基础接口',
+                'API相关接口',
+                '用户认证',
+                '版本信息',
+                '搜索功能'
+            ]
+        ], 'API Tags');
+    }
+
     /**
      * 获取API Token
      *
