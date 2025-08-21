@@ -34,9 +34,6 @@
                             <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'sheet', 'pid' => $pageID]) !!}" class="dropdown-item">
                                 <i class="fa fa-table mr-2"></i> 创建 表格
                             </a>
-                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'flowchart', 'pid' => $pageID]) !!}" class="dropdown-item">
-                                <i class="fa fa-table mr-2"></i> 创建 流程图
-                            </a>
                             <a data-toggle="modal" data-target="#wz-document-import" class="dropdown-item">
                                 <i class="fa fa-upload mr-2"></i> 批量导入
                             </a>

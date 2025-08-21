@@ -50,8 +50,6 @@ if (!function_exists('wzRoute')) {
             Document::TYPE_DOC     => 'markdown',
             Document::TYPE_SWAGGER => 'swagger',
             Document::TYPE_TABLE   => 'table',
-            Document::TYPE_FLOW    => 'flowchart',
-            Document::TYPE_MINDMAP => 'mindmap',
             Document::TYPE_SHEET   => 'sheet',
         ];
         if ($flip) {

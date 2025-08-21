@@ -83,8 +83,6 @@ class Document extends Model
     const TYPE_DOC          = 1;     //MD文档
     const TYPE_SWAGGER      = 2;     //SWAGGER文档
     const TYPE_TABLE        = 3;     //表格
-    const TYPE_FLOW         = 4;     //流程图
-    const TYPE_MINDMAP      = 5;     //思维导图
     const TYPE_SHEET        = 6;     //LuckySheet表格
 
     /**

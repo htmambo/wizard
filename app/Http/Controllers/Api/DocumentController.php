@@ -174,9 +174,6 @@ class DocumentController extends Controller
         } elseif ($document->isTable() && $request->input('format', 'raw') === 'csv') {
             // 如果是表格文档，并且请求格式为CSV，则转换为CSV
             $document->content = Formatter::make($document->content, Formatter::CSV)->toArray();
-        // } elseif ($document->isFlow() && $request->input('format', 'raw') === 'xml') {
-        //     // 如果是流程图文档，并且请求格式为XML，则转换为XML
-        //     $document->content = Formatter::make($document->content, Formatter::XML)->toArray();
         }
         $document = [
             'id' => $document->id,
