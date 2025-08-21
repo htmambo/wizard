@@ -12,9 +12,10 @@ trait ApiResponse
             'success' => true,
             'message' => $message,
             'data' => $data,
+            'meta' => $meta,
         ], 200);
     }
-    
+
     protected function error(string $message = '', int $code = 400, $errors = null): JsonResponse
     {
         return response()->json([
@@ -23,7 +24,7 @@ trait ApiResponse
             'errors' => $errors,
         ], $code);
     }
-    
+
     protected function paginated($data, string $message = ''): JsonResponse
     {
         return response()->json([

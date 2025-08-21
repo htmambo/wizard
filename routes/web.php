@@ -28,6 +28,12 @@ Route::group(['middleware' => 'locale'], function () {
     ];
     Auth::routes($authRoutes);
 
+    // 博客子域名
+    Route::domain('blog')->group(function () {
+        // 公共首页
+        Route::get('/{catalog?}', 'BlogController@home')->name('home');
+    });
+
     // 公共首页
     Route::get('/{catalog?}', 'HomeController@home')->name('home');
     Route::group(['middleware' => 'global-auth'], function () {

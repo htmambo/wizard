@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -73,12 +72,13 @@ Route::middleware('auth:api')->group(function () {
         // 文档列表
         Route::get('lists', [DocumentController::class, 'lists']);
         // 文档创建
-        Route::post('create', [DocumentController::class, 'create']);
+        // Route::post('create', [DocumentController::class, 'create']);
         // 文档更新
         Route::patch('update/{id}', [DocumentController::class, 'update']);
         // 文档删除
         Route::delete('delete/{id}', [DocumentController::class, 'delete']);
     });
+    Route::post('entries.{foramt}', [DocumentController::class, 'create']);
 });
 // 获取API Token
 Route::post('token', [ApiController::class, 'token']);
@@ -87,4 +87,4 @@ Route::get('version', [ApiController::class, 'version']);
 // 搜索
 Route::get('search', [ApiController::class, 'search']);
 // 标签
-Route::get('tags', [ApiController::class, 'tags']);
+Route::get('tags.{format}', [ApiController::class, 'tags']);

@@ -9,10 +9,14 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\Parameter;
 use App\Repositories\ApiToken;
 use App\Repositories\Document;
+use App\Repositories\Tag;
+use App\Repositories\PageTag;
 
 #[Group('基础接口', 'API相关接口', 1)]
 class ApiController extends Controller
@@ -20,15 +24,22 @@ class ApiController extends Controller
 
     public function tags(Request $request)
     {
-        return $this->success([
-            'tags' => [
-                '基础接口',
-                'API相关接口',
-                '用户认证',
-                '版本信息',
-                '搜索功能'
-            ]
-        ], 'API Tags');
+        // 使用 LEFT JOIN 和 COUNT 合并查询，避免 N+1 查询问题
+        $tags = Tag::query()
+            ->select('tags.id', 'tags.name', DB::raw('COUNT(`wz_page_tag`.tag_id) as nb_entries'))
+            ->leftJoin('page_tag', 'tags.id', '=', 'page_tag.tag_id')
+            ->groupBy('tags.id', 'tags.name')
+            ->get()
+            ->map(function ($tag) {
+                return [
+                    'id'   => $tag->id,
+                    'label' => $tag->name,
+                    'slug'  => 't:' . urlencode($tag->name),
+                    'nbEntries' => (int) $tag->nb_entries,
+                ];
+            })
+            ->toArray();
+        return response()->json($tags);
     }
 
     /**
@@ -95,15 +106,11 @@ class ApiController extends Controller
         }
         $apiToken->expires_at = now()->addHour();
         $apiToken->save();
-        // 返回token信息
-        return $this->success([
-            'token' => $apiToken->token,
-            'user'  => [
-                'id'       => $user->id,
-                'name'     => $user->name,
-                'email'    => $user->email
-            ],
-            'expires_in' => 3600, // 1小时有效期
+        return response()->json([
+            'access_token' => $apiToken->token,
+            'type'  => 'Bearer',
+            'expires_in' => 86400, // 1小时有效期
+            'refresh_token' => $apiToken->token
         ]);
     }
 
@@ -112,15 +119,7 @@ class ApiController extends Controller
      * @unauthenticated
      */
     public function version(Request $request){
-        // 返回应用的版本信息
-        return $this->success([
-                                    'version'         => config('wizard.version', '1.0.0'),
-                                    'app_name'        => config('app.name', '果农笔记'),
-                                    'laravel_version' => app()->version(),
-                                    'timestamp'       => now()->toISOString(),
-                                    'environment'     => app()->environment(),
-                                    'php_version'     => phpversion(),
-                                ]);
+        return response()->json(config('wizard.version', '1.0.0'));
     }
 
     /**
