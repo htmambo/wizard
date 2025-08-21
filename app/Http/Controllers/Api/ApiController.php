@@ -1,9 +1,6 @@
 <?php
 /**
- * Wizard
- *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * 基础接口
  */
 
 namespace App\Http\Controllers\Api;
@@ -12,11 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Dedoc\Scramble\Attributes\Group;
-use Dedoc\Scramble\Attributes\Parameter;
 use App\Repositories\ApiToken;
 use App\Repositories\Document;
 use App\Repositories\Tag;
 use App\Repositories\PageTag;
+
 
 #[Group('基础接口', 'API相关接口', 1)]
 class ApiController extends Controller
@@ -56,61 +53,82 @@ class ApiController extends Controller
      * @throws \Random\RandomException
      */
     public function token(Request $request){
-        $this->validate(
-            $request, [
-                // 账号或邮箱
-                'username'     => 'required|string',
-                // 密码
-                'password'     => 'required|string',
-                // 授权类型
-                'grant_type'   => 'required|string|in:password',
-                // 客户端ID
-                'client_id'    => 'required|string',
-                // 客户端密钥
-                'client_secret' => 'required|string',
-            ]
-        );
-        $username = $request->get('username', '');
-        $password = $request->get('password', '');
-        $grandtType = $request->get('grant_type', 'password');
+        //懒得去加载其它第三方包了，就简单的实现个access_token和refresh_token算了
+        // 基础验证规则
+        $this->validate($request, [
+            // 授权类型
+            'grant_type'   => 'required|string|in:password,refresh_token',
+            // 客户端ID
+            'client_id'    => 'required|string',
+            // 客户端密钥
+            'client_secret' => 'required|string',
+            // 刷新令牌
+            'refresh_token' => 'required_if:grant_type,refresh_token|string',
+            // 用户名
+            'username' => 'required_if:grant_type,password|string',
+            // 密码
+            'password' => 'required_if:grant_type,password|string',
+        ]);
+
+        // 根据grant_type添加条件验证规则
+        $grantType = $request->get('grant_type');
+
         $clientId = $request->get('client_id', '');
         $clientSecret = $request->get('client_secret', '');
-        if ($grandtType !== 'password') {
-            return $this->error('Unsupported grant type', 400);
+        $grandtType = $request->get('grant_type', 'password');
+        $username = $request->get('username', '');
+        $password = $request->get('password', '');
+        $refreshToken = $request->get('refresh_token', '');
+        if ($grandtType === 'refresh_token') {
+            // 刷新token - 使用refresh_token字段进行验证
+            $apiToken = ApiToken::where('refresh_token', $refreshToken)->first();
+            if (!$apiToken) {
+                return $this->error('Invalid refresh token', 401);
+            }
+            if ($apiToken->refresh_expires_at && $apiToken->refresh_expires_at < now()) {
+                return $this->error('Refresh token expired', 401);
+            }
+            // 直接设置用户，无需重新验证密码
+            $user = $apiToken->user;
+            Auth::setUser($user);
+        } else {
+            // 验证用户凭据
+            if (!Auth::attempt(['email' => $username, 'password' => $password])) {
+                return $this->error('Invalid username or password', 401);
+            }
         }
-        if (empty($username) || empty($password)) {
-            return $this->error('Username and password are required', 400);
-        }
-        if (empty($clientSecret)) {
-            return $this->error('Client secret is required', 400);
-        }
-        // 验证客户端ID和密钥
-        if ($clientId !== config('wizard.client_id', 'default_client') || $clientSecret !== config('wizard.client_secret', 'default_secret')) {
-            // return $this->error('Invalid client credentials', 401);
-        }
-        // 验证用户凭据
-        if (!\Auth::attempt(['email' => $username, 'password' => $password])) {
-            return $this->error('Invalid username or password', 401);
-        }
-        $user = \Auth::user();
+        $user = Auth::user();
         if (!$user) {
             return $this->error('Unauthorized', 401);
         }
+
         // 检查用户是否已存在token
         $apiToken = ApiToken::where('user_id', $user->id)->first();
-        if (!$apiToken) {
+        if (!$apiToken || $apiToken->expires_at < now()) {
             // 创建新的token
-            $apiToken = new ApiToken();
-            $apiToken->user_id = $user->id;
-            $apiToken->token = bin2hex(random_bytes(40)); // 生成新的token
+            if (!$apiToken) {
+                $apiToken = new ApiToken();
+                $apiToken->user_id = $user->id;
+            }
+
+            // 生成access_token：用户ID + 时间戳 + 随机值的哈希
+            $accessTokenString = $user->id . '_access_' . $user->email . '_' . time() . '_' . bin2hex(random_bytes(16));
+            $apiToken->token = hash('sha256', $accessTokenString);
+            $apiToken->expires_at = now()->addHours(2); // access_token 2小时过期
+
+            // 生成refresh_token：用户ID + 时间戳 + 随机值的哈希
+            $refreshTokenString = $user->id . '_refresh_' . $user->email . '_' . time() . '_' . bin2hex(random_bytes(16));
+            $apiToken->refresh_token = hash('sha256', $refreshTokenString);
+            $apiToken->refresh_expires_at = now()->addDays(30); // refresh_token 30天过期
+
+            $apiToken->save();
         }
-        $apiToken->expires_at = now()->addHour();
-        $apiToken->save();
+
         return response()->json([
             'access_token' => $apiToken->token,
-            'type'  => 'Bearer',
-            'expires_in' => 86400, // 1小时有效期
-            'refresh_token' => $apiToken->token
+            'token_type'  => 'Bearer',
+            'expires_in' => -$apiToken->expires_at->diffInSeconds(now()),
+            'refresh_token' => $apiToken->refresh_token,
         ]);
     }
 

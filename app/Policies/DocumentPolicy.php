@@ -24,6 +24,39 @@ class DocumentPolicy
     use HandlesAuthorization, GroupHasProjectPrivilege;
 
     /**
+     * 是否可以发布到博客
+     *
+     * @param User         $user
+     * @param Document|int $page
+     * @return void
+     */
+    public function toblog($user, $page)
+    {
+        /**
+         * 1. 公开项目
+         * 2. 项目创建者
+         * 3. 文档创建者
+         */
+        $page = $this->getDocument($page);
+        $project = $this->getProject($page->project);
+        if ($project->visibility === Project::VISIBILITY_PUBLIC) {
+            return true;
+        }
+
+        // 项目创建者
+        if ((int)$project->user_id === (int)$user->id) {
+            return true;
+        }
+
+        // 文档创建者
+        if ((int)$page->user_id === (int)$user->id) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * 文档编辑权限
      *
      * @param User         $user

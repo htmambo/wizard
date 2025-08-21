@@ -32,13 +32,16 @@ class ApiToken extends Model
     protected $fillable = [
         'user_id',
         'token',
+        'refresh_token',
         'name',
         'expires_at',
+        'refresh_expires_at',
         'last_used_at',
     ];
 
     protected $casts = [
         'expires_at' => 'datetime',
+        'refresh_expires_at' => 'datetime',
         'last_used_at' => 'datetime',
     ];
 
