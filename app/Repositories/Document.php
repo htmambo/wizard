@@ -266,4 +266,9 @@ class Document extends Model
     {
         return (int)$this->type === self::TYPE_HTML;
     }
+
+    public function exists(string $url): bool
+    {
+        return Document::where('sync_url', $url)->exists();
+    }
 }
