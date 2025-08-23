@@ -33,6 +33,24 @@ use App\Repositories\Tag;
 class DocumentController extends Controller
 {
 
+    public function deletetag(Request $request, $id, $tag_id){
+        $document = Document::find($id);
+        if (!$document) {
+            return $this->error('Document not found', 404);
+        }
+        // 检查权限
+        if (!Auth::user()->can('project-edit', $document->project)) {
+            return $this->error('Unauthorized', 403);
+        }
+        $tag = Tag::find($tag_id);
+        if (!$tag) {
+            return $this->error('Tag not found', 404);
+        }
+        $document->tags()->detach($tag_id);
+        // 触发文档标签修改事件
+        event(new DocumentMarkModified($document));
+        return $this->success($this->returnDocumentInfo($document), 'Document tag deleted successfully');
+    }
     /**
      * 检查文档是否存在
      *
@@ -131,14 +149,7 @@ class DocumentController extends Controller
             event(new DocumentModified($document));
         }
 
-        return $this->success([
-            'id' => $document->id,
-            'title' => $document->title,
-            'url' => '/project/' . $document->project_id . '?p=' . $document->id,
-            'tags' => $document->tags->select('id', 'name')->toArray(),
-            'domain_name' => parse_url($document->url, PHP_URL_HOST),
-            'preview_picture' => null,
-        ]);
+        return $this->success($this->returnDocumentInfo($document), 'Document updated successfully');
     }
 
     /**
@@ -215,19 +226,22 @@ class DocumentController extends Controller
             // 触发文档创建事件
             event(new DocumentCreated($document));
         }
-        $result = [
+        return $this->success($this->returnDocumentInfo($document), 'Document created or updated successfully');
+    }
+
+    private function returnDocumentInfo(Document $document){
+        return [
             'id' => $document->id,
             'is_starred' => false,
             'is_archived' => false,
             'title' => $document->title,
             'url' => '/project/' . $document->project_id . '?p=' . $document->id,
             'tags' => $document->tags->select('id', 'name')->toArray(),
-            'domain_name' => parse_url($document->url, PHP_URL_HOST),
+            'domain_name' => parse_url($document->sync_url, PHP_URL_HOST),
             'preview_picture' => null,
+            'sync_url' => $document->sync_url,
         ];
-        return $this->success($result);
     }
-
     /**
      * 获取文档详情
      *
@@ -260,14 +274,6 @@ class DocumentController extends Controller
             // 如果是表格文档，并且请求格式为CSV，则转换为CSV
             $document->content = Formatter::make($document->content, Formatter::CSV)->toArray();
         }
-        $document = [
-            'id' => $document->id,
-            'title' => $document->title,
-            'content' => $document->content,
-            'created_at' => $document->created_at->toIso8601String(),
-            'updated_at' => $document->updated_at->toIso8601String(),
-            'tags' => $document->tags->select('id', 'name')->toArray(),
-        ];
-        return $this->success($document);
+        return $this->success($document->toArray());;
     }
 }

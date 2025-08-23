@@ -76,6 +76,8 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('{id}.{format}', [DocumentController::class, 'update']);
         // 文档删除
         Route::delete('{id}.{format}', [DocumentController::class, 'delete']);
+        // 删除文档标签
+        Route::delete('{id}/tags/{tag}.{format}', [DocumentController::class, 'deleteTag']);
         // 文档是否存在
         Route::get('exists.json', [DocumentController::class, 'exists']);
     });
