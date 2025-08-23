@@ -22,6 +22,7 @@ use Illuminate\Support\Str;
 use SoapBox\Formatter\Formatter;
 use Dedoc\Scramble\Attributes\Group;
 use League\HTMLToMarkdown\HtmlConverter;
+use App\Repositories\Tag;
 
 /**
  * 文档相关API
@@ -32,6 +33,54 @@ use League\HTMLToMarkdown\HtmlConverter;
 class DocumentController extends Controller
 {
 
+    /**
+     * 检查文档是否存在
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function exists(Request $request){
+        $url = $request->input('url');
+        $exists = Document::exists($url);
+        return response()->json(['exists' => $exists]);
+    }
+
+    /**
+     * 删除文档
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function delete(Request $request, $id){
+        $document = Document::find($id);
+        if (!$document) {
+            return $this->error('Document not found', 404);
+        }
+        // 检查权限
+        if (!Auth::user()->can('project-edit', $document->project)) {
+            return $this->error('Unauthorized', 403);
+        }
+        // 检查文档是否被引用
+        $referenced = PageShare::where('page_id', $document->id)->exists();
+        if ($referenced) {
+            return $this->error('Document is referenced and cannot be deleted', 400);
+        }
+        // 执行删除操作
+        $document->delete();
+        // 触发文档删除事件
+        event(new DocumentDeleted($document));
+        return $this->success($document->toArray());
+    }
+
+    /**
+     * 更新文档
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
     public function update(Request $request, $id){
         $document = Document::find($id);
         if (!$document) {
@@ -46,6 +95,31 @@ class DocumentController extends Controller
         if($title) {
             $document->title = $title;
         }
+        $tags = $request->input('tags');
+        if($tags) {
+            $names = array_filter(array_map(function ($val) {
+                return trim($val);
+            }, explode(',', $request->input('tags'))), function ($val) {
+                return !empty($val);
+            });
+
+            /** @var Collection $tagsExisted */
+            $tagsExisted     = Tag::whereIn('name', $names)->get();
+            $tagNamesExisted = array_values($tagsExisted->pluck('name')->map(function ($tag) {
+                return strtolower($tag);
+            })->toArray());
+
+            $tagsNewCreated = collect($names)->filter(function ($tag) use ($tagNamesExisted) {
+                return !in_array(strtolower($tag), $tagNamesExisted);
+            })->map(function ($name) {
+                return Tag::create(['name' => $name]);
+            });
+
+            $tags = $tagsExisted->concat($tagsNewCreated);
+
+            $document->tags()->detach();
+            $document->tags()->attach($tags->pluck('id'));
+        }
         if($document->isDirty()) {
             $document->updated_at = Carbon::now();
             $document->last_sync_at = Carbon::now();
@@ -57,12 +131,11 @@ class DocumentController extends Controller
             event(new DocumentModified($document));
         }
 
-
         return $this->success([
             'id' => $document->id,
             'title' => $document->title,
-            'url' => '/project/1?p=' . $document->id,
-            'tags' => [],
+            'url' => '/project/' . $document->project_id . '?p=' . $document->id,
+            'tags' => $document->tags->select('id', 'name')->toArray(),
             'domain_name' => parse_url($document->url, PHP_URL_HOST),
             'preview_picture' => null,
         ]);
@@ -115,6 +188,7 @@ class DocumentController extends Controller
         // 根据project_id、sync_url来检查是否已经存在该文档
         $document = Document::where('sync_url', $url)
             ->where('project_id', 1) // 假设项目ID为1
+            ->whereNull('deleted_at')
             ->first();
         if (!$document) {
             $document = new Document();
@@ -146,8 +220,8 @@ class DocumentController extends Controller
             'is_starred' => false,
             'is_archived' => false,
             'title' => $document->title,
-            'url' => '/project/1?p=' . $document->id,
-            'tags' => [],
+            'url' => '/project/' . $document->project_id . '?p=' . $document->id,
+            'tags' => $document->tags->select('id', 'name')->toArray(),
             'domain_name' => parse_url($document->url, PHP_URL_HOST),
             'preview_picture' => null,
         ];
@@ -192,6 +266,7 @@ class DocumentController extends Controller
             'content' => $document->content,
             'created_at' => $document->created_at->toIso8601String(),
             'updated_at' => $document->updated_at->toIso8601String(),
+            'tags' => $document->tags->select('id', 'name')->toArray(),
         ];
         return $this->success($document);
     }

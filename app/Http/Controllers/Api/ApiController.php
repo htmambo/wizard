@@ -23,18 +23,8 @@ class ApiController extends Controller
     {
         // 使用 LEFT JOIN 和 COUNT 合并查询，避免 N+1 查询问题
         $tags = Tag::query()
-            ->select('tags.id', 'tags.name', DB::raw('COUNT(`wz_page_tag`.tag_id) as nb_entries'))
-            ->leftJoin('page_tag', 'tags.id', '=', 'page_tag.tag_id')
-            ->groupBy('tags.id', 'tags.name')
+            ->select('id', 'name')
             ->get()
-            ->map(function ($tag) {
-                return [
-                    'id'   => $tag->id,
-                    'label' => $tag->name,
-                    'slug'  => 't:' . urlencode($tag->name),
-                    'nbEntries' => (int) $tag->nb_entries,
-                ];
-            })
             ->toArray();
         return response()->json($tags);
     }

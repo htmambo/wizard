@@ -76,10 +76,8 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('{id}.{format}', [DocumentController::class, 'update']);
         // 文档删除
         Route::delete('{id}.{format}', [DocumentController::class, 'delete']);
-        Route::get('exists.json', function (\Illuminate\Http\Request $request) {
-            $exists = Document::exists($request->input('url'));
-            return response()->json(['exists' => $exists]);
-        });
+        // 文档是否存在
+        Route::get('exists.json', [DocumentController::class, 'exists']);
     });
     // 文档创建
     Route::post('document.{format}', [DocumentController::class, 'create']);
