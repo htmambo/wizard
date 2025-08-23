@@ -138,7 +138,7 @@ class ApiController extends Controller
      */
     public function version(Request $request){
         return $this->success([
-            'versipn' => config('wizard.version', '1.0.0'),
+            'version' => config('wizard.version', '1.0.0'),
             'api_version' => config('wizard.api_version', '1.0.0'),
             'name'    => config('app.name', 'Wizard'),
             'env'     => config('app.env', 'production'),
