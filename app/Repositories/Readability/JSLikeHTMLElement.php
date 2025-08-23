@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Readability;
+namespace App\Repositories\Readability;
 
 /**
  * JavaScript-like HTML DOM Element.

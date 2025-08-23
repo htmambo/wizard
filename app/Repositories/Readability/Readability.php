@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Readability;
+namespace App\Repositories\Readability;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
