@@ -50,7 +50,7 @@ class ProjectController extends Controller
         }
 
         /** @var LengthAwarePaginator $projects */
-        $projects = $projectModel->where('user_id', \Auth::user()->id)
+        $projects = $projectModel->where('user_id', Auth::user()->id)
                                  ->orderBy('sort_level', 'ASC')
                                  ->paginate($perPage)
                                  ->appends([

@@ -49,7 +49,7 @@ Route::middleware('auth:api')->group(function () {
         // 项目详情
         Route::get('{id}', [ProjectController::class, 'view']);
         // 项目列表
-        Route::get('lists', [ProjectController::class, 'lists']);
+        Route::get('lists.{format}', [ProjectController::class, 'lists']);
         // 项目创建
         Route::post('create', [ProjectController::class, 'create']);
         // 项目更新

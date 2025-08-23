@@ -37,12 +37,13 @@ class DocumentController extends Controller
      * 删除文档标签
      *
      * @param Request $request
-     * @param         $id
-     * @param         $tag_id
+     * @param int     $id     文档ID
+     * @param int     $tag_id 标签ID
+     * @param string  $format 格式，默认为json
      *
      * @return JsonResponse
      */
-    public function deletetag(Request $request, $id, $tag_id){
+    public function deleteTag(Request $request, $id, $tag_id, $format = 'json'){
         $document = Document::find($id);
         if (!$document) {
             return $this->error('Document not found', 404);
@@ -123,6 +124,17 @@ class DocumentController extends Controller
         $title = $request->input('title');
         if($title) {
             $document->title = $title;
+        }
+        $project = $request->input('project_id');
+        if($project && $project != $document->project_id) {
+            $newProject = Project::find($project);
+            if (!$newProject) {
+                return $this->error('Project not found', 404);
+            }
+            if (!Auth::user()->can('project-edit', $newProject)) {
+                return $this->error('Unauthorized to move to the specified project', 403);
+            }
+            $document->project_id = $project;
         }
         $tags = $request->input('tags');
         if($tags) {
@@ -209,12 +221,12 @@ class DocumentController extends Controller
 
         // 根据project_id、sync_url来检查是否已经存在该文档
         $document = Document::where('sync_url', $url)
-            ->where('project_id', 1) // 假设项目ID为1
+            // ->where('project_id', 13) // 假设项目ID为1
             ->whereNull('deleted_at')
             ->first();
         if (!$document) {
             $document = new Document();
-            $document->project_id = 1;
+            $document->project_id = 13;
             $document->type = Document::TYPE_DOC; // 默认类型为HTML
             $document->user_id = Auth::id();
             $document->created_at = Carbon::now();
@@ -243,6 +255,8 @@ class DocumentController extends Controller
     private function returnDocumentInfo(Document $document){
         return [
             'id' => $document->id,
+            'project_id' => $document->project_id,
+            'project_name' => $document->project->name,
             'is_starred' => false,
             'is_archived' => false,
             'title' => $document->title,

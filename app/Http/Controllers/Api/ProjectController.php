@@ -63,23 +63,36 @@ class ProjectController extends Controller
         ];
         return $this->success($documents, 'Documents retrieved successfully', $meta);
     }
-    public function all(Request $request)
+
+    /**
+     * 获取项目列表
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function lists(Request $request, $format = 'json')
     {
         $projectModel = Project::query();
-        $user = \Auth::user();
-        $userGroups = empty($user) ? null : $user->groups->pluck('id')->toArray();
+        $user = Auth::user();
+        $userGroups = empty($user) ? null : $user->groups->toArray();
         $projectModel->where(function ($query) use ($user, $userGroups) {
-            $query->where('visibility', Project::VISIBILITY_PUBLIC);
+            $query->where('visibility', Project::VISIBILITY_PUBLIC)->orWhere('user_id', $user->id);
             if (!empty($userGroups)) {
                 $query->orWhere(function ($query) use ($userGroups) {
                     $query->where('visibility', '!=', Project::VISIBILITY_PUBLIC)
                           ->whereHas('groups', function ($query) use ($userGroups) {
                               $query->where('groups.id', $userGroups);
                           });
-                })->orWhere('user_id', $user->id);
+                });
             }
         });
-        $projects = $projectModel->select(['id', 'name'])->orderBy('sort_level', 'ASC')->get();
-        return $this->success($projects);
+        $projects = $projectModel->select(['id', 'name'])->orderBy('catalog_id', 'ASC')->orderBy('sort_level', 'ASC')->get();
+        $sql = $projectModel->toSql();
+        return $this->success($projects, 'Projects retrieved successfully', [
+            'sql' => $sql,
+            'bindings' => $projectModel->getBindings(),
+            'usergroups' => $userGroups,
+            'user' => $user ? $user->only(['id', 'name']) : null
+        ]);
     }
 }

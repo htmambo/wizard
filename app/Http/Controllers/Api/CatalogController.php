@@ -14,8 +14,8 @@ class CatalogController extends Controller
      */
     public function lists(){
         try {
-            $catalogs = Catalog::select('id', 'name', 'description', 'created_at')
-                   ->orderBy('name')
+            $catalogs = Catalog::select('id', 'name')
+                   ->orderBy('sort_level', 'ASC')
                    ->get();
             if ($catalogs->isEmpty()) {
                 return $this->error('No catalogs found', 404);
