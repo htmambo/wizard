@@ -91,6 +91,7 @@
                     @if(!empty($pageItem->sync_url))
                         <p>
                             文档同步地址：<a href="{{ $pageItem->sync_url }}" target="_blank">{{ $pageItem->sync_url }}</a>，最后同步于 {{ $pageItem->last_sync_at ?? '-' }}
+                            @if($pageItem->isSwagger())
                             @can('page-edit', $pageItem)
                                 <a href="#" wz-form-submit data-form="#form-document-sync" data-confirm="执行文档同步后，您将成为最后修改人，确定要执行文档同步吗？" class="ml-2" title="同步文档">
                                     <i class="fa fa-refresh" data-toggle="tooltip" title="同步文档"></i>
@@ -100,6 +101,7 @@
                                     </form>
                                 </a>
                             @endcan
+                            @endif
                         </p>
                     @endif
                 </div>

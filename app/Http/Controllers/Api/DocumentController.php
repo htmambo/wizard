@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Validation\ValidationException;
-use Readability\Readability;
+use App\Components\Readability\Readability;
 use App\Events\DocumentCreated;
 use App\Events\DocumentDeleted;
 use App\Events\DocumentMarkModified;
@@ -95,11 +95,21 @@ class DocumentController extends Controller
 
         if ($result) {
             $content = $readability->getContent()->innerHTML;
+
         }
+        $origContent = $content;
         // 将内容转换为Markdown格式
         if ($request->input('format', 'html') === 'html') {
-            $converter = new HtmlConverter();
+            $converter = new HtmlConverter([
+                'strip_tags' => true,
+                'hard_break' => true,
+                // 'preserve_comments' => true,
+            ]);
             $content = $converter->convert($content);
+            $content = preg_replace('/<[a-z\/][^>]*>/iu', '  ' . PHP_EOL, $content);
+
+
+            // $content = preg_replace('/\s*\n\s*\n/', '  ' . PHP_EOL, $content);
         }
 
         // 根据project_id、sync_url来检查是否已经存在该文档
@@ -117,6 +127,7 @@ class DocumentController extends Controller
         }
         $document->title = $request->input('title');
         $document->content = $content;
+        $document->html_code = $origContent;
         if($document->isDirty()) {
             if($url) {
                 $document->last_sync_at = Carbon::now();

@@ -137,7 +137,17 @@ class ApiController extends Controller
      * @unauthenticated
      */
     public function version(Request $request){
-        return response()->json(config('wizard.version', '1.0.0'));
+        return $this->success([
+            'versipn' => config('wizard.version', '1.0.0'),
+            'api_version' => config('wizard.api_version', '1.0.0'),
+            'name'    => config('app.name', 'Wizard'),
+            'env'     => config('app.env', 'production'),
+            'debug'   => config('app.debug', false),
+            'url'     => config('app.url', 'https://wzard.com'),
+            'timezone' => config('app.timezone', 'UTC'),
+            'PHP_VERSION' => PHP_VERSION,
+            'laravel_version' => app()->version(),
+        ]);
     }
 
     /**

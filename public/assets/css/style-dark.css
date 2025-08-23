@@ -666,7 +666,7 @@ body.wz-dark-theme,
   color: hsl(40, 90%, 60%);
 }
 .wz-dark-theme pre.prettyprint code .typ {
-  color: hsl(75, 70%, 60%);
+  color: hsl(75, 7%, 60%);
 }
 .wz-dark-theme pre.prettyprint code .pun {
   color: rgb(200, 159, 110);

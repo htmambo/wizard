@@ -67,18 +67,17 @@ Route::middleware('auth:api')->group(function () {
 
     // 文档管理，控制器：Api\DocumentController
     Route::prefix('document')->group(function () {
-        // 文档详情
-        Route::get('{id}', [DocumentController::class, 'view']);
         // 文档列表
         Route::get('lists', [DocumentController::class, 'lists']);
-        // 文档创建
-        // Route::post('create', [DocumentController::class, 'create']);
+        // 文档详情
+        Route::get('{id}.{format}', [DocumentController::class, 'view']);
         // 文档更新
-        Route::patch('update/{id}', [DocumentController::class, 'update']);
+        Route::patch('{id}.{format}', [DocumentController::class, 'update']);
         // 文档删除
-        Route::delete('delete/{id}', [DocumentController::class, 'delete']);
+        Route::delete('{id}.{format}', [DocumentController::class, 'delete']);
     });
-    Route::post('entries.{foramt}', [DocumentController::class, 'create']);
+    // 文档创建
+    Route::post('document.{format}', [DocumentController::class, 'create']);
 });
 // 获取API Token
 Route::post('token', [ApiController::class, 'token']);

@@ -75,6 +75,7 @@
                     <input type="text" class="form-control wz-input-long" name="sync_url" id="editor-sync_url" value="{{ $pageItem->sync_url ?? '' }}" placeholder="http://"/>
                 </div>
             @else
+                <input type="hiden" name="sync_url" value="{{ $pageItem->sync_url?? ''}}">
                 <div class="form-group wz-document-form-select">
                     <label for="editor-title" class="bmd-label-static">@lang('document.title')</label>
                     <input type="text" class="form-control wz-input-long" name="title" id="editor-title"
