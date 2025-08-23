@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Readability;
+namespace App\Components\Readability;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -170,7 +170,7 @@ class Readability implements LoggerAwareInterface
     /**
      * Get article content element.
      *
-     * @return \JSLikeHTMLElement
+     * @return \DOMElement
      */
     public function getContent()
     {
@@ -636,7 +636,7 @@ class Readability implements LoggerAwareInterface
     /**
      * Remove extraneous break tags from a node.
      */
-    public function killBreaks(JSLikeHTMLElement $node): void
+    public function killBreaks(\DOMElement $node): void
     {
         $html = $node->getInnerHTML();
         $html = preg_replace($this->regexps['killBreaks'], '<br />', $html);
@@ -977,7 +977,7 @@ class Readability implements LoggerAwareInterface
      * Using a variety of metrics (content score, classname, element types), find the content that is
      * most likely to be the stuff a user wants to read. Then return it wrapped up in a div.
      *
-     * @return \JSLikeHTMLElement|false
+     * @return \DOMElement|false
      */
     protected function grabArticle(?\DOMElement $page = null)
     {
