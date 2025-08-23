@@ -33,6 +33,15 @@ use App\Repositories\Tag;
 class DocumentController extends Controller
 {
 
+    /**
+     * 删除文档标签
+     *
+     * @param Request $request
+     * @param         $id
+     * @param         $tag_id
+     *
+     * @return JsonResponse
+     */
     public function deletetag(Request $request, $id, $tag_id){
         $document = Document::find($id);
         if (!$document) {
@@ -68,6 +77,7 @@ class DocumentController extends Controller
      * 删除文档
      *
      * @param Request $request
+     * @param         $id
      *
      * @return JsonResponse
      */
@@ -96,6 +106,7 @@ class DocumentController extends Controller
      * 更新文档
      *
      * @param Request $request
+     * @param         $id
      *
      * @return JsonResponse
      */
