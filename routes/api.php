@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Repositories\Document;
 
 // 需要认证的API路由组
 Route::middleware('auth:api')->group(function () {
@@ -75,6 +76,10 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('{id}.{format}', [DocumentController::class, 'update']);
         // 文档删除
         Route::delete('{id}.{format}', [DocumentController::class, 'delete']);
+        Route::get('exists.json', function (\Illuminate\Http\Request $request) {
+            $exists = Document::exists($request->input('url'));
+            return response()->json(['exists' => $exists]);
+        });
     });
     // 文档创建
     Route::post('document.{format}', [DocumentController::class, 'create']);
