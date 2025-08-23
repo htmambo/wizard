@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Validation\ValidationException;
-use App\Components\Readability\Readability;
 use App\Events\DocumentCreated;
 use App\Events\DocumentDeleted;
 use App\Events\DocumentMarkModified;
