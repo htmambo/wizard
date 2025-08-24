@@ -3329,12 +3329,19 @@
         };
 
         markedRenderer.heading = function (text, level, raw) {
+            console.log(text, level, raw);
             var headingId = '';
             if (/#/.test(text)) {
                 var headingIdReg = /<a href="#(.*?)">#<\/a>/;
                 headingId = text.match(headingIdReg);
             }
             text = trim(raw.replace(/[\s#]+$/g, " "));
+            if(!headingId || headingId.length!==2) {
+                headingId = [
+                    text,
+                    'wizardtoc_' + level + '_' + markdownToC.length
+                ];
+            }
             var linkText = text + "<a name=\"" + headingId[1] + "\"></a>";
 
             var toc = {
@@ -3779,7 +3786,7 @@
             startLineAttr: 'linenums',
             smartLists: true,
             smartypants: false,
-            headerIds: false,
+            headerIds: true,
             mangle: false,
         };
 
