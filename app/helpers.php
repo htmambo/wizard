@@ -30,7 +30,7 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function wzRoute($name, $parameters = [], $absolute = false){
-        foreach ($parameters as $k => $v) {
+        if(is_array($parameters)) foreach ($parameters as $k => $v) {
             $parameters[$k] = urlencode($v);
         }
         $result = route($name, $parameters, $absolute);
