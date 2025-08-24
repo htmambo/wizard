@@ -130,8 +130,7 @@
                     previewContainer = $(window);
                 }
                 var hdName = id.substring(1);
-                var ref = $('h' + lev + '#' + hdId + '>a[name="' + hdName + '"]');
-                console.log('h' + lev + '#' + hdId + '>a[name="' + hdName + '"]')
+                var ref = $('h' + lev + '>a[name="' + hdName + '"]');
                 if(ref.length !== 1) {
                     return true;
                 }

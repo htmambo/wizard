@@ -1,0 +1,49 @@
+{
+   "action": {
+      "default_icon": "img/wallabag-icon-48.png",
+      "default_popup": "popup.html",
+      "default_title": "Wizarder",
+      "theme_icons": [ {
+         "dark": "img/wallabagger.svg",
+         "light": "img/wallabagger-light.svg",
+         "size": 32
+      } ]
+   },
+   "background": {
+      "service_worker": "background.js",
+      "type": "module"
+   },
+   "commands": {
+      "_execute_action": {
+         "suggested_key": {
+            "default": "Alt+W",
+            "mac": "Alt+W",
+            "windows": "Alt+W"
+         }
+      },
+      "wizarder-it": {
+         "description": "__MSG_Wallabag_it_description__",
+         "suggested_key": {
+            "default": "Alt+Shift+W",
+            "mac": "Alt+Shift+W",
+            "windows": "Alt+Shift+W"
+         }
+      }
+   },
+   "default_locale": "en",
+   "description": "__MSG_Extension_description__",
+   "icons": {
+      "128": "img/wallabag-icon-128.png",
+      "48": "img/wallabag-icon-48.png"
+   },
+   "manifest_version": 3,
+   "name": "Wizarder",
+   "optional_host_permissions": [ "*://*/api/*" ],
+   "options_ui": {
+      "open_in_tab": true,
+      "page": "options.html"
+   },
+   "permissions": [ "tabs", "storage", "contextMenus", "activeTab", "scripting" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.18.1"
+}

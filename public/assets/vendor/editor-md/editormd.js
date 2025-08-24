@@ -3329,56 +3329,26 @@
         };
 
         markedRenderer.heading = function (text, level, raw) {
-
-            var linkText = text;
-            var hasLinkReg = /\s*\<a\s*href\=\"(.*)\"\s*([^\>]*)\>(.*)\<\/a\>\s*/;
-            var getLinkTextReg = /\s*\<a\s*([^\>]+)\>([^\>]*)\<\/a\>\s*/g;
-
-            if (hasLinkReg.test(text)) {
-                var tempText = [];
-                text = text.split(/\<a\s*([^\>]+)\>([^\>]*)\<\/a\>/);
-
-                for (var i = 0, len = text.length; i < len; i++) {
-                    tempText.push(text[i].replace(/\s*href\=\"(.*)\"\s*/g, ""));
-                }
-
-                text = tempText.join(" ");
+            var headingId = '';
+            if (/#/.test(text)) {
+                var headingIdReg = /<a href="#(.*?)">#<\/a>/;
+                headingId = text.match(headingIdReg);
             }
+            text = trim(raw.replace(/[\s#]+$/g, " "));
+            var linkText = text + "<a name=\"" + headingId[1] + "\"></a>";
 
-            text = trim(text);
-
-            var escapedText = text.toLowerCase().replace(/[^\w]+/g, "-");
-            var id = "";
-            while(true) {
-                id = Math.random().toString(36).slice(-8);
-                if($('#h' + level + "-" + this.options.headerPrefix + id).length == 0) {
-                    break;
-                }
-            }
             var toc = {
                 text: text,
                 level: level,
-                slug: escapedText,
-                gotoid: 'h' + level + "-" + this.options.headerPrefix + id
+                gotoid: headingId[1]
             };
 
             markdownToC.push(toc);
 
-            var headingHTML = "<h" + level + " id=\"h" + level + "-" + this.options.headerPrefix + id + "\">";
-
-            // Wizard 添加样式 START
-            // if (level === 2) {
-            //     headingHTML += "<i class='fa fa-thumb-tack mr-2'></i>";
-            // } else if (level === 3) {
-                headingHTML += "<i class='fa fa-hashtag mr-2'></i>";
-            // }
-            // Wizard 添加样式 END
-            text = text.replace(/<\/?.+?>/g,"").replace(/ /g,"");
-            headingHTML += "<a name=\"" + text + "\" class=\"reference-link\"></a>";
-            headingHTML += "<span class=\"header-link octicon octicon-link\"></span>";
-            headingHTML += (hasLinkReg) ? this.atLink(this.emoji(linkText)) : this.atLink(this.emoji(text));
+            var headingHTML = "<h" + level + ">";
+            headingHTML += "<i class='fa fa-hashtag mr-2'></i>";
+            headingHTML += linkText;
             headingHTML += "</h" + level + ">";
-
             return headingHTML;
         };
 
@@ -3559,6 +3529,7 @@
         for (var i = 0, len = toc.length; i < len; i++) {
             var text = toc[i].text;
             var level = toc[i].level;
+            var gotoid = toc[i].gotoid;
 
             if (level < startLevel) {
                 continue;
@@ -3572,7 +3543,7 @@
                 html += "</ul></li>";
             }
 
-            html += "<li><a class=\"toc-level-" + level + "\" href=\"#" + text + "\" level=\"" + level + "\" gotoid='" + toc[i].gotoid + "'>" + text + "</a><ul>";
+            html += "<li><a class='toc-level-" + level + "' level='" + level + "' href='#" + gotoid + "'>" + text + "</a><ul>";
             lastLevel = level;
         }
 
@@ -3807,7 +3778,9 @@
             noLineNumCss: 'no-line-numbers',
             startLineAttr: 'linenums',
             smartLists: true,
-            smartypants: true,
+            smartypants: false,
+            headerIds: false,
+            mangle: false,
         };
 
         // markdownDoc = new String(markdownDoc);
