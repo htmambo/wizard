@@ -64,6 +64,8 @@ class ApiClientController extends Controller
                         'users',
                         false
                     );
+                    $client->secret = $newSecret = Str::random(40);
+                    $client->save();
                     break;
 
                 case 'personal':
@@ -74,12 +76,11 @@ class ApiClientController extends Controller
                     throw new UnsupportedOperationException('不支持 Authorization Code Client 的创建，请手动创建。');
                     break;
             }
-
             return redirect()->route('admin:api-clients')
                 ->with('success', 'API 客户端创建成功！')
                 ->with('client_credentials', [
                     'client_id' => $client->id,
-                    'client_secret' => $client->secret,
+                    'client_secret' => $newSecret,
                 ]);
 
         } catch (\Exception $e) {
