@@ -33,7 +33,12 @@ if (!function_exists('wzRoute')) {
         foreach ($parameters as $k => $v) {
             $parameters[$k] = urlencode($v);
         }
-        return route($name, $parameters, $absolute);
+        $result = route($name, $parameters, $absolute);
+        // 检查当前是否是https请求，如果是，则将生成的url中的http替换为https
+        if (request()->isSecure()) {
+            $result = Str::replaceFirst('http://', 'https://', $result);
+        }
+        return $result;
     }
 
     /**
