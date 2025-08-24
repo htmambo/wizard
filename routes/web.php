@@ -19,6 +19,7 @@
 
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiClientController;
 
 Route::group(['middleware' => 'locale'], function () {
     $authRoutes = [
@@ -125,6 +126,24 @@ Route::group(['middleware' => 'locale'], function () {
                 Route::delete('/catalogs/{id}', 'CatalogController@delete')->name('catalogs:delete');
                 Route::delete('/catalogs/{id}/project/{project_id}', 'CatalogController@removeProject')
                      ->name('catalogs:project:del');
+
+                // API 客户端管理
+                // API 客户端列表
+                Route::get('/api-clients', 'ApiClientController@clients')->name('api-clients');
+                // 创建新的 API 客户端
+                Route::post('/api-clients', 'ApiClientController@add')->name('api-clients:add');
+                // 管理 API 客户端
+                Route::get('/api-clients/{uuid}', 'ApiClientController@info')->name('api-clients:view');
+                // 编辑 API 客户端
+                Route::post('/api-clients/{uuid}', 'ApiClientController@edit')->name('api-clients:edit');
+                // 删除 API 客户端
+                Route::delete('/api-clients/{uuid}', 'ApiClientController@delete')->name('api-clients:delete');
+                // 撤销 API 客户端的所有访问令牌
+                Route::delete('/api-clients/{uuid}/tokens', 'ApiClientController@revokeTokens')
+                     ->name('api-clients:tokens:revoke');
+                // 重新生成客户端密钥
+                Route::post('/api-clients/{uuid}/regenerate-secret', [ApiClientController::class, 'regenerateSecret'])
+                     ->name('api-clients:regenerate-secret');
             });
 
         // 文档搜索

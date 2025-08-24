@@ -9,11 +9,11 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\OAuthController;
 
 // OAuth 相关路由 (无需认证)
-// Route::prefix('oauth')->group(function () {
-//     Route::post('token', [OAuthController::class, 'token']);
-// });
+Route::prefix('oauth')->group(function () {
+    Route::post('token', [OAuthController::class, 'token']);
+});
 // 使用 Passport 内置的令牌路由
-Route::post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
+// Route::post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
 
 // 需要认证的API路由组
 Route::middleware('auth:api')->group(function () {

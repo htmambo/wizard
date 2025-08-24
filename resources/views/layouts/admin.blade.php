@@ -8,7 +8,7 @@
             <a class="wz-left-main-switch btn"><i class="fa fa-angle-double-down"></i> </a>
         </div>
         <div class="col-12 col-lg-3 wz-left-main">
-            <nav class="nav flex-column">
+            <nav class="nav flex-column" data-op="{{ $op }}">
                 <a class="nav-link {{ $op == 'dashboard' ? 'active':'' }}" href="{{ wzRoute('admin:dashboard') }}">
                     <i class="fa fa-dashboard mr-2"></i> 仪表盘
                 </a>
@@ -20,6 +20,9 @@
                 </a>
                 <a class="nav-link {{ $op == 'catalogs' ? 'active':'' }}" href="{!! wzRoute('admin:catalogs') !!}">
                     <i class="fa fa-folder-open"></i> 项目目录管理
+                </a>
+                <a class="nav-link {{ $op == 'clients' ? 'active':'' }}" href="{!! wzRoute('admin:api-clients') !!}">
+                    <i class="fa fa-key"></i> Api 客户端管理
                 </a>
             </nav>
         </div>

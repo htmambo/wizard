@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Laravel\Passport\Http\Controllers\AccessTokenController as PassportAccessTokenController;
 use League\OAuth2\Server\AuthorizationServer;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,8 +19,12 @@ class OAuthController extends Controller
      * 获取 OAuth Token
      *
      * @unauthenticated
+     * @requestMediaType multipart/form-data
+     *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
+     * @throws ValidationException
      */
     public function token(Request $request)
     {
@@ -48,7 +54,7 @@ class OAuthController extends Controller
 
             $response = $controller->issueToken($serverRequest, $psrResponse);
 
-            return response()->json(json_decode($response->getBody(), true));
+            return response()->json(json_decode($response->getContent(), true));
 
         } catch (\Exception $e) {
             return response()->json([

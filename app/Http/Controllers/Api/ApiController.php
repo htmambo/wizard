@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Dedoc\Scramble\Attributes\Group;
-use App\Repositories\ApiToken;
 use App\Repositories\Document;
 use App\Repositories\Tag;
 use App\Repositories\PageTag;
