@@ -83,15 +83,37 @@ $(function () {
 
         var form = $($(this).data('form'));
         var confirm = $(this).data('confirm');
+        var prompt = $(this).data('prompt');
 
-        if (confirm === undefined) {
+        if (confirm === undefined && prompt === undefined) {
             form.submit();
             return false;
         }
-
-        $.wz.confirm(confirm, function () {
-            form.submit();
-        });
+        if(confirm) {
+            $.wz.confirm(confirm, function () {
+                form.submit();
+            });
+        } else {
+            var prompt = {
+                title: prompt,
+                field: $(this).data('field') || 'value',
+                value: $(this).data('value') || '',
+                placeholder: prompt || ''
+            };
+            layer.prompt(prompt, function (value) {
+                if (value !== null) {
+                    if (prompt.field) {
+                        var field = form.find('[name="' + prompt.field + '"]');
+                        if (field.length > 0) {
+                            field.val(value);
+                        } else {
+                            form.append('<input type="hidden" name="' + prompt.field + '" value="' + value + '">');
+                        }
+                    }
+                    form.submit();
+                }
+            });
+        }
     });
 
     $('button[data-href]').on('click', function () {

@@ -226,6 +226,9 @@ Route::group(['middleware' => 'locale'], function () {
                 // 文档标记
                 Route::put('/{id}/doc/{page_id}/mark-status', 'DocumentController@markStatus')->name('doc:mark-status');
 
+                // 发布为博客
+                Route::put('/{id}/doc/{page_id}/blogit', 'DocumentController@blogIt')->name('doc:blogit');
+
                 // 文档分享
                 Route::post('/{id}/doc/{page_id}/share', 'ShareController@create')->name('doc:share');
                 Route::delete('/{id}/doc/{page_id}/share', 'ShareController@delete')->name('doc:share:delete');

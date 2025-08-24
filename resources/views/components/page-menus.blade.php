@@ -46,6 +46,17 @@
                         {{ method_field('DELETE') }}{{ csrf_field() }}
                     </form>
                 </a>
+
+
+                <a href="#" wz-form-submit id="testabtn" data-form="#form-blogit-{{ $pageItem->id }}"
+                   data-prompt="请输入博客链接" data-field="alias" data-value="" class="dropdown-item">
+                    <span class="fa fa-outdent mr-2"></span>
+                    发布为博客
+                    <form id="form-blogit-{{ $pageItem->id }}" method="post"
+                          action="{{ wzRoute('project:doc:blogit', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
+                        {{ method_field('PUT') }}{{ csrf_field() }}
+                    </form>
+                </a>
             @endif
 
         </div>

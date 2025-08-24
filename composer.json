@@ -22,12 +22,14 @@
         "maennchen/zipstream-php": "*",
         "mpdf/mpdf": "^8.2",
         "nyholm/psr7": "^1.8",
+        "overtrue/laravel-pinyin": "^5.2",
         "php-http/guzzle7-adapter": "^1.1",
         "psr/http-factory-implementation": "*",
         "sebastian/diff": "*",
         "soapbox/laravel-formatter": "^2.0",
         "symfony/psr-http-message-bridge": "^7.3",
-        "yzalis/identicon": "^2.0"
+        "yzalis/identicon": "^2.0",
+      "ext-iconv": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

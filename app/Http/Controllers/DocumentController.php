@@ -9,6 +9,8 @@
 namespace App\Http\Controllers;
 
 
+use App\Components\Segmentation\Analysis;
+use App\Components\Segmentation\PSCWS;
 use App\Events\DocumentCreated;
 use App\Events\DocumentDeleted;
 use App\Events\DocumentMarkModified;
@@ -832,5 +834,68 @@ class DocumentController extends Controller
     protected function processTableRequest($content)
     {
         return processSpreedSheet($content);
+    }
+    public function blogIt(Request $request, $id, $page_id)
+    {
+        /** @var Document $pageItem */
+        $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $dict = $request->input('dict', 'pscws');
+        $this->authorize('page-toblog', $pageItem);
+
+        $title = $pageItem->title;
+        $title = 'Laravel Passport API 认证使用小结南京市长欢迎你中国共产党为公布国共合作宣言';
+        if ($dict === 'jieba') {
+            \App\Components\Segmentation\Jieba::init();
+            \App\Components\Segmentation\JiebaFinalseg::init();
+            $seg_list = \App\Components\Segmentation\Jieba::cut($title);
+            $title = implode(' ', $seg_list);
+            $title = str_replace(' ', '_', $title);
+        } else if ($dict === 'pscws') {
+            $pscws = new PSCWS();
+
+            $pscws->set_ignore(false);
+            $pscws->send_text($title);
+            $tags = [];
+            while (true) {
+                $tmp = $pscws->get_result();
+                if ($tmp) {
+                    if(is_array($tmp)) {
+                        $tags = array_merge($tags, array_column($tmp, 'word'));
+                    }
+                } else {
+                    break;
+                }
+            }
+            // $allKeywords = $pscws->get_tops(20);
+            // return $allKeywords;
+            $title = implode('_', $tags);
+            $pscws->close();
+
+        } else if ($dict === 'blt') {
+            $pa                    = new Analysis();
+            $pa->loadDictionaries();
+            $pa->setSourceText($title);
+            $pa->startSegmentationAnalysis(true);
+            $title = $pa->getFormattedResults();
+        }
+        echo $title;
+        echo '<br/>';
+
+        $title = \Overtrue\Pinyin\Pinyin::converter()->noTone()->convert($title);
+        $title = str_replace([' ', '_'], ['', '-'], $title);
+        echo $title;
+        echo '<br/>';
+        $alias = $request->input('alias', Str::slug($pageItem->title));
+        exit($alias);
+        // 只有文档内容发生修改才进行保存
+        if ($pageItem->isDirty()) {
+            $pageItem->last_modified_uid = \Auth::user()->id;
+            $pageItem->save();
+
+            event(new DocumentMarkModified($pageItem));
+        }
+
+        $this->alertSuccess('操作成功');
+        return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_id]));
     }
 }
