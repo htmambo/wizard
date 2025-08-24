@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Auth;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Laravel\Passport\Passport;
+use Carbon\CarbonInterval;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -45,14 +47,18 @@ class AppServiceProvider extends ServiceProvider
         // 用于解决某些版本的mysql下，由于默认编码为utf8mb4而导致出现错误
         // Syntax error or access violation: 1071 Specified key was too long; max key length is 767 bytes
         Schema::defaultStringLength(191);
-        // 注册自定义 Token Guard
-        Auth::extend('wizard_token', function ($app, $name, array $config) {
-            return new TokenGuard(
-                Auth::createUserProvider($config['provider']),
-                $app->make('request'),
-                $config['input_key'] ?? 'api_token'
-            );
-        });
+
+        // 启用所有的授权类型
+        Passport::enableImplicitGrant();
+
+        // 配置令牌过期时间
+        Passport::tokensExpireIn(CarbonInterval::days(15));
+        Passport::refreshTokensExpireIn(CarbonInterval::days(30));
+        Passport::personalAccessTokensExpireIn(CarbonInterval::months(6));
+
+        // 启用密码授权类型
+        Passport::enablePasswordGrant();
+
         \Illuminate\Pagination\Paginator::useBootstrap();
         $this->addProjectExistRules('project_exist');
         $this->addPageExistRules('page_exist');
@@ -78,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        Passport::ignoreRoutes();
     }
 
     /**

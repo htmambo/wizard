@@ -6,43 +6,20 @@ use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProjectController;
-use App\Repositories\Document;
+use App\Http\Controllers\Api\OAuthController;
+
+// OAuth 相关路由 (无需认证)
+// Route::prefix('oauth')->group(function () {
+//     Route::post('token', [OAuthController::class, 'token']);
+// });
+// 使用 Passport 内置的令牌路由
+Route::post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
 
 // 需要认证的API路由组
 Route::middleware('auth:api')->group(function () {
-    // 用户相关，控制器：Api\UserController
-    Route::prefix('user')->group(function () {
-        // 获取用户信息
-        Route::get('profile', [UserController::class, 'profile']);
-        // 更新用户信息
-        Route::put('update', [UserController::class, 'update']);
-        // 修改密码
-        Route::put('password', [UserController::class, 'changePassword']);
-        // 获取用户列表
-        Route::get('lists', [UserController::class, 'lists']);
-        // 创建用户
-        Route::post('create', [UserController::class, 'create']);
-        // 更新用户
-        Route::put('update/{id}', [UserController::class, 'update']);
-        // 删除用户
-        Route::delete('delete/{id}', [UserController::class, 'delete']);
-        // 获取用户操作日志
-        Route::get('logs', [UserController::class, 'logs']);
-    });
-
-    // 目录相关，控制器：Api\CatalogController
-    Route::prefix('catalog')->group(function () {
-        // 目录列表
-        Route::get('lists', [CatalogController::class, 'lists']);
-        // 目录详情
-        Route::get('{id}', [CatalogController::class, 'view']);
-        // 创建目录
-        Route::post('create', [CatalogController::class, 'create']);
-        // 更新目录
-        Route::put('update/{id}', [CatalogController::class, 'update']);
-        // 删除目录
-        Route::delete('delete/{id}', [CatalogController::class, 'delete']);
-    });
+    // 用户信息
+    Route::get('user', [OAuthController::class, 'user']);
+    Route::post('oauth/revoke', [OAuthController::class, 'revoke']);
 
     // 项目相关，控制器：Api\ProjectController
     Route::prefix('project')->group(function () {
@@ -83,12 +60,10 @@ Route::middleware('auth:api')->group(function () {
     });
     // 文档创建
     Route::post('document.{format}', [DocumentController::class, 'create']);
+    // 搜索
+    Route::get('search', [ApiController::class, 'search']);
+    // 标签
+    Route::get('tags.{format}', [ApiController::class, 'tags']);
 });
-// 获取API Token
-Route::post('token', [ApiController::class, 'token']);
 // 获取版本信息
 Route::get('version', [ApiController::class, 'version']);
-// 搜索
-Route::get('search', [ApiController::class, 'search']);
-// 标签
-Route::get('tags.{format}', [ApiController::class, 'tags']);
