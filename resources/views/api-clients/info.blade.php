@@ -11,7 +11,7 @@
                 <div class="card-header">
                     <h3 class="card-title">{{ $client->name }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('admin:api-clients') }}" class="btn btn-default">
+                        <a href="{{ wzRoute('admin:api-clients') }}" class="btn btn-default">
                             <i class="fas fa-arrow-left"></i> 返回列表
                         </a>
                     </div>
@@ -196,7 +196,7 @@
 <div class="modal fade" id="editClientModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="POST" action="{{ route('admin:api-clients:edit', $client->id) }}">
+            <form method="POST" action="{{ wzRoute('admin:api-clients:edit', $client->id) }}">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">编辑客户端</h5>
@@ -232,7 +232,7 @@ function regenerateSecret() {
     layer.confirm('重新生成密钥将导致使用旧密钥的应用无法正常工作，确定要继续吗？', function(){
         $.ajax(
             {
-                url: `{{ route('admin:api-clients:regenerate-secret', $client->id) }}`,
+                url: `{{ wzRoute('admin:api-clients:regenerate-secret', $client->id) }}`,
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}'
@@ -256,7 +256,7 @@ function revokeAllTokens() {
     if (confirm('确定要撤销此客户端的所有访问令牌吗？此操作不可撤销。')) {
         $.ajax(
             {
-                url: `{{ route('admin:api-clients:tokens:revoke', $client->id) }}`,
+                url: `{{ wzRoute('admin:api-clients:tokens:revoke', $client->id) }}`,
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',

@@ -35,7 +35,7 @@ if (!function_exists('wzRoute')) {
         }
         $result = route($name, $parameters, $absolute);
         // 检查当前是否是https请求，如果是，则将生成的url中的http替换为https
-        if (request()->isSecure()) {
+        if ($absolute && request()->isSecure()) {
             $result = Str::replaceFirst('http://', 'https://', $result);
         }
         return $result;

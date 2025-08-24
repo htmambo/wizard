@@ -72,7 +72,7 @@
                                         <td>{{ $client->created_at->format('Y-m-d H:i') }}</td>
                                         <td>
                                             <div class="btn-group-smxs" role="group">
-                                                <a href="{{ route('admin:api-clients:view', $client->id) }}" 
+                                                <a href="{{ wzRoute('admin:api-clients:view', $client->id) }}"
                                                    class="btn btn-sm btn-info">
                                                     <i class="fas fa-eye"></i> 查看
                                                 </a>
@@ -103,7 +103,7 @@
 <div class="modal fade" id="createClientModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="POST" action="{{ route('admin:api-clients:add') }}">
+            <form method="POST" action="{{ wzRoute('admin:api-clients:add') }}">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">创建 API 客户端</h5>
@@ -149,7 +149,7 @@ function deleteClient(clientId) {
     if (confirm('确定要删除这个 API 客户端吗？删除后将无法恢复，且所有相关的访问令牌都会被撤销。')) {
         $.ajax(
             {
-                url: `{{ route('admin:api-clients:delete', 'clientId') }}`.replace('clientId', clientId),
+                url: `{{ wzRoute('admin:api-clients:delete', 'clientId') }}`.replace('clientId', clientId),
                 type: 'DELETE',
                 data: {
                     _token: '{{ csrf_token() }}'
