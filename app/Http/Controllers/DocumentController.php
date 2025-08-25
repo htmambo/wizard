@@ -837,6 +837,26 @@ class DocumentController extends Controller
     {
         return processSpreedSheet($content);
     }
+
+    public function unBlog(Request $request, $id, $page_id)
+    {
+        /** @var Document $pageItem */
+        $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $this->authorize('page-toblog', $pageItem);
+
+        $pageItem->is_blog = 0;
+        // 只有文档内容发生修改才进行保存
+        if ($pageItem->isDirty()) {
+            $pageItem->last_modified_uid = \Auth::user()->id;
+            $pageItem->save();
+
+            event(new DocumentMarkModified($pageItem));
+        }
+
+        $this->alertSuccess('操作成功');
+        return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_id]));
+    }
+
     public function blogIt(Request $request, $id, $page_id)
     {
         /** @var Document $pageItem */

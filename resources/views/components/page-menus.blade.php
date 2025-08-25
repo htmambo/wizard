@@ -47,16 +47,29 @@
                     </form>
                 </a>
 
-
-                <a href="#" wz-form-submit id="testabtn" data-form="#form-blogit-{{ $pageItem->id }}"
-                   data-prompt="请输入博客链接" data-field="alias" data-value="" class="dropdown-item">
-                    <span class="fa fa-outdent mr-2"></span>
-                    发布为博客
-                    <form id="form-blogit-{{ $pageItem->id }}" method="post"
-                          action="{{ wzRoute('project:doc:blogit', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
-                        {{ method_field('PUT') }}{{ csrf_field() }}
-                    </form>
-                </a>
+                @if ($pageItem->isMarkdown() || $pageItem->isHtml())
+                    @if ($pageItem->is_blog)
+                    <a href="#" wz-form-submit id="testabtn" data-form="#form-blogit-{{ $pageItem->id }}"
+                        data-confirm="确实要取消当前文档的博客发布吗？" class="dropdown-item">
+                        <span class="fa fa-outdent mr-2"></span>
+                        取消博客发布
+                        <form id="form-blogit-{{ $pageItem->id }}" method="post"
+                              action="{{ wzRoute('project:doc:blogit', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
+                            {{ method_field('DELETE') }}{{ csrf_field() }}
+                        </form>
+                    </a>
+                    @else
+                    <a href="#" wz-form-submit id="testabtn" data-form="#form-blogit-{{ $pageItem->id }}"
+                        data-prompt="请输入博客链接" data-field="alias" data-value="" class="dropdown-item">
+                        <span class="fa fa-outdent mr-2"></span>
+                        发布为博客
+                        <form id="form-blogit-{{ $pageItem->id }}" method="post"
+                              action="{{ wzRoute('project:doc:blogit', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
+                            {{ method_field('PUT') }}{{ csrf_field() }}
+                        </form>
+                    </a>
+                    @endif
+                @endif
             @endif
 
         </div>
