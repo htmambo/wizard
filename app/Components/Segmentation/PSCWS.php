@@ -451,218 +451,6 @@ class PSCWS
         fclose($fd);
     }
 
-    function set_rule1($fpath){
-        // 检查文件是否存在并可读
-        if (!file_exists($fpath) || !is_readable($fpath)) {
-            return false;
-        }
-
-        // 尝试打开规则文件
-        if (!($fd = fopen($fpath, 'r'))) {
-            return false;
-        }
-
-        // 初始化规则集数组
-        $this->_rs = [];
-        $this->_rd = [];
-
-        // 默认规则项模板，避免重复创建数组
-        $defaultItem = [
-            'tf' => 5.0,      // 词频权重
-            'idf' => 3.5,     // 逆文档频率权重
-            'attr' => 'un',   // 词性标记
-            'bit' => 0,       // 规则位标记
-            'flag' => 0,      // 规则标志
-            'zmin' => 0,      // 最小字符数
-            'zmax' => 0,      // 最大字符数
-            'inc' => 0,       // 包含规则
-            'exc' => 0        // 排除规则
-        ];
-
-        $ruleCount = 0;
-        $customRuleIndex = 0;
-        $rbl = false;    // 是否按行读取标志
-        $currentItem = null;    // 当前处理的规则项引用
-        $pendingRuleData = [];  // 存储待处理的规则数据
-
-        while ($buf = fgets($fd, 512)) {
-            $buf = trim($buf);
-            if (empty($buf)) {
-                continue;
-            }
-            $ch = substr($buf, 0, 1);
-
-            // 跳过注释行（以分号开头）
-            if ($ch == ';') {
-                continue;
-            }
-
-            // 处理规则块开始标记
-            if ($ch == '[') {
-                // 如果有待处理的规则数据，先处理完
-                if ($currentItem !== null && !empty($pendingRuleData)) {
-                    $this->_processRuleData($pendingRuleData, $currentItem, $rbl);
-                    $pendingRuleData = [];
-                }
-
-                $rule = '';
-                if(preg_match('/^\[([^\]]+)\]$/', $buf, $matches)){
-                    $rule = $matches[1];
-                }
-                if(strlen($rule) < 1 || strlen($rule) > 15){
-                    continue; // 跳过不符合长度要求的规则名称
-                }
-
-                // 提取规则名称（转为小写）
-                $rule = strtolower($rule);
-                if (!isset($this->_rs[$rule])) {
-                    // 如果规则已存在，使用现有规则
-                    // 初始化规则项，包含默认权重和各种参数
-                    $item = $defaultItem;
-
-                    // 设置特殊规则的位标记
-                    switch ($rule) {
-                        case 'special':
-                            $item['bit'] = PSCWS4_RULE_SPECIAL;
-                            break;
-                        case 'nostats':
-                            $item['bit'] = PSCWS4_RULE_NOSTATS;
-                            break;
-                        default:
-                            $item['bit'] = (1 << $customRuleIndex);
-                            $customRuleIndex++;
-                            break;
-                    }
-
-                    $this->_rs[$rule] = $item;
-                }
-                $currentItem = &$this->_rs[$rule];
-
-                // 限制规则数量，防止内存溢出
-                if (++$ruleCount >= PSCWS4_RULE_MAX) {
-                    break;
-                }
-
-                $rbl = true;    // 默认按行读取
-                continue;
-            }
-
-            // 处理规则参数设置（以冒号开头）
-            if ($ch == ':') {
-                if ($currentItem === null) {
-                    continue;
-                }
-
-                $buf = substr($buf, 1);
-                if (!($pos = strpos($buf, '='))) {
-                    continue;
-                }
-
-                [$pkey, $pval] = explode('=', $buf, 2);
-                $pkey = trim($pkey);
-                $pval = trim($pval);
-                switch($pkey) {
-                    case 'line':
-                        $rbl = (strtolower(substr($pval, 0, 1)) == 'n' ? false : true);
-                        break;
-                    case 'tf':
-                        $currentItem['tf'] = floatval($pval);  // 词频权重
-                        break;
-                    case 'idf':
-                        $currentItem['idf'] = floatval($pval);  // 逆文档频率权重
-                        break;
-                    case 'attr':
-                        $currentItem['attr'] = $pval;  // 词性标记
-                        break;
-                    case 'znum':
-                        // 设置字符数范围：znum=min,max 或 znum=min
-                        if ($pos = strpos($pval, ',')) {
-                            $currentItem['zmax'] = intval(trim(substr($pval, $pos + 1)));
-                            $currentItem['flag'] |= PSCWS4_ZRULE_RANGE;
-                            $pval = substr($pval, 0, $pos);
-                        }
-                        $currentItem['zmin'] = intval($pval);
-                        break;
-                    case 'type':
-                        // 设置匹配类型：prefix（前缀）或suffix（后缀）
-                        if ($pval == 'prefix') {
-                            $currentItem['flag'] |= PSCWS4_ZRULE_PREFIX;
-                        }
-                        if ($pval == 'suffix') {
-                            $currentItem['flag'] |= PSCWS4_ZRULE_SUFFIX;
-                        }
-                        break;
-                    case 'include':
-                    case 'exclude':
-                        $currentItem[$pkey] = explode(',', $pval);
-                        // 处理包含/排除规则：include=rule1,rule2,rule3
-                        // $clude = 0;
-                        // foreach (explode(',', $pval) as $tmp) {
-                        //     $tmp = strtolower(trim($tmp));
-                        //     if (!isset($this->_rs[$tmp])) {
-                        //         continue;
-                        //     }
-                        //     $clude |= $this->_rs[$tmp]['bit'];
-                        // }
-                        // if ($pkey == 'include') {
-                        //     $currentItem['inc'] |= $clude;
-                        //     $currentItem['flag'] |= PSCWS4_ZRULE_INCLUDE;
-                        // } else {
-                        //     $currentItem['exc'] |= $clude;
-                        //     $currentItem['flag'] |= PSCWS4_ZRULE_EXCLUDE;
-                        // }
-                        break;
-                }
-                continue;
-            }
-
-            // 处理规则词汇数据
-            if ($currentItem === null) {
-                continue;
-            }
-
-            // 将词汇数据添加到待处理数组
-            $pendingRuleData[] = $buf;
-        }
-
-        // 处理最后一个规则的数据
-        if ($currentItem !== null && !empty($pendingRuleData)) {
-            $this->_processRuleData($pendingRuleData, $currentItem, $rbl);
-        }
-        print_r($this->_rs);
-        print_r($this->_rd);
-        exit;
-        // 关闭文件句柄
-        fclose($fd);
-    }
-
-    /**
-     * 处理规则数据的辅助方法
-     */
-    private function _processRuleData($ruleData, &$ruleItem, $rbl) {
-        foreach ($ruleData as $buf) {
-            // 根据读取模式存储规则数据
-            if ($rbl) {
-                // 按行读取：整行作为一个词汇
-                $this->_rd[$buf] = &$ruleItem;
-            } else {
-                // 按字符读取：逐个字符存储（用于中文字符处理）
-                $len = strlen($buf);
-                for ($off = 0; $off < $len;) {
-                    $ord = ord(substr($buf, $off, 1));
-                    $zlen = $this->_ztab[$ord];  // 获取字符字节长度
-
-                    if ($off + $zlen > $len) {
-                        break;
-                    }
-
-                    $zch = substr($buf, $off, $zlen);
-                    $this->_rd[$zch] = &$ruleItem;
-                    $off += $zlen;
-                }
-            }
-        }
-    }
     // 设置忽略符号与无用字符
     function set_ignore($yes){
         if ($yes === true) {
@@ -1033,17 +821,19 @@ class PSCWS
         if (!$this->_dict) {
             return false;
         }
-        if (isset($this->_dict_cache[$word])) {
-            $value = $this->_dict_cache[$word];
-        } else {
+        $value = false;
+        if (!isset($this->_dict_cache[$word])) {
             $value = $this->_dict->Get($word);
+            if ($value) {
+                $value = unpack('ftf/fidf/Cflag/a3attr', $value);
+                $value['attr'] = trim($value['attr']);
+            }
             $this->_dict_cache[$word] = $value; // 缓存查询结果
         }
         if (!$value) {
             return false;
         }
-
-        return unpack('ftf/fidf/Cflag/a3attr', $value);
+        return $this->_dict_cache[$word];
     }
 
     /**
@@ -1534,7 +1324,7 @@ class PSCWS
                     continue;
                 }
 
-                $clen = ($r1['zmin'] > 0 ? $r1['zmin'] : 1);
+                $clen = max(1, $r1['zmin']);
 
                 // 处理前缀规则（如姓氏+名字）
                 if (($r1['flag'] & PSCWS4_ZRULE_PREFIX) && ($i < ($zlen - $clen))) {

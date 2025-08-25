@@ -274,7 +274,7 @@ class Analysis
         // 重置处理状态
         $this->segmentationResults = [];
         $this->currentSentenceIndex = 0;
-        $this->unicodeSourceString = $sourceText;
+        $this->unicodeSourceString = iconv('utf-8', UCS2, $sourceText);
         return true;
     }
 
@@ -402,34 +402,20 @@ class Analysis
         }
 
         // 字符串粗分处理
-        $currentWordBuffer = '';
+        $wordBuffer = '';
         $lastCharacterType = CDB_WORD_TYPE_CN;
-        $ansiWordPattern = "[0-9a-z@#%\+\.-]";
-        $nonNumberPattern = "[a-z@#%\+]";
 
-        // 逐字符处理
-        $i = 0;
-        while($i < $sourceStringLength) {
-            $currentChar = substr($this->unicodeSourceString, $i, 1);
-            $charCode = ord($currentChar);
-            // 字符长度
-            $charLen = $this->_ztab[$charCode];
-            $currentCharacter = substr($this->unicodeSourceString, $i, $charLen);
-            $i += $charLen;
-            if(isset($fullWidthToHalfWidthMap[$currentCharacter])) {
-                $currentCharacter = $fullWidthToHalfWidthMap[$currentCharacter];
-            }
-            $currentCharacter = iconv('UTF-8', UCS2, $currentCharacter);
-            $characterCode = hexdec(bin2hex($currentCharacter));
+        for ($i = 0; $i < $sourceStringLength; $i++) {
+            $character = $this->unicodeSourceString[$i] . $this->unicodeSourceString[++$i];
+            $characterCode = hexdec(bin2hex($character));
+            $characterCode = isset($sbcArr[$characterCode]) ? $sbcArr[$characterCode] : $characterCode;
 
             // 处理ANSI字符
-            if ($charLen == 1) {
+            if ($characterCode < 0x80) {
                 $this->processAnsiCharacter(
                     $characterCode,
-                    $currentWordBuffer,
+                    $wordBuffer,
                     $lastCharacterType,
-                    $ansiWordPattern,
-                    $nonNumberPattern,
                     $enableOptimization
                 );
             }
@@ -437,10 +423,9 @@ class Analysis
             else {
                 $this->processUnicodeCharacter(
                     $characterCode,
-                    $currentCharacter,
-                    $currentWordBuffer,
+                    $character,
+                    $wordBuffer,
                     $lastCharacterType,
-                    $nonNumberPattern,
                     $enableOptimization,
                     $i,
                     $sourceStringLength
@@ -457,13 +442,12 @@ class Analysis
      * @param int $characterCode 字符编码
      * @param string &$wordBuffer 词汇缓冲区
      * @param int &$lastType 上一个字符类型
-     * @param string $ansiPattern ANSI字符模式
-     * @param string $nonNumberPattern 非数字字符模式
      * @param bool $enableOptimization 是否启用优化
      */
-    private function processAnsiCharacter($characterCode, &$wordBuffer, &$lastType,
-                                          $ansiPattern, $nonNumberPattern, $enableOptimization)
+    private function processAnsiCharacter($characterCode, &$wordBuffer, &$lastType, $enableOptimization)
     {
+        $ansiPattern = "[0-9a-z@#%\+\.-]";
+        $nonNumberPattern = "[a-z@#%\+]";
         if (preg_match('/' . $ansiPattern . '/i', chr($characterCode))) {
             // 处理英文数字字符
             if ($lastType != CDB_WORD_TYPE_EN && $wordBuffer != '') {
@@ -501,14 +485,14 @@ class Analysis
      * @param string $character 字符
      * @param string &$wordBuffer 词汇缓冲区
      * @param int &$lastType 上一个字符类型
-     * @param string $nonNumberPattern 非数字字符模式
      * @param bool $enableOptimization 是否启用优化
      * @param int &$currentIndex 当前索引
      * @param int $totalLength 总长度
      */
     private function processUnicodeCharacter($characterCode, $character, &$wordBuffer, &$lastType,
-                                             $nonNumberPattern, $enableOptimization, &$currentIndex, $totalLength)
+                                             $enableOptimization, &$currentIndex, $totalLength)
     {
+        $nonNumberPattern = "[a-z@#%\+]";
         // 判断是否为正常中日韩文字
         if (($characterCode > 0x3FFF && $characterCode < 0x9FA6) ||
             ($characterCode > 0xF8FF && $characterCode < 0xFA2D) ||
@@ -520,13 +504,27 @@ class Analysis
                 if ($lastType == CDB_WORD_TYPE_EN) {
                     if (!preg_match('/' . $nonNumberPattern . '/i', iconv(UCS2, 'utf-8', $wordBuffer))) {
                         $lastType = CDB_WORD_TYPE_NUM;
+                        if(isset($this->additionalDictionary['unit'][$character])) {
+                            $wordBuffer .= $character;
+                            $character = '';
+                        }
                     }
                 }
-                $this->addToSegmentationResults($wordBuffer, $lastType, $enableOptimization);
+                $prevWord = end($this->segmentationResults);
+                // 连续的数字当一个词处理
+                if($lastType == CDB_WORD_TYPE_NUM && $prevWord['t'] == CDB_WORD_TYPE_NUM) {
+                    $prevWord = array_pop($this->segmentationResults);
+                    $prevWord['w'] .= $wordBuffer;
+                    $prevWord['segments'] = [$prevWord['w']];
+                    $this->segmentationResults[] = $prevWord;
+                } else {
+                    $this->addToSegmentationResults($wordBuffer, $lastType, $enableOptimization);
+                }
                 $wordBuffer = '';
             }
-            $lastType = CDB_WORD_TYPE_CN;
+            if (!$character) return;
             $wordBuffer .= $character;
+            $lastType = CDB_WORD_TYPE_CN;
         } else {
             // 处理特殊符号
             $this->processSpecialSymbol($character, $characterCode, $wordBuffer, $lastType,
@@ -598,22 +596,21 @@ class Analysis
     {
         $ellipsisSequence = $character;
         $ellipsisChar = chr(0x20) . chr(0x26);
-        $offset = 1;
+        $offset = 0;
 
         // 查找连续的省略号
         while ($currentIndex + $offset < $totalLength) {
-            $nextChar = $this->unicodeSourceString[$currentIndex + $offset] .
-                        $this->unicodeSourceString[$currentIndex + $offset + 1];
+            $nextChar = $this->unicodeSourceString[$currentIndex + $offset] . $this->unicodeSourceString[$currentIndex + $offset + 1];
 
             if ($nextChar != $ellipsisChar) {
                 break;
             }
 
-            $ellipsisSequence .= $nextChar;
             $offset += 2;
+            $ellipsisSequence .= $nextChar;
         }
 
-        $currentIndex += $offset - 1;
+        $currentIndex += $offset;
         $this->addToSegmentationResults($ellipsisSequence, 14, false);
     }
 
@@ -634,8 +631,7 @@ class Analysis
 
         // 查找书名内容
         while ($currentIndex + $offset < $totalLength) {
-            $nextChar = $this->unicodeSourceString[$currentIndex + $offset] .
-                        $this->unicodeSourceString[$currentIndex + $offset + 1];
+            $nextChar = $this->unicodeSourceString[$currentIndex + $offset] . $this->unicodeSourceString[$currentIndex + $offset + 1];
 
             if ($nextChar == $closingBookMark) {
                 $this->addToSegmentationResults($character, CDB_WORD_TYPE_OTHER, false);
@@ -651,8 +647,8 @@ class Analysis
                 $isValidBook = true;
                 break;
             } else {
-                $bookTitle .= $nextChar;
                 $offset += 2;
+                $bookTitle .= $nextChar;
 
                 // 避免过长的书名
                 if (strlen($bookTitle) > 60) {
@@ -690,15 +686,14 @@ class Analysis
         if ($needOptimization && $type == CDB_WORD_TYPE_CN) {
             $this->performDeepAnalysis($word, $type, $needOptimization);
         } else {
-            // 非中文词汇的处理
+            // 非中文或不需要优化的词汇直接添加
+            $this->currentSentenceIndex++;
             if ($type != CDB_WORD_TYPE_NUM || $needOptimization) {
                 if ($this->convertToLowerCase && $type == CDB_WORD_TYPE_EN) {
                     $resultItem['segments'] = [strtolower($word)];
                 } else {
                     $resultItem['segments'] = [$word];
                 }
-            } else {
-                $resultItem['segments'] = [$word];
             }
         }
 
@@ -755,12 +750,10 @@ class Analysis
 
         // 处理数字+单位的组合
         if ($lastType == CDB_WORD_TYPE_NUM &&
-            (isset($this->additionalDictionary['unit'][$shortText]) ||
-             isset($this->additionalDictionary['unit'][substr($shortText, 0, 2)]))) {
+            (isset($this->additionalDictionary['unit'][$shortText]) || isset($this->additionalDictionary['unit'][substr($shortText, 0, 2)]))) {
 
             $remainingText = '';
-            if (!isset($this->additionalDictionary['unit'][$shortText]) &&
-                isset($this->additionalDictionary['stop'][substr($shortText, 2, 2)])) {
+            if (!isset($this->additionalDictionary['unit'][$shortText]) && isset($this->additionalDictionary['stop'][substr($shortText, 2, 2)])) {
                 $remainingText = substr($shortText, 2, 2);
                 $shortText = substr($shortText, 0, 2);
             }
@@ -971,8 +964,7 @@ class Analysis
                     }
                 }
 
-                if (!isset($this->additionalDictionary['stop'][$currentWord]) &&
-                    !$shouldSkipSuffixRecognition) {
+                if (!isset($this->additionalDictionary['stop'][$currentWord]) && !$shouldSkipSuffixRecognition) {
                     $optimizedResults[$resultIndex] = $currentWord . $nextWord;
                     $currentIndex++;
                     $resultIndex++;
@@ -981,20 +973,33 @@ class Analysis
             }
             // 新词发现（基于规则的两字词组合）
             else if ($this->enableSingleWordMerging) {
-                if (strlen($currentWord) == 2 && strlen($nextWord) == 2 &&
-                    !isset($this->additionalDictionary['stop'][$currentWord]) &&
-                    !isset($this->additionalDictionary['region'][$currentWord]) &&
-                    !isset($this->additionalDictionary['suffix'][$currentWord]) &&
-                    !isset($this->additionalDictionary['stop'][$nextWord]) &&
-                    !isset($this->additionalDictionary['num'][$nextWord])) {
+                if (
+                    strlen($currentWord) == 2
+                    &&
+                    strlen($nextWord) == 2
+                    &&
+                    !isset($this->additionalDictionary['stop'][$currentWord])
+                    &&
+                    !isset($this->additionalDictionary['region'][$currentWord])
+                    &&
+                    !isset($this->additionalDictionary['suffix'][$currentWord])
+                    &&
+                    !isset($this->additionalDictionary['stop'][$nextWord])
+                    &&
+                    !isset($this->additionalDictionary['num'][$nextWord])
+                ) {
 
                     $newWord = $currentWord . $nextWord;
 
                     // 尝试识别三字新词
                     if (isset($segmentArray[$currentIndex + 2]) &&
                         strlen($segmentArray[$currentIndex + 2]) == 2 &&
-                        (isset($this->additionalDictionary['suffix'][$segmentArray[$currentIndex + 2]]) ||
-                         isset($this->additionalDictionary['unit'][$segmentArray[$currentIndex + 2]]))) {
+                        (
+                            isset($this->additionalDictionary['suffix'][$segmentArray[$currentIndex + 2]])
+                            // ||
+                            // isset($this->additionalDictionary['unit'][$segmentArray[$currentIndex + 2]])
+                        )
+                    ) {
 
                         $newWord .= $segmentArray[$currentIndex + 2];
                         $currentIndex++;
@@ -1069,5 +1074,27 @@ class Analysis
         }
 
         return implode($delimiter, $filteredResults);
+    }
+
+    /**
+     * 添加数字检测方法
+     */
+    private function isNumeric($word, $skipUnits = false) {
+        if(is_numeric($word)) {
+            return true;
+        }
+        if(isset($this->additionalDictionary['num'][$word])) {
+            return true;
+        }
+        if(!$skipUnits && isset($this->additionalDictionary['unit'][$word])) {
+            return true;
+        }
+        if(strlen($word)>2) {
+            $info = $this->getWordInformation($word);
+            if(isset($info['attr']) && $info['attr'] == 'num') {
+                return true;
+            }
+        }
+        return false;
     }
 }

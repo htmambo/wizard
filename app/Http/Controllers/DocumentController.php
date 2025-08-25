@@ -10,6 +10,8 @@ namespace App\Http\Controllers;
 
 
 use App\Components\Segmentation\Analysis;
+use App\Components\Segmentation\Jieba;
+use App\Components\Segmentation\JiebaFinalseg;
 use App\Components\Segmentation\PSCWS;
 use App\Events\DocumentCreated;
 use App\Events\DocumentDeleted;
@@ -843,11 +845,11 @@ class DocumentController extends Controller
         $this->authorize('page-toblog', $pageItem);
 
         $title = $pageItem->title;
-        $title = 'Laravel Passport API 认证使用小结南京市长欢迎你中国共产党为公布国共合作宣言';
+        // $title = 'Laravel Passport API 认证使用小结南京市长欢迎你中国共产党为公布国共合作宣言';
         if ($dict === 'jieba') {
-            \App\Components\Segmentation\Jieba::init();
-            \App\Components\Segmentation\JiebaFinalseg::init();
-            $seg_list = \App\Components\Segmentation\Jieba::cut($title);
+            Jieba::init();
+            JiebaFinalseg::init();
+            $seg_list = Jieba::cut($title);
             $title = implode(' ', $seg_list);
             $title = str_replace(' ', '_', $title);
         } else if ($dict === 'pscws') {
@@ -875,8 +877,8 @@ class DocumentController extends Controller
             $pa                    = new Analysis();
             $pa->loadDictionaries();
             $pa->setSourceText($title);
-            $pa->startSegmentationAnalysis(true);
-            $title = $pa->getFormattedResults();
+            $pa->startSegmentationAnalysis();
+            $title = $pa->getFormattedResults('_');
         }
         echo $title;
         echo '<br/>';
