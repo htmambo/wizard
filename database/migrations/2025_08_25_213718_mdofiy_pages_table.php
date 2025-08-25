@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pages', function (Blueprint $table) {
-            $table->char('alias', 100)->comment('博客链接');
+            $table->char('alias', 100)->nullable()->comment('博客链接');
         });
     }
 
