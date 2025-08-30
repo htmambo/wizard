@@ -1,5 +1,5 @@
 {
-    "action": {
+    "browser_action": {
         "default_icon": "img/wallabag-icon-48.png",
         "default_popup": "popup.html",
         "default_title": "Wizarder",
@@ -10,16 +10,23 @@
         } ]
     },
     "background": {
-        "service_worker": "background.js",
-        "type": "module"
+        "scripts": [
+            "js/common.js",
+            "js/deps/text.min.js",
+            "js/deps/asmcrypto.all.es5.min.js",
+            "js/deps/webcrypto-liner.shim.min.js",
+            "js/fetch-api.js",
+            "js/wallabag-api.js",
+            "js/background.js"
+        ]
     },
     "commands": {
-        "_execute_action": {
+        "_execute_browser_action": {
             "suggested_key": {
                 "default": "Alt+W",
                 "mac": "Alt+W",
                 "windows": "Alt+W"
-             }
+            }
         },
         "wizarder-it": {
             "suggested_key": {
@@ -36,14 +43,13 @@
         "128": "img/wallabag-icon-128.png",
         "48": "img/wallabag-icon-48.png"
     },
-    "manifest_version": 3,
+    "manifest_version": 2,
     "name": "Wizarder",
-    "optional_host_permissions": [ "*://*/api/*" ],
+    "optional_permissions": [ "*://*/api/*" ],
     "options_ui": {
         "open_in_tab": true,
         "page": "options.html"
     },
-    "permissions": [ "tabs", "storage", "contextMenus", "activeTab", "scripting" ],
-    "update_url": "https://clients2.google.com/service/update2/crx",
+    "permissions": [ "tabs", "storage", "contextMenus", "activeTab" ],
     "version": "1.18.1"
 }

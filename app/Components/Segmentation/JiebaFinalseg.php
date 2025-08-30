@@ -58,7 +58,7 @@ class JiebaFinalseg
      * @param string $f_name # input f_name
      * @param array $options # other options
      *
-     * @return void
+     * @return array
      */
     public static function loadModel($f_name, $options = array())
     {

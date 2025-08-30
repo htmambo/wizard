@@ -5,23 +5,38 @@ namespace App\Components\Segmentation;
  * 基于Unicode编码词典的PHP分词器
  *
  * 功能特点：
- * 1. 仅适用于PHP5，需要iconv扩展
+ * 1. 需要iconv扩展
  * 2. 使用RMM（逆向最大匹配）算法进行分词
- * 3. 支持特殊格式编码的词典，无需将词典完全载入内存
+ * 3. 支持特殊格式编码的词典，无需将词典完全载入内存，提供编译(MakeDict)以及导出词典(ExportDict)
  * 4. 支持人名、地名、数字等特殊词汇识别
  * 5. 支持多种分词模式和结果过滤
  *
- * 使用流程：SetSource -> StartAnalysis -> GetResult
+ * 使用流程：setSourceText -> StartAnalysis -> Get***Result
  *
  * @version 3.0
  * @author IT柏拉图
  * @contact QQ: 2500875 Email: 2500875@qq.com
  *
- * 词性标记说明：
- * 基础词性：n(名词), v(动词), adj(形容词), r(副词), c(介词),
- *          pron(代词), num(数词), loc(方位词), conj(连词), aux(助词)
- * 特殊词性：name(人名), sp(专有名词), i(成语/习语), j(简称),
- *          un(数字后缀), x(其他/未分类)
+ * 基本词性标记：
+ *  - 副词（adverb）:r
+ *  - 介词（preposition）:c
+ *
+ *  - 名词（noun）:n
+ *  - 动词（verb）:v
+ *  - 形容词（adjective）:adj
+ *  - 代词（pronoun）:pron
+ *  - 数词（numeral）:num
+ *  - 方位词（localizer）:loc
+ *  - 连词（conjunction）:conj
+ *  - 助词（auxiliary）:aux
+ *  特殊词性标记：
+ *  - 人名/姓：name
+ *  - 专有名词：sp
+ *  - 成语/习语/俗语：i
+ *  扩展标记：
+ *  - j:简称/缩写
+ *  - unit:数字后缀
+ *  - x:其他/未分类
  */
 
 // 字符分隔符定义
@@ -29,17 +44,20 @@ defined('_SP_') || define('_SP_', chr(0xFF) . chr(0xFE));
 defined('UCS2') || define('UCS2', 'ucs-2be');
 
 // 哈希算法参数
-defined('CDB_HASH_BASE') || define('CDB_HASH_BASE', 0x238f13af);
-defined('CDB_HASH_PRIME') || define('CDB_HASH_PRIME', 0xFFFF);
+defined('CDB_HASH_BASE') || define('CDB_HASH_BASE', 0xf422f);
+defined('CDB_HASH_PRIME') || define('CDB_HASH_PRIME', 32141);
 
 // 词语类型常量定义
-defined('CDB_WORD_TYPE_CN') || define('CDB_WORD_TYPE_CN', 1);           // 中/韩/日文
-defined('CDB_WORD_TYPE_EN') || define('CDB_WORD_TYPE_EN', 2);           // 英文/数字/符号
-defined('CDB_WORD_TYPE_ANSI') || define('CDB_WORD_TYPE_ANSI', 3);       // ANSI符号
-defined('CDB_WORD_TYPE_NUM') || define('CDB_WORD_TYPE_NUM', 4);         // 纯数字
-defined('CDB_WORD_TYPE_OTHER') || define('CDB_WORD_TYPE_OTHER', 5);     // 其他字符
-defined('CDB_WORD_TYPE_QUOTE') || define('CDB_WORD_TYPE_QUOTE', 6);     // 引号
-defined('CDB_WORD_TYPE_BOOK') || define('CDB_WORD_TYPE_BOOK', 7);       // 书名号
+//中/韩/日文
+defined('CDB_WORD_TYPE_CN') || define('CDB_WORD_TYPE_CN', 1);
+//英文/数字/符号('.', '@', '#', '+')
+defined('CDB_WORD_TYPE_EN') || define('CDB_WORD_TYPE_EN', 2);
+//ANSI符号
+defined('CDB_WORD_TYPE_ANSI') || define('CDB_WORD_TYPE_ANSI', 3);
+//纯数字
+defined('CDB_WORD_TYPE_NUM') || define('CDB_WORD_TYPE_NUM', 4);
+//非ANSI符号或不支持字符
+defined('CDB_WORD_TYPE_OTHER') || define('CDB_WORD_TYPE_OTHER', 5);
 
 /**
  * PhpAnalysisXdb 主分词类
@@ -113,21 +131,10 @@ class Analysis
 
     /**
      * 主词典中词语的最大长度（字节数）
+     * 计算公式：字符数 * 2
      * @var int
      */
     private $maxWordLength = 14;
-
-    /**
-     * 粗分后的结果数组
-     * @var array
-     */
-    private $roughSegmentationResults = [];
-
-    /**
-     * 最终分词结果（空格分隔的词汇列表）
-     * @var array
-     */
-    private $finalSegmentationResults = [];
 
     /**
      * 词典加载状态标识
@@ -165,11 +172,15 @@ class Analysis
      */
     private $currentSentenceIndex = 0;
     private $_ztab;
-
+    private $headerInfo = [
+        'base' => CDB_HASH_BASE,
+        'prime' => CDB_HASH_PRIME,
+    ];
 
     /**
      * 构造函数
-     * 初始化分词器实例
+     *
+     * @return void
      */
     public function __construct()
     {
@@ -208,6 +219,11 @@ class Analysis
         }
     }
 
+    public function getIoTimes()
+    {
+        return $this->mainDictionaryHandle->_io_times;
+    }
+
     /**
      * 从主词典获取词汇信息
      *
@@ -222,38 +238,28 @@ class Analysis
         } else {
             // 查询数据库
             $this->dictionaryQueryCount++;
-            $unicodeWord = iconv(UCS2, 'utf-8', $wordKey);
-            $databaseValue = $this->mainDictionaryHandle->Get($unicodeWord);
-            $wordInformation = false;
-
-            if ($databaseValue) {
-                // 解包二进制数据：词频、权重、标志位、词性属性
-                $wordInformation = unpack('ftf/faf/Cflag/a3attr', $databaseValue);
-
-                // 检查词汇有效性标志位
-                if (!($wordInformation['flag'] & 0x01)) {
-                    $wordInformation = false;
+            $databaseValue = $this->mainDictionaryHandle->Get($wordKey, true);
+            if (!is_array($databaseValue) || !isset($databaseValue[$wordKey])) {
+                $databaseValue = false;
+                $wordInformation = false;
+            }
+            if($databaseValue) {
+                foreach($databaseValue as $k1 => $v1) {
+                    $isNumeric = true;
+                    $strLen = strlen($k1);
+                    for($i=0;$i<$strLen;$i+=2) {
+                        $c = $k1[$i] . $k1[$i+1];
+                        if(!$this->isNumeric($c)) {
+                            $isNumeric = false;
+                            break;
+                        }
+                    }
+                    if ($isNumeric) {
+                        $databaseValue[$k1] = [999, 'num'];
+                    }
+                    $this->mainDictionaryCache[$k1] = ['attr' => $databaseValue[$k1][1], 'tf' => $databaseValue[$k1][0]];
                 }
-            }
-
-            // 清理不需要的字段
-            if ($wordInformation) {
-                unset($wordInformation['flag'], $wordInformation['af']);
-            }
-
-            // 数字识别处理
-            $isNumericWord = true;
-            for ($i = 0; $i < strlen($wordKey); $i += 2) {
-                $characterCode = $wordKey[$i] . $wordKey[$i + 1];
-                if (!$this->isNumericCharacter($characterCode)) {
-                    $isNumericWord = false;
-                    break;
-                }
-            }
-
-            // 为数字词汇设置默认属性
-            if ($isNumericWord) {
-                $wordInformation = ['attr' => 'num', 'tf' => 999];
+                $wordInformation = $databaseValue[$wordKey];
             }
 
             // 缓存结果
@@ -301,19 +307,23 @@ class Analysis
         // 确定主词典文件路径
         $additionalDictionaryPath = dirname(__FILE__) . '/' . $this->additionalDictionaryFile;
         if ($mainDictionaryPath == '' || !file_exists($mainDictionaryPath)) {
-            $this->mainDictionaryFile = dirname(__FILE__) . '/dict/dict.utf8.xdb';
+            $this->mainDictionaryFile = dirname(__FILE__) . '/' . $this->mainDictionaryFile;
         } else {
             $this->mainDictionaryFile = $mainDictionaryPath;
         }
 
         // 初始化主词典数据库
-        $databaseInstance = new \App\Components\XTreeDB(CDB_HASH_BASE, CDB_HASH_PRIME);
+        $databaseInstance = new XTreeDB(CDB_HASH_BASE, CDB_HASH_PRIME);
+        $databaseInstance->setReversedCfg('iiii', 'ItfTotal/ItotalWords/ImaxWordLength/Ireversed');
         if (!$databaseInstance->Open($this->mainDictionaryFile)) {
-            trigger_error("无法打开XDB数据文件：{$this->mainDictionaryFile}", E_USER_ERROR);
+            throw new \Exception("无法打开XDB数据文件：{$this->mainDictionaryFile}");
         } else {
             $this->mainDictionaryHandle = $databaseInstance;
         }
-
+        $this->headerInfo = $databaseInstance->headerInfo;
+        if(is_numeric($this->headerInfo['maxWordLength']) && $this->headerInfo['maxWordLength']>0) {
+            $this->maxWordLength = $this->headerInfo['maxWordLength'];
+        }
         // 加载附加词典
         $this->loadAdditionalDictionaries($additionalDictionaryPath);
 
@@ -376,7 +386,7 @@ class Analysis
      * @param bool $enableOptimization 是否对结果进行优化
      * @return bool 处理成功返回true
      */
-    public function startSegmentationAnalysis($enableOptimization = true)
+    public function StartAnalysis($enableOptimization = true)
     {
         // 重置查询计数
         $this->dictionaryQueryCount = 0;
@@ -392,20 +402,21 @@ class Analysis
         $this->unicodeSourceString .= chr(0) . chr(32);
 
         $sourceStringLength = strlen($this->unicodeSourceString);
-        $fullWidthToHalfWidthMap = [];
+        $sbcArr = [];
+        $j = 0;
 
-        // 构建全角半角字符映射表
-        for ($i = 0; $i< 0x5F; $i++) {
-            $halfWidthChar = chr(0x20 + $i);
-            $fullWidthChar = iconv(UCS2, 'UTF-8', hex2bin(dechex(0xFF00 + $i)));
-            $fullWidthToHalfWidthMap[$fullWidthChar] = $halfWidthChar;
+        // 全角与半角字符对照表
+        for ($i = 0xFF00; $i < 0xFF5F; ++$i) {
+            $scb = 0x20 + $j;
+            ++$j;
+            $sbcArr[$i] = $scb;
         }
 
-        // 字符串粗分处理
+        // 对字符串进行粗分
         $wordBuffer = '';
         $lastCharacterType = CDB_WORD_TYPE_CN;
 
-        for ($i = 0; $i < $sourceStringLength; $i++) {
+        for ($i = 0; $i < $sourceStringLength; ++$i) {
             $character = $this->unicodeSourceString[$i] . $this->unicodeSourceString[++$i];
             $characterCode = hexdec(bin2hex($character));
             $characterCode = isset($sbcArr[$characterCode]) ? $sbcArr[$characterCode] : $characterCode;
@@ -512,7 +523,7 @@ class Analysis
                 }
                 $prevWord = end($this->segmentationResults);
                 // 连续的数字当一个词处理
-                if($lastType == CDB_WORD_TYPE_NUM && $prevWord['t'] == CDB_WORD_TYPE_NUM) {
+                if($lastType == CDB_WORD_TYPE_NUM && $prevWord && $prevWord['t'] == CDB_WORD_TYPE_NUM) {
                     $prevWord = array_pop($this->segmentationResults);
                     $prevWord['w'] .= $wordBuffer;
                     $prevWord['segments'] = [$prevWord['w']];
@@ -557,22 +568,6 @@ class Analysis
             $this->addToSegmentationResults($wordBuffer, $lastType, $enableOptimization);
         }
 
-        // 处理省略号
-        if ($characterCode == 0x2026) {
-            $this->processEllipsis($character, $currentIndex, $totalLength);
-            $wordBuffer = '';
-            $lastType = CDB_WORD_TYPE_OTHER;
-            return;
-        }
-
-        // 处理书名号
-        if ($characterCode == 0x300A) {
-            $this->processBookTitle($character, $currentIndex, $totalLength, $enableOptimization);
-            $wordBuffer = '';
-            $lastType = CDB_WORD_TYPE_OTHER;
-            return;
-        }
-
         // 处理其他符号
         $wordBuffer = '';
         $lastType = CDB_WORD_TYPE_OTHER;
@@ -581,83 +576,6 @@ class Analysis
             // 跳过全角空格
             return;
         } else {
-            $this->addToSegmentationResults($character, CDB_WORD_TYPE_OTHER, false);
-        }
-    }
-
-    /**
-     * 处理省略号
-     *
-     * @param string $character 字符
-     * @param int &$currentIndex 当前索引
-     * @param int $totalLength 总长度
-     */
-    private function processEllipsis($character, &$currentIndex, $totalLength)
-    {
-        $ellipsisSequence = $character;
-        $ellipsisChar = chr(0x20) . chr(0x26);
-        $offset = 0;
-
-        // 查找连续的省略号
-        while ($currentIndex + $offset < $totalLength) {
-            $nextChar = $this->unicodeSourceString[$currentIndex + $offset] . $this->unicodeSourceString[$currentIndex + $offset + 1];
-
-            if ($nextChar != $ellipsisChar) {
-                break;
-            }
-
-            $offset += 2;
-            $ellipsisSequence .= $nextChar;
-        }
-
-        $currentIndex += $offset;
-        $this->addToSegmentationResults($ellipsisSequence, 14, false);
-    }
-
-    /**
-     * 处理书名号
-     *
-     * @param string $character 字符
-     * @param int &$currentIndex 当前索引
-     * @param int $totalLength 总长度
-     * @param bool $enableOptimization 是否启用优化
-     */
-    private function processBookTitle($character, &$currentIndex, $totalLength, $enableOptimization)
-    {
-        $bookTitle = '';
-        $offset = 1;
-        $isValidBook = false;
-        $closingBookMark = chr(0x30) . chr(0x0B);
-
-        // 查找书名内容
-        while ($currentIndex + $offset < $totalLength) {
-            $nextChar = $this->unicodeSourceString[$currentIndex + $offset] . $this->unicodeSourceString[$currentIndex + $offset + 1];
-
-            if ($nextChar == $closingBookMark) {
-                $this->addToSegmentationResults($character, CDB_WORD_TYPE_OTHER, false);
-                $this->addToSegmentationResults($bookTitle, 13, $enableOptimization);
-
-                // 最大切分模式下继续分词
-                if ($this->enableMaximumSegmentation) {
-                    $this->performDeepAnalysis($bookTitle, CDB_WORD_TYPE_CN, $enableOptimization);
-                }
-
-                $this->addToSegmentationResults($closingBookMark, CDB_WORD_TYPE_OTHER, false);
-                $currentIndex += $offset + 1;
-                $isValidBook = true;
-                break;
-            } else {
-                $offset += 2;
-                $bookTitle .= $nextChar;
-
-                // 避免过长的书名
-                if (strlen($bookTitle) > 60) {
-                    break;
-                }
-            }
-        }
-
-        if (!$isValidBook) {
             $this->addToSegmentationResults($character, CDB_WORD_TYPE_OTHER, false);
         }
     }
@@ -675,30 +593,30 @@ class Analysis
             return;
         }
 
-        // 创建分词结果项
+        // 创建基本的分词结果项
         $resultItem = [
             'w' => $word,
             't' => $type,
             'segments' => null
         ];
 
-        // 中文词汇进行深度分析
+        // 如果需要深度分析
         if ($needOptimization && $type == CDB_WORD_TYPE_CN) {
+            $this->segmentationResults[] = $resultItem;
+            $this->currentSentenceIndex++;
             $this->performDeepAnalysis($word, $type, $needOptimization);
         } else {
             // 非中文或不需要优化的词汇直接添加
-            $this->currentSentenceIndex++;
             if ($type != CDB_WORD_TYPE_NUM || $needOptimization) {
                 if ($this->convertToLowerCase && $type == CDB_WORD_TYPE_EN) {
                     $resultItem['segments'] = [strtolower($word)];
                 } else {
                     $resultItem['segments'] = [$word];
                 }
+                $this->segmentationResults[] = $resultItem;
+                $this->currentSentenceIndex++;
             }
         }
-
-        $this->segmentationResults[] = $resultItem;
-        $this->currentSentenceIndex++;
     }
 
     /**
@@ -744,7 +662,7 @@ class Analysis
     private function processShortSentence($shortText, $currentIndex)
     {
         $lastType = 0;
-        if ($currentIndex > 0 && isset($this->segmentationResults[$currentIndex - 1]['t'])) {
+        if ($currentIndex > 0) {
             $lastType = $this->segmentationResults[$currentIndex - 1]['t'];
         }
 
@@ -786,8 +704,7 @@ class Analysis
         $leftQuote = chr(0x20) . chr(0x1C);
         $segmentedWords = [];
         $currentIndex = $this->currentSentenceIndex - 1;
-        $previousWord = isset($this->segmentationResults[$currentIndex - 1]['w'])
-            ? $this->segmentationResults[$currentIndex - 1]['w'] : '';
+        $previousWord = isset($this->segmentationResults[$currentIndex - 1]['w']) ? $this->segmentationResults[$currentIndex - 1]['w'] : '';
 
         // 特殊情况：前一个词为左引号且当前文本较短时
         if ($currentIndex > 0 && $textLength < 11 && $previousWord == $leftQuote) {
@@ -818,7 +735,7 @@ class Analysis
 
                 $potentialWord = substr($chineseText, $i - $wordLength, $wordLength);
 
-                if (strlen($potentialWord) <= 2) {
+                if (!isset($potentialWord[3])) {
                     $i = $i - 1;
                     break;
                 }
@@ -854,39 +771,52 @@ class Analysis
     /**
      * 优化分词结果
      *
-     * @param array &$segmentArray 分词结果数组
-     * @param int $currentPosition 当前位置
+     * 该方法是分词系统的核心优化模块，主要功能包括：
+     * 1. 数量词识别与合并（如："三" + "个" → "三个"）
+     * 2. 人名识别与合并（如："张" + "三" → "张三"）
+     * 3. 地名/后缀词识别与合并（如："北京" + "市" → "北京市"）
+     * 4. 新词发现与合并（基于规则的两字词组合）
+     * 5. 二元歧义消解处理（最大切分模式）
+     *
+     * 词典结构说明：
+     * - $this->additionalDictionary['num']: 数字词典
+     * - $this->additionalDictionary['unit']: 单位词典
+     * - $this->additionalDictionary['name']: 姓氏词典
+     * - $this->additionalDictionary['suffix']: 后缀词典（地名等）
+     * - $this->additionalDictionary['stop']: 停用词典
+     * - $this->additionalDictionary['region']: 时间词典
+     *
+     * @param array &$segmentArray 分词结果数组（引用传递）
+     * @param int $currentPosition 当前处理位置
+     * @return void
      */
-    private function optimizeSegmentationResults(&$segmentArray, $currentPosition)
-    {
-        $optimizedResults = [];
+    private function optimizeSegmentationResults(&$segmentArray, $currentPosition) {
+        $optimizedResultArray = [];
         $previousPosition = $currentPosition - 1;
         $arrayLength = count($segmentArray);
         $currentIndex = $resultIndex = 0;
 
-        // 处理与前一个词汇的数量词合并
+        // 1 处理与前一个词汇的数量词合并
         if ($previousPosition > -1 &&
-            isset($this->segmentationResults[$previousPosition]['t']) &&
             !isset($this->segmentationResults[$previousPosition]['segments'])) {
-
             $previousWord = $this->segmentationResults[$previousPosition]['w'];
             $previousWordType = $this->segmentationResults[$previousPosition]['t'];
 
             if (($previousWordType == CDB_WORD_TYPE_NUM ||
-                 isset($this->additionalDictionary['num'][$previousWord])) &&
+                isset($this->additionalDictionary['num'][$previousWord])) &&
                 isset($this->additionalDictionary['unit'][$segmentArray[0]])) {
 
                 $this->segmentationResults[$previousPosition]['w'] = $previousWord . $segmentArray[0];
                 $this->segmentationResults[$previousPosition]['t'] = CDB_WORD_TYPE_NUM;
                 $segmentArray[0] = '';
-                $currentIndex++;
+                ++$currentIndex;
             }
         }
 
-        // 处理词汇优化
-        for (; $currentIndex < $arrayLength; $currentIndex++) {
+        // 2 处理词汇优化
+        for (; $currentIndex < $arrayLength; ++$currentIndex) {
             if (!isset($segmentArray[$currentIndex + 1])) {
-                $optimizedResults[$resultIndex] = $segmentArray[$currentIndex];
+                $optimizedResultArray[$resultIndex] = $segmentArray[$currentIndex];
                 break;
             }
 
@@ -894,13 +824,13 @@ class Analysis
             $nextWord = $segmentArray[$currentIndex + 1];
             $hasMatched = false;
 
-            // 数字识别与合并
-            if ($this->isNumericCharacter($currentWord, true)) {
+            // 2.1 数字识别与合并
+            if ($this->isNumeric($currentWord, true)) {
                 $nextIndex = $currentIndex;
                 $combinedNumber = '';
 
                 while ($nextIndex < $arrayLength) {
-                    if (!$this->isNumericCharacter($segmentArray[$nextIndex])) {
+                    if (!$this->isNumeric($segmentArray[$nextIndex])) {
                         break;
                     }
                     $combinedNumber .= $segmentArray[$nextIndex];
@@ -909,11 +839,11 @@ class Analysis
                 }
 
                 $currentIndex--;
-                $optimizedResults[$resultIndex] = $combinedNumber;
+                $optimizedResultArray[$resultIndex] = $combinedNumber;
                 $resultIndex++;
                 $hasMatched = true;
             }
-            // 人名识别与合并
+            // 2.2 人名识别与合并
             else if (isset($this->additionalDictionary['name'][$currentWord])) {
                 $shouldSkipNameRecognition = false;
 
@@ -928,7 +858,7 @@ class Analysis
 
                 // 进行人名识别
                 if (!isset($this->additionalDictionary['stop'][$nextWord]) &&
-                    strlen($nextWord) < 5 &&
+                    !isset($nextWord[5]) &&
                     !$shouldSkipNameRecognition) {
 
                     $recognizedName = $currentWord . $nextWord;
@@ -943,19 +873,19 @@ class Analysis
                         $currentIndex++;
                     }
 
-                    $optimizedResults[$resultIndex] = $recognizedName;
+                    $optimizedResultArray[$resultIndex] = $recognizedName;
                     $this->mainDictionaryCache[$recognizedName] = ['attr' => 'name', 'tf' => 999];
                     $resultIndex++;
                     $currentIndex++;
                     $hasMatched = true;
                 }
             }
-            // 地名/后缀词识别与合并
+            // 2.3 地名/后缀词识别与合并
             else if (isset($this->additionalDictionary['suffix'][$nextWord])) {
                 $shouldSkipSuffixRecognition = false;
 
-                // 检查当前词是否为高频词
-                if (strlen($currentWord) > 2) {
+                // 检查当前词是否为副词、介词等高频词
+                if (isset($currentWord[2])) {
                     $wordInfo = $this->getWordInformation($currentWord);
                     if (isset($wordInfo['attr']) &&
                         ($wordInfo['attr'] == 'a' || $wordInfo['attr'] == 'r' ||
@@ -965,33 +895,28 @@ class Analysis
                 }
 
                 if (!isset($this->additionalDictionary['stop'][$currentWord]) && !$shouldSkipSuffixRecognition) {
-                    $optimizedResults[$resultIndex] = $currentWord . $nextWord;
+                    // 合并地名
+                    $optimizedResultArray[$resultIndex] = $currentWord . $nextWord;
                     $currentIndex++;
                     $resultIndex++;
                     $hasMatched = true;
                 }
             }
-            // 新词发现（基于规则的两字词组合）
+            // 2.4 新词发现（基于规则的两字词组合）
             else if ($this->enableSingleWordMerging) {
                 if (
-                    strlen($currentWord) == 2
-                    &&
-                    strlen($nextWord) == 2
-                    &&
-                    !isset($this->additionalDictionary['stop'][$currentWord])
-                    &&
-                    !isset($this->additionalDictionary['region'][$currentWord])
-                    &&
-                    !isset($this->additionalDictionary['suffix'][$currentWord])
-                    &&
-                    !isset($this->additionalDictionary['stop'][$nextWord])
-                    &&
+                    strlen($currentWord) == 2 &&
+                    strlen($nextWord) == 2 &&
+                    !isset($this->additionalDictionary['stop'][$currentWord]) &&
+                    !isset($this->additionalDictionary['region'][$currentWord]) &&
+                    !isset($this->additionalDictionary['suffix'][$currentWord]) &&
+                    !isset($this->additionalDictionary['stop'][$nextWord]) &&
                     !isset($this->additionalDictionary['num'][$nextWord])
                 ) {
 
                     $newWord = $currentWord . $nextWord;
 
-                    // 尝试识别三字新词
+                    // 尝试识别三字新词（后缀为地名或单位词）
                     if (isset($segmentArray[$currentIndex + 2]) &&
                         strlen($segmentArray[$currentIndex + 2]) == 2 &&
                         (
@@ -1005,79 +930,127 @@ class Analysis
                         $currentIndex++;
                     }
 
-                    $optimizedResults[$resultIndex] = $newWord;
+                    $optimizedResultArray[$resultIndex] = $newWord;
                     $currentIndex++;
                     $resultIndex++;
                     $hasMatched = true;
                 }
             }
 
-            // 未匹配的词汇直接添加
+            // 3 处理未匹配的词汇
             if (!$hasMatched) {
-                $optimizedResults[$resultIndex] = $currentWord;
+                $optimizedResultArray[$resultIndex] = $currentWord;
                 $resultIndex++;
+
+                // 二元歧义消解处理（最大切分模式）
+                $nextWordLength = strlen($nextWord);
+                if ($this->enableMaximumSegmentation &&
+                    !isset($this->additionalDictionary['stop'][$currentWord]) &&
+                    strlen($currentWord) < 5 &&
+                    $nextWordLength > 2 &&
+                    $nextWordLength < 7) {
+
+                    // 尝试不同的切分方式
+                    for ($splitPosition = 0; $splitPosition <= $nextWordLength; $splitPosition += 2) {
+                        $wordHead = substr($nextWord, $splitPosition, 2);
+                        $combinedWord = $currentWord . substr($nextWord, 0, $splitPosition);
+
+                        // 检查组合后的词是否在词典中
+                        if ($this->isWordInDictionary($combinedWord . $wordHead)) {
+                            if (strlen($currentWord) > 2) {
+                                ++$resultIndex;
+                            }
+                            $optimizedResultArray[$resultIndex] = chr(0) . chr(0x28) . $combinedWord . $wordHead . chr(0) . chr(0x29);
+                        }
+                    }
+                }
+                ++$resultIndex;
             }
         }
 
         // 更新分词结果
-        $segmentArray = $optimizedResults;
+        $segmentArray = $optimizedResultArray;
     }
 
     /**
-     * 检查字符是否为数字字符
-     *
-     * @param string $character 字符
-     * @param bool $checkPattern 是否检查模式
-     * @return bool 是数字字符返回true
-     */
-    private function isNumericCharacter($character, $checkPattern = false)
-    {
-        if ($checkPattern) {
-            return preg_match('/^[0-9]+$/', iconv(UCS2, 'utf-8', $character));
-        }
-
-        $charCode = hexdec(bin2hex($character));
-        return ($charCode >= 0x30 && $charCode <= 0x39);
-    }
-
-    /**
-     * 获取分词结果
+     * 获取简化的分词结果
      *
      * @return array 分词结果数组
      */
-    public function getSegmentationResults()
-    {
-        $results = [];
-        foreach ($this->segmentationResults as $item) {
-            if (isset($item['segments']) && is_array($item['segments'])) {
-                $results = array_merge($results, $item['segments']);
+    public function GetSimpleResult() {
+        $rearr = [];
+        foreach ($this->segmentationResults as $k => $v) {
+            $w = $this->_out_string_encoding($v['w']);
+            if ($w != ' ') {
+                $rearr[$k]['w'] = $w;
+                $rearr[$k]['t'] = $v['t'];
             }
         }
-        return $results;
+        return $rearr;
     }
 
     /**
-     * 获取格式化的分词结果字符串
+     * 把uncode字符串转换为输出字符串
+     *
+     * @parem str
+     * return string
+     */
+    private function _out_string_encoding($str){
+        return iconv(UCS2, 'utf-8', $str);
+    }
+
+    /**
+     * 获取最终分词结果
      *
      * @param string $delimiter 分隔符
      * @return string 格式化的分词结果
      */
-    public function getFormattedResults($delimiter = ' ')
+    public function GetFinallyResult($delimiter = ' ', $num = 0)
     {
-        $results = $this->getSegmentationResults();
         $filteredResults = [];
+        $i = 0;
+        $findLeft = false;
 
-        foreach ($results as $word) {
-            if (!empty($word)) {
-                $filteredResults[] = iconv(UCS2, 'utf-8', $word);
+        foreach ($this->segmentationResults as $v) {
+            if (empty($v['segments'])) {
+                continue;
+            }
+
+            foreach ($v['segments'] as $word) {
+                if ($this->resultType == 2 && ($v['t'] == 3 || $v['t'] == 5)) {
+                    continue;
+                }
+
+                $w = $this->_out_string_encoding($word);
+                if ($w != ' ' && (strlen($w) > 3 || $this->resultType == 1)) {
+                    if ($w == '(' && $v['t'] == 20) {
+                        $findLeft = true;
+                    }
+                    ++$i;
+                    if (!$findLeft) {
+                        $filteredResults[] = $w;
+                    }
+                }
+                if ($w == ')') {
+                    $findLeft = false;
+                }
+                if ($num > 0 && $i >= $num) {
+                    break 2;
+                }
             }
         }
-
+        if(is_null($delimiter)) {
+            return $filteredResults;
+        }
         return implode($delimiter, $filteredResults);
     }
 
     /**
-     * 添加数字检测方法
+     * 检查是否为数字字符
+     *
+     * @param string $char 字符
+     *
+     * @return bool 是否为数字
      */
     private function isNumeric($word, $skipUnits = false) {
         if(is_numeric($word)) {
@@ -1096,5 +1069,156 @@ class Analysis
             }
         }
         return false;
+    }
+
+    private function _get_index($key)
+    {
+        $l = strlen($key);
+        $h = $this->headerInfo['base'];
+        while ($l--) {
+            $h += ($h << 5);
+            $h ^= ord($key[$l]);
+            $h &= 0x7fffffff;
+        }
+        return ($h % $this->headerInfo['prime']);
+    }
+
+    /**
+     * 编译词典
+     * @parem $sourcefile utf-8编码的文本词典数据文件
+     * 注意, 需要PHP开放足够的内存才能完成操作
+     *
+     * @return void
+     */
+    public function MakeDict($source_file, $target_file = '', $base = 0, $prime = 0){
+        ini_set('memory_limit', '512M');
+        if ($base>0) {
+            $this->headerInfo['base'] = $base;
+        }
+        if ($prime>0) {
+            $this->headerInfo['prime'] = $prime;
+        }
+        $target_file = ($target_file == '' ? $this->mainDictionaryFile : $target_file);
+        $words = $allk = [];
+        $fp          = fopen($source_file, 'r');
+        $maxWordLength = 0;
+        $totalWords = $tfTotal = $maxTf = $minTf = 0;
+        while ($line = fgets($fp, 512)) {
+            $line = trim($line);
+            if (!$line || $line[0] == '@') {
+                continue;
+            }
+            list($w, $r, $a) = explode(',', $line);
+            // 过滤 1. 重复词 2. 非utf-8编码（中英混合等）
+            if(isset($words[$w]) || strlen($w)!=mb_strlen($w, 'utf-8')*3) {
+                continue;
+            }
+            $w = trim($w);
+            $wordLength = mb_strlen($w, 'utf-8') * 2;
+            if($wordLength > $maxWordLength) {
+                $maxWordLength = $wordLength;
+            }
+            $words[$w] = $r . ','. $a;
+            ++$totalWords;
+            $r = $r % 1000;
+            $tfTotal += $r;
+            if($maxTf === 0) {
+                $maxTf = $r;
+            } else if ($r>$maxTf) {
+                $maxTf = $r;
+            }
+            if($minTf === 0) {
+                $minTf = $r;
+            } else if ($r<$minTf) {
+                $minTf = $r;
+            }
+            $a            = trim($a);
+            $w            = iconv('utf-8', UCS2, $w);
+            $k            = $this->_get_index($w);
+            $allk[$k][$w] = [$r, $a];
+        }
+        ksort($words);
+        $lastw = '';
+        foreach($words as $k => $v) {
+            if ($lastw && strpos($k, $lastw) === 0) {
+                $v .= ',xxxxx';
+            }
+            $lastw = $k;
+            file_put_contents('newdict.txt', $k. ','. $v. "\n", FILE_APPEND);
+        }
+        echo '共有'.$totalWords.'个词, 平均词频: '.round($tfTotal/$totalWords, 2).', 最大词频: '.$maxTf.', 最小词频: '.$minTf.'，正在写入词典文件...' . PHP_EOL;
+        fclose($fp);
+        if ($target_file == $this->mainDictionaryFile && $this->mainDictionaryHandle) {
+            $this->mainDictionaryHandle->close();
+        }
+        $fp = fopen($target_file, 'w');
+        $buf = pack('a3CIIIIIII', XDB_TAGNAME, 34,
+            $this->headerInfo['base'], $this->headerInfo['prime'], 0, $tfTotal, $totalWords, $maxWordLength, 0);
+
+        fseek($fp, 0, SEEK_SET);
+        fwrite($fp, $buf, 32);
+
+        $heade_rarr = [];
+        $alldat     = '';
+        // 32为文件头尺寸
+        $start_pos = $this->headerInfo['prime'] * 8 + 32;
+        foreach ($allk as $k => $v) {
+            $dat    = serialize($v);
+
+            $dlen   = strlen($dat);
+            $alldat .= $dat;
+
+            $heade_rarr[$k][0] = $start_pos;
+            $heade_rarr[$k][1] = $dlen;
+            $heade_rarr[$k][2] = count($v);
+
+            $start_pos += $dlen;
+        }
+        unset($allk);
+        for ($i = 0; $i < $this->headerInfo['prime']; $i++) {
+            if (!isset($heade_rarr[$i])) {
+                $data = [0, 0, 0];
+            } else {
+                $data = $heade_rarr[$i];
+            }
+            fwrite($fp, pack("Inn", $data[0], $data[1], $data[2]));
+        }
+        fwrite($fp, $alldat);
+        fclose($fp);
+        if ($target_file == $this->mainDictionaryFile && $this->mainDictionaryHandle) {
+            //重新加载主词典（只打开）
+            $this->mainDictionaryHandle = fopen($this->mainDictionaryFile, 'r');
+        }
+    }
+
+    /**
+     * 导出词典的词条
+     * @parem $targetfile 保存位置
+     *
+     * @return void
+     */
+    public function ExportDict($targetfile){
+        $op = fopen($this->mainDictionaryFile, 'r');
+        $fp = fopen($targetfile, 'w');
+        for ($i = 0; $i <= $this->headerInfo['prime']; $i++) {
+            $move_pos = $i * 8 + 32;
+            fseek($op, $move_pos, SEEK_SET);
+            $dat = fread($op, 8);
+            $arr = unpack('I1s/n1l/n1c', $dat);
+            if ($arr['l'] == 0) {
+                continue;
+            }
+            fseek($op, $arr['s'], SEEK_SET);
+            $data = @unserialize(fread($op, $arr['l']));
+            if (!is_array($data)) {
+                continue;
+            }
+            foreach ($data as $k => $v) {
+                $w = iconv(UCS2, 'utf-8', $k);
+                fwrite($fp, "{$w},{$v[0]},{$v[1]}\n");
+            }
+        }
+        fclose($fp);
+        return true;
     }
 }

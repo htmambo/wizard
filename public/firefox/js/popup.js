@@ -1,5 +1,3 @@
-import { Common } from './common.js';
-
 const PopupController = function () {
     this.mainCard = document.getElementById('main-card');
     this.errorToast = document.getElementById('error-toast');
@@ -386,7 +384,6 @@ PopupController.prototype = {
         this.entryUrl.dataset.projectId = ps.value;
         this.entryUrl.textContent = ps.options[psIndex].text;
         this.cardTitle.textContent = this.titleInput.value;
-
         this.hide(this.cardBody);
         this.show(this.cardHeader);
     },
@@ -400,13 +397,13 @@ PopupController.prototype = {
 
     openUrl: function (e) {
         e.preventDefault();
-        chrome.tabs.create({ url: this.href });
+        browser.tabs.create({ url: this.href });
         window.close();
     },
 
     activeTab: function () {
         return new Promise((resolve, reject) => {
-            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
                 if (tabs[0] != null) {
                     return resolve(tabs[0]);
                 } else {
@@ -542,7 +539,7 @@ PopupController.prototype = {
     },
 
     init: function () {
-        this.port = chrome.runtime.connect({ name: 'popup' });
+        this.port = browser.runtime.connect({ name: 'popup' });
         this.port.onMessage.addListener(this.messageListener.bind(this));
         this.port.postMessage({ request: 'setup' });
     },
@@ -581,50 +578,55 @@ PopupController.prototype = {
             this.cardTitle.textContent = tab.title;
             this.enableTagsInput();
 
-            chrome.runtime.onMessage.addListener(event => {
+            browser.runtime.onMessage.addListener(event => {
                 if (typeof event.wallabagSaveArticleContent === 'undefined') {
                     return;
                 }
-
-                this.port.postMessage({ request: 'save', tabUrl: tab.url, title: tab.title, content: event.wallabagSaveArticleContent });
-            });
-
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: () => {
-                    if (typeof (browser) === 'undefined' && typeof (chrome) === 'object') {
-                        browser = chrome;
-                    }
-                    // 删除一些不可能是正文的元素
-                    var origDocument = window.document.cloneNode(true);
-                    var elements = ['comment', 'header', 'footer', 'nav', 'aside', 'script', 'style', 'link', 'textarea'];
-                    elements.forEach(element => {
-                        var elements = origDocument.getElementsByTagName(element);
-                        while (elements.length > 0) {
-                            elements[0].parentNode.removeChild(elements[0]);
+                var content = event.wallabagSaveArticleContent;
+                try {
+                    var parser = new DOMParser();
+                    var origDocument = parser.parseFromString(event.wallabagSaveArticleContent, 'text/html');
+                    if (origDocument.body) {
+                        var elements = ['comment', 'header', 'footer', 'nav', 'aside', 'script', 'style', 'link', 'textarea'];
+                        elements.forEach(element => {
+                            var elements = origDocument.getElementsByTagName(element);
+                            while (elements.length > 0) {
+                                elements[0].parentNode.removeChild(elements[0]);
+                            }
+                        });
+                        // 除了pre和code外，移除其它标签的不必要的属性
+                        elements = origDocument.getElementsByTagName('*');
+                        for (var i = 0; i < elements.length; i++) {
+                            var element = elements[i];
+                            if (element.tagName !== 'PRE' && element.tagName !== 'CODE') {
+                                element.removeAttribute('class');
+                            }
+                            element.removeAttribute('id');
+                            element.removeAttribute('style');
+                            element.removeAttribute('title');
                         }
-                    });
-                    // 除了pre和code外，移除其它标签的不必要的属性
-                    elements = origDocument.getElementsByTagName('*');
-                    for (var i = 0; i < elements.length; i++) {
-                        var element = elements[i];
-                        if (element.tagName !== 'PRE' && element.tagName !== 'CODE') {
-                            element.removeAttribute('class');
-                        }
-                        element.removeAttribute('id');
-                        element.removeAttribute('style');
-                        element.removeAttribute('title');
-                    }
-                    // 使用正则移除所有的<!-- -->注释
-                    var re = /<!--[\s\S]*?-->/g;
-                    origDocument.documentElement.innerHTML = origDocument.documentElement.innerHTML.replace(re, '');
-                    origDocument.documentElement.innerHTML = origDocument.documentElement.innerHTML.replaceAll('<span>', '').replaceAll('</span>', '');
+                        // 使用正则移除所有的<!-- -->注释
+                        var re = /<!--[\s\S]*?-->/g;
+                        origDocument.documentElement.innerHTML = origDocument.documentElement.innerHTML.replace(re, '');
+                        origDocument.documentElement.innerHTML = origDocument.documentElement.innerHTML.replaceAll('<span>', '').replaceAll('</span>', '');
 
-                    browser.runtime.sendMessage({
-                        wallabagSaveArticleContent: origDocument.documentElement.innerHTML
-                    });
+                        content=origDocument.documentElement.innerHTML;
+                    } else {
+                        throw new Error('Failed to parse HTML');
+                    }
+                } catch (e) {
+                    console.error('Error parsing HTML:', e);
                 }
+
+                this.port.postMessage({ request: 'save', tabUrl: tab.url, title: tab.title, content: content });
             });
+
+            browser.tabs.executeScript(
+                tab.id,
+                {
+                    code: 'if(typeof(browser) === "undefined" && typeof (chrome) === "object") { browser = chrome; }; browser.runtime.sendMessage({"wallabagSaveArticleContent": window.document.body.innerHTML});'
+                }
+            );
         });
     },
 
@@ -635,6 +637,9 @@ PopupController.prototype = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
+    if (typeof (browser) === 'undefined' && typeof (chrome) === 'object') {
+        browser = chrome;
+    }
     Common.translateAll();
     const PC = new PopupController();
     PC.init();
