@@ -34,6 +34,11 @@ Route::group(['middleware' => 'locale'], function () {
         // 公共首页
         Route::get('/{catalog?}', 'BlogController@home')->name('home');
     });
+    Route::group(['prefix' => 'blog', 'as' => 'blog:'], function () {
+        Route::get('/{project?}', 'BlogController@home')->name('home');
+        Route::get('/{project?}/{id}', 'BlogController@post')->name('post');
+        Route::get('/{project?}/{id}:{alias}', 'BlogController@post')->name('post');
+    });
 
     // 公共首页
     Route::get('/{catalog?}', 'HomeController@home')->name('home');

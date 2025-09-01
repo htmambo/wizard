@@ -260,10 +260,9 @@ class Analysis
                     $this->mainDictionaryCache[$k1] = ['attr' => $databaseValue[$k1][1], 'tf' => $databaseValue[$k1][0]];
                 }
                 $wordInformation = $databaseValue[$wordKey];
+            } else {
+                $this->mainDictionaryCache[$wordKey] = false;
             }
-
-            // 缓存结果
-            $this->mainDictionaryCache[$wordKey] = $wordInformation;
         }
 
         return $wordInformation;
@@ -521,16 +520,7 @@ class Analysis
                         }
                     }
                 }
-                $prevWord = end($this->segmentationResults);
-                // 连续的数字当一个词处理
-                if($lastType == CDB_WORD_TYPE_NUM && $prevWord && $prevWord['t'] == CDB_WORD_TYPE_NUM) {
-                    $prevWord = array_pop($this->segmentationResults);
-                    $prevWord['w'] .= $wordBuffer;
-                    $prevWord['segments'] = [$prevWord['w']];
-                    $this->segmentationResults[] = $prevWord;
-                } else {
-                    $this->addToSegmentationResults($wordBuffer, $lastType, $enableOptimization);
-                }
+                $this->addToSegmentationResults($wordBuffer, $lastType, $enableOptimization);
                 $wordBuffer = '';
             }
             if (!$character) return;
@@ -592,6 +582,17 @@ class Analysis
         if (empty($word)) {
             return;
         }
+        // prevWord
+        $prevWord = end($this->segmentationResults);
+        // 连续的数字当一个词处理
+        if($type == CDB_WORD_TYPE_NUM && $prevWord && $prevWord['t'] == CDB_WORD_TYPE_NUM) {
+            $prevWord = array_pop($this->segmentationResults);
+            $prevWord['w'] .= $word;
+            $prevWord['segments'] = [$prevWord['w']];
+            $this->mainDictionaryCache[$prevWord['w']] = ['attr' => 'name', 'tf' => 999];
+            $this->segmentationResults[] = $prevWord;
+            return;
+        }
 
         // 创建基本的分词结果项
         $resultItem = [
@@ -635,59 +636,20 @@ class Analysis
 
             // 短句子处理
             if ($textLength < $this->minSplitLength) {
-                $this->processShortSentence($textToAnalyze, $currentIndex);
-            }
-            // 长句子的深度分词
-            else {
+                $this->segmentationResults[$currentIndex]['segments'] = [$textToAnalyze];
+            } else {
+                // 长句子的深度分词
                 $this->performChineseDeepAnalysis($textToAnalyze, $characterType, $textLength, $enableOptimization);
             }
         }
-        // 英文文本处理
         else {
+            // 英文文本处理
             $currentIndex = $this->currentSentenceIndex - 1;
             if ($this->convertToLowerCase) {
                 $this->segmentationResults[$currentIndex]['segments'] = [strtolower($textToAnalyze)];
             } else {
                 $this->segmentationResults[$currentIndex]['segments'] = [$textToAnalyze];
             }
-        }
-    }
-
-    /**
-     * 处理短句子
-     *
-     * @param string $shortText 短文本
-     * @param int $currentIndex 当前索引
-     */
-    private function processShortSentence($shortText, $currentIndex)
-    {
-        $lastType = 0;
-        if ($currentIndex > 0) {
-            $lastType = $this->segmentationResults[$currentIndex - 1]['t'];
-        }
-
-        // 处理数字+单位的组合
-        if ($lastType == CDB_WORD_TYPE_NUM &&
-            (isset($this->additionalDictionary['unit'][$shortText]) || isset($this->additionalDictionary['unit'][substr($shortText, 0, 2)]))) {
-
-            $remainingText = '';
-            if (!isset($this->additionalDictionary['unit'][$shortText]) && isset($this->additionalDictionary['stop'][substr($shortText, 2, 2)])) {
-                $remainingText = substr($shortText, 2, 2);
-                $shortText = substr($shortText, 0, 2);
-            }
-
-            $combinedWord = $this->segmentationResults[$currentIndex - 1]['w'] . $shortText;
-            $this->segmentationResults[$currentIndex - 1]['w'] = $combinedWord;
-            $this->segmentationResults[$currentIndex - 1]['t'] = CDB_WORD_TYPE_NUM;
-            $this->segmentationResults[$currentIndex]['w'] = '';
-
-            if ($remainingText != '') {
-                $this->segmentationResults[$currentIndex - 1]['segments'] = [$combinedWord, $remainingText];
-            } else {
-                $this->segmentationResults[$currentIndex - 1]['segments'] = [$combinedWord];
-            }
-        } else {
-            $this->segmentationResults[$currentIndex]['segments'] = [$shortText];
         }
     }
 
@@ -795,23 +757,6 @@ class Analysis
         $previousPosition = $currentPosition - 1;
         $arrayLength = count($segmentArray);
         $currentIndex = $resultIndex = 0;
-
-        // 1 处理与前一个词汇的数量词合并
-        if ($previousPosition > -1 &&
-            !isset($this->segmentationResults[$previousPosition]['segments'])) {
-            $previousWord = $this->segmentationResults[$previousPosition]['w'];
-            $previousWordType = $this->segmentationResults[$previousPosition]['t'];
-
-            if (($previousWordType == CDB_WORD_TYPE_NUM ||
-                isset($this->additionalDictionary['num'][$previousWord])) &&
-                isset($this->additionalDictionary['unit'][$segmentArray[0]])) {
-
-                $this->segmentationResults[$previousPosition]['w'] = $previousWord . $segmentArray[0];
-                $this->segmentationResults[$previousPosition]['t'] = CDB_WORD_TYPE_NUM;
-                $segmentArray[0] = '';
-                ++$currentIndex;
-            }
-        }
 
         // 2 处理词汇优化
         for (; $currentIndex < $arrayLength; ++$currentIndex) {
@@ -1003,7 +948,7 @@ class Analysis
      * 获取最终分词结果
      *
      * @param string $delimiter 分隔符
-     * @return string 格式化的分词结果
+     * @return string|array 格式化的分词结果
      */
     public function GetFinallyResult($delimiter = ' ', $num = 0)
     {
