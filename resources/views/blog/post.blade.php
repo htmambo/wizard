@@ -17,7 +17,7 @@
                                         <a href="{{ wzRoute('blog:home') }}">首页</a>
                                     </li>
                                     <li class="breadcrumb-item">
-                                        <a href="{{ wzRoute('project:home', $post->project_id) }}">{{ $post->project->name }}</a>
+                                        <a href="{{ wzRoute('blog:home', $post->project_id) }}">{{ $post->project->name }}</a>
                                     </li>
                                     <li class="breadcrumb-item active">{{ $post->title }}</li>
                                 </ol>
@@ -47,7 +47,7 @@
                 <!-- 文章内容 -->
                 <div class="card mb-4">
                     <div class="card-body wz-markdown-body">
-                        {!! $post->content_html !!}
+                        {!! $post->html_code !!}
                     </div>
                 </div>
 

@@ -8,7 +8,7 @@
             <!-- 主内容区域 -->
             <div class="col-md-8 col-lg-9">
                 <!-- 目录导航 -->
-                @if($catalogs->count() > 0)
+                @if($catalogs && $catalogs->count() > 0)
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
@@ -40,62 +40,46 @@
                     </div>
                 @endif
 
-                <!-- 项目列表 -->
+                <!-- 博客文章列表 -->
                 <div class="row">
-                    @forelse($projects as $project)
+                    @forelse($pages as $page)
                         <div class="col-md-6 col-lg-4 mb-4">
                             <div class="card h-100">
-                                @if($project->visibility == \App\Repositories\Project::VISIBILITY_PRIVATE)
-                                    <div class="card-header">
-                                        <small class="text-muted">
-                                            <i class="fas fa-lock"></i> 私有项目
-                                        </small>
-                                    </div>
-                                @endif
                                 <div class="card-body">
                                     <h5 class="card-title">
-                                        <a href="{{ wzRoute('project:home', $project->id) }}" class="text-decoration-none">
-                                            {{ $project->name }}
+                                        <a href="{{ wzRoute('blog:post', ['project' => $page->project_id, 'id' => $page->id, 'alias' => $page->alias? ':' . trim($page->alias):null]) }}" class="text-decoration-none">
+                                            {{ $page->title }}
                                         </a>
                                     </h5>
-                                    @if($project->description)
-                                        <p class="card-text text-muted small">{{ $project->description }}</p>
+                                    @if($page->description)
+                                        <p class="card-text text-muted">{{ Str::limit($page->description, 100) }}</p>
                                     @endif
 
-                                    <!-- 博客文章列表 -->
-                                    @if($project->pages->count() > 0)
-                                        <div class="list-group list-group-flush">
-                                            @foreach($project->pages->take(3) as $page)
-                                                <div class="list-group-item px-0 py-2 border-0">
-                                                    <h6 class="mb-1">
-                                                        <a href="{{ wzRoute('blog:post', [$project->id, $page->id]) }}"
-                                                           class="text-decoration-none">
-                                                            {{ $page->title }}
-                                                        </a>
-                                                    </h6>
-                                                    <small class="text-muted">
-                                                        {{ $page->updated_at->diffForHumans() }}
-                                                    </small>
-                                                </div>
+                                    <!-- 标签 -->
+                                    @if($page->tags->count() > 0)
+                                        <div class="mb-2">
+                                            @foreach($page->tags->take(3) as $tag)
+                                                <span class="badge badge-secondary badge-sm mr-1">{{ $tag->name }}</span>
                                             @endforeach
-                                            @if($project->pages->count() > 3)
-                                                <div class="list-group-item px-0 py-2 border-0">
-                                                    <small>
-                                                        <a href="{{ wzRoute('project:home', $project->id) }}">
-                                                            查看更多 ({{ $project->pages->count() - 3 }} 篇)
-                                                        </a>
-                                                    </small>
-                                                </div>
-                                            @endif
                                         </div>
-                                    @else
-                                        <p class="card-text text-muted">暂无博客文章</p>
                                     @endif
                                 </div>
                                 <div class="card-footer text-muted small">
-                                    <i class="fas fa-file-alt"></i> {{ $project->pages->count() }} 篇文章
-                                    @if($project->catalog)
-                                        · <i class="fas fa-folder"></i> {{ $project->catalog->name }}
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <i class="fas fa-user"></i> {{ $page->user->name ?? '匿名' }}
+                                        </span>
+                                        <span>
+                                            <i class="fas fa-clock"></i> {{ $page->updated_at->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                    @if($page->project)
+                                        <div class="mt-1">
+                                            <i class="fas fa-folder"></i>
+                                            <a href="{{ wzRoute('blog:home', $page->project_id) }}" class="text-muted">
+                                                {{ $page->project->name }}
+                                            </a>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -103,8 +87,8 @@
                     @empty
                         <div class="col-12">
                             <div class="alert alert-info text-center">
-                                <h4>暂无项目</h4>
-                                <p class="mb-0">当前目录下还没有任何项目，或者您没有权限查看。</p>
+                                <h4>暂无博客文章</h4>
+                                <p class="mb-0">当前没有任何博客文章，或者您没有权限查看。</p>
                             </div>
                         </div>
                     @endforelse
@@ -112,7 +96,7 @@
 
                 <!-- 分页 -->
                 <div class="d-flex justify-content-center">
-                    {{ $projects->appends(request()->query())->links() }}
+                    {{ $pages->appends(request()->query())->links() }}
                 </div>
             </div>
 
@@ -131,7 +115,7 @@
                                 <h6 class="mb-1">
                                     <a href="{{ wzRoute('blog:post', [$post->project_id, $post->id]) }}"
                                        class="text-decoration-none">
-                                        {{ $post->title }}
+                                        {{ Str::limit($post->title, 40) }}
                                     </a>
                                 </h6>
                                 <small class="text-muted">
@@ -145,7 +129,7 @@
                 </div>
 
                 <!-- 热门标签 -->
-                @if($popularTags->count() > 0)
+                @if($popularTags && $popularTags->count() > 0)
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
@@ -154,7 +138,9 @@
                         </div>
                         <div class="card-body">
                             @foreach($popularTags as $tag)
-                                <span class="badge badge-secondary mr-2 mb-2">{{ $tag->name }}</span>
+                                <a href="#" class="badge badge-secondary mr-2 mb-2 text-decoration-none">
+                                    {{ $tag->name }}
+                                </a>
                             @endforeach
                         </div>
                     </div>
