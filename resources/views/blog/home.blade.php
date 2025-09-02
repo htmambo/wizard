@@ -7,39 +7,6 @@
         <div class="row">
             <!-- 主内容区域 -->
             <div class="col-md-8 col-lg-9">
-                <!-- 目录导航 -->
-                @if($catalogs && $catalogs->count() > 0)
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-folder"></i> 项目目录
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="btn-group-toggle" data-toggle="buttons">
-                                <label class="btn btn-outline-primary {{ empty($catalog) ? 'active' : '' }}">
-                                    <a href="{{ wzRoute('blog:home') }}" class="text-decoration-none">全部</a>
-                                </label>
-                                @foreach($catalogs as $cat)
-                                    <label class="btn btn-outline-primary {{ $catalog == $cat->id ? 'active' : '' }}">
-                                        <a href="{{ wzRoute('blog:home', $cat->id) }}" class="text-decoration-none">{{ $cat->name }}</a>
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                <!-- 当前目录信息 -->
-                @if($currentCatalog)
-                    <div class="alert alert-info">
-                        <h4><i class="fas fa-folder-open"></i> {{ $currentCatalog->name }}</h4>
-                        @if($currentCatalog->description)
-                            <p class="mb-0">{{ $currentCatalog->description }}</p>
-                        @endif
-                    </div>
-                @endif
-
                 <!-- 博客文章列表 -->
                 <div class="row">
                     @forelse($pages as $page)
