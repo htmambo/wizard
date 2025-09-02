@@ -36,9 +36,7 @@ Route::group(['middleware' => 'locale'], function () {
     });
     Route::group(['prefix' => 'blog', 'as' => 'blog:'], function () {
         Route::get('/{project?}', 'BlogController@home')->name('home');
-        Route::get('/{project?}/{id}{alias?}', 'BlogController@post')
-             ->where(['alias' => ':[A-Za-z0-9\-_]+'])
-             ->name('post');
+        Route::get('/{project?}/{id}/{alias?}', 'BlogController@post')->name('post');
     });
 
     // 公共首页

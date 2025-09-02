@@ -47,7 +47,7 @@
                             <div class="card h-100">
                                 <div class="card-body">
                                     <h5 class="card-title">
-                                        <a href="{{ wzRoute('blog:post', ['project' => $page->project_id, 'id' => $page->id, 'alias' => $page->alias? ':' . trim($page->alias):null]) }}" class="text-decoration-none">
+                                        <a href="{{ wzRoute('blog:post', ['project' => $page->project_id, 'id' => $page->id, 'alias' => $page->alias]) }}" class="text-decoration-none">
                                             {{ $page->title }}
                                         </a>
                                     </h5>
@@ -113,7 +113,7 @@
                         @forelse($recentPosts as $post)
                             <div class="mb-3 pb-3 {{ !$loop->last ? 'border-bottom' : '' }}">
                                 <h6 class="mb-1">
-                                    <a href="{{ wzRoute('blog:post', [$post->project_id, $post->id]) }}"
+                                    <a href="{{ wzRoute('blog:post', ['project' => $post->project_id, 'id' => $post->id, 'alias' => $post->alias]) }}"
                                        class="text-decoration-none">
                                         {{ Str::limit($post->title, 40) }}
                                     </a>

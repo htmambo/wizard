@@ -863,52 +863,47 @@ class DocumentController extends Controller
         $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
         $dict = $request->input('dict', 'pscws');
         $this->authorize('page-toblog', $pageItem);
-
-        $title = $pageItem->title;
-        // $title = 'Laravel Passport API 认证使用小结南京市长欢迎你中国共产党为公布国共合作宣言';
-        if ($dict === 'jieba') {
-            Jieba::init();
-            JiebaFinalseg::init();
-            $seg_list = Jieba::cut($title);
-            $title = implode(' ', $seg_list);
-            $title = str_replace(' ', '_', $title);
-        } else if ($dict === 'pscws') {
-            $pscws = new PSCWS();
-
-            $pscws->set_ignore(false);
-            $pscws->send_text($title);
-            $tags = [];
-            while (true) {
-                $tmp = $pscws->get_result();
-                if ($tmp) {
-                    if(is_array($tmp)) {
-                        $tags = array_merge($tags, array_column($tmp, 'word'));
-                    }
-                } else {
-                    break;
-                }
-            }
-            // $allKeywords = $pscws->get_tops(20);
-            // return $allKeywords;
-            $title = implode('_', $tags);
-            $pscws->close();
-
-        } else if ($dict === 'blt') {
-            $pa                    = new Analysis();
-            $pa->loadDictionaries();
-            $pa->setSourceText($title);
-            $pa->startSegmentationAnalysis();
-            $title = $pa->getFormattedResults('_');
-        }
-        echo $title;
-        echo '<br/>';
-
-        $title = \Overtrue\Pinyin\Pinyin::converter()->noTone()->convert($title);
-        $title = str_replace([' ', '_'], ['', '-'], $title);
-        echo $title;
-        echo '<br/>';
         $alias = $request->input('alias', Str::slug($pageItem->title));
-        exit($alias);
+        if(!$alias) {
+            $title = $pageItem->title;
+            // $title = 'Laravel Passport API 认证使用小结南京市长欢迎你中国共产党为公布国共合作宣言';
+            if ($dict === 'jieba') {
+                Jieba::init();
+                JiebaFinalseg::init();
+                $seg_list = Jieba::cut($title);
+                $title = implode('_', $seg_list);
+            } else if ($dict === 'pscws') {
+                $pscws = new PSCWS();
+
+                $pscws->set_ignore(false);
+                $pscws->send_text($title);
+                $tags = [];
+                while (true) {
+                    $tmp = $pscws->get_result();
+                    if ($tmp) {
+                        if(is_array($tmp)) {
+                            $tags = array_merge($tags, array_column($tmp, 'word'));
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                $title = implode('_', $tags);
+                $pscws->close();
+
+            } else if ($dict === 'blt') {
+                $pa                    = new Analysis();
+                $pa->loadDictionaries();
+                $pa->setSourceText($title);
+                $pa->startAnalysis();
+                $title = $pa->GetFinallyResult('_');
+            }
+            $title = \Overtrue\Pinyin\Pinyin::converter()->noTone()->convert($title);
+            $title = str_replace([' ', '_'], ['', '-'], $title);
+            $alias = Str::slug($title);
+        }
+        $pageItem->alias = $alias;
+        $pageItem->is_blog = 1;
         // 只有文档内容发生修改才进行保存
         if ($pageItem->isDirty()) {
             $pageItem->last_modified_uid = \Auth::user()->id;

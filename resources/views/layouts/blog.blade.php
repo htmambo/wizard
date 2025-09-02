@@ -13,32 +13,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="/assets/css/style.css?{{ resourceVersion() }}" rel="stylesheet">
-
+    @stack('stylesheet')
     @stack('style')
 
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-        .card {
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            border: 1px solid rgba(0, 0, 0, 0.125);
-        }
-        .btn-outline-primary {
-            border-color: #007bff;
-        }
-        .btn-outline-primary:not(.active):hover {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-outline-primary.active {
-            background-color: #007bff;
-            color: white;
-        }
-    </style>
 </head>
 <body>
 <!-- 导航栏 -->

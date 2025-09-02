@@ -28,7 +28,7 @@ class DocumentPolicy
      *
      * @param User         $user
      * @param Document|int $page
-     * @return void
+     * @return bool
      */
     public function toblog($user, $page)
     {
@@ -39,6 +39,9 @@ class DocumentPolicy
          */
         $page = $this->getDocument($page);
         $project = $this->getProject($page->project);
+        if(!$page->isMarkdown() && !$page->isHtml()) {
+            return false;
+        }
         if ($project->visibility === Project::VISIBILITY_PUBLIC) {
             return true;
         }

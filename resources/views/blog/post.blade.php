@@ -121,7 +121,7 @@
                     </div>
                     <div class="card-body">
                         <h6>
-                            <a href="{{ wzRoute('project:home', $post->project_id) }}" class="text-decoration-none">
+                            <a href="{{ wzRoute('blog:home', $post->project_id) }}" class="text-decoration-none">
                                 {{ $post->project->name }}
                             </a>
                         </h6>
@@ -170,11 +170,6 @@
     <style>
         .markdown-body .toc-menu-btn, .markdown-body .editormd-toc-menu {
             display:none;
-        }
-        pre .copy-button {
-            position: absolute;
-            top: 0;
-            right: 0;
         }
     </style>
 @endpush
