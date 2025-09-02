@@ -65,11 +65,14 @@
                 return ;
             }
             $('body').append('<div id="wz-toc-container" class="d-none"><span class="fa fa-th-list"></span>' + html + '</div>');
-
-            $('.wz-panel-right').scroll(function () {
+            var contentBody = $('.wz-panel-right');
+            if(!contentBody.length) {
+                contentBody = $(window);
+            }
+            contentBody.scroll(function () {
                 var tocContainer = $('#wz-toc-container');
 
-                if ($('.wz-panel-right').scrollTop() > 300) {
+                if (contentBody.scrollTop() > 300) {
                     tocContainer.removeClass('d-none');
                 } else {
                     tocContainer.addClass('d-none');

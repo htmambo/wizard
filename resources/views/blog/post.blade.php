@@ -168,8 +168,28 @@
 @endif
 @push('style')
     <style>
-        .markdown-body .toc-menu-btn, .markdown-body .editormd-toc-menu {
-            display:none;
+        #wz-toc-container > ul {
+            display: block;
+            /*background: #f0f0f0;*/
+            padding: 0;
+            margin: 0;
+        }
+        #wz-toc-container:hover > ul {
+            margin-left: 0 !important;
+        }
+        #wz-toc-container ul li a {
+            padding-left: 0 !important;
+        }
+        #wz-toc-container span {
+            display: none;
+        }
+        #wz-toc-container,#wz-toc-container:hover {
+            top: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border: 1px solid #eaeaea;
+            background: #fafafa;
+            border-radius: 5px;
         }
     </style>
 @endpush
