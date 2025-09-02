@@ -37,7 +37,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ wzRoute('home') }}">
+                    <a class="nav-link" href="{{ config('app.url')?:wzRoute('home') }}">
                         <i class="fas fa-book"></i> 文档系统
                     </a>
                 </li>
