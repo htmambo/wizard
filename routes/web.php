@@ -32,7 +32,8 @@ Route::group(['middleware' => 'locale'], function () {
     // 博客子域名
     Route::domain(env('BLOG_DOMAIN', 'blog.example.com'))->group(function () {
         // 公共首页
-        Route::get('/{catalog?}', 'BlogController@home')->name('home');
+        Route::get('/{project?}', 'BlogController@home')->name('home');
+        Route::get('/{project?}/{id}/{alias?}', 'BlogController@post')->name('post');
     });
     Route::group(['prefix' => 'blog', 'as' => 'blog:'], function () {
         Route::get('/{project?}', 'BlogController@home')->name('home');
