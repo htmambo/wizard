@@ -4,8 +4,7 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="row">
-            <!-- 主内容区域 -->
+        <div class="row">            <!-- 主内容区域 -->
             <div class="col-md-8 col-lg-9">
                 <!-- 文章头部信息 -->
                 <div class="card mb-4">
@@ -45,9 +44,14 @@
                 </div>
 
                 <!-- 文章内容 -->
-                <div class="card mb-4">
-                    <div class="card-body wz-markdown-body">
-                        {!! $post->html_code !!}
+                <div class="wz-project-main card mb-4">
+                    <div class="card-body markdown-body wz-panel-limit {{ $post->isMarkDown() ? 'wz-markdown-style-fix' : '' }}" id="markdown-body">
+                        @if($post->isHtml())
+                            {!! $post->content ?? '' !!}
+                        @endif
+                        @if($post->isMarkDown())
+                            <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', processMarkdown($post->content ?? '')) }}</textarea>
+                        @endif
                     </div>
                 </div>
 
@@ -159,28 +163,18 @@
         </div>
     </div>
 @endsection
-
+@if($post->isMarkDown())
+    @include("components.markdown-show")
+@endif
 @push('style')
     <style>
-        .wz-markdown-body {
-            line-height: 1.6;
+        .markdown-body .toc-menu-btn, .markdown-body .editormd-toc-menu {
+            display:none;
         }
-        .wz-markdown-body h1, .wz-markdown-body h2, .wz-markdown-body h3,
-        .wz-markdown-body h4, .wz-markdown-body h5, .wz-markdown-body h6 {
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .wz-markdown-body pre {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 0.25rem;
-            overflow-x: auto;
-        }
-        .wz-markdown-body blockquote {
-            border-left: 4px solid #007bff;
-            background-color: #f8f9fa;
-            padding: 1rem;
-            margin: 1rem 0;
+        pre .copy-button {
+            position: absolute;
+            top: 0;
+            right: 0;
         }
     </style>
 @endpush

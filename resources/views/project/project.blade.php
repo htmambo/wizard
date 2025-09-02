@@ -31,7 +31,7 @@
                                 data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}"
                                 data-toggle="tooltip"
                                 title="@lang('common.btn_diff')" class="btn btn-primary  bmd-btn-icon">
-                            <i class="fa fa-columns"></i>
+                            <i class="fa fa-clock-rotate-left"></i>
                         </button>
                     </li>
                 @endif
@@ -41,7 +41,7 @@
                         <span class="fa fa-laptop"></span>
                     </button>
                 </li>
-                @if($pageItem->type == \App\Repositories\Document::TYPE_DOC || $pageItem->type == \App\Repositories\Document::TYPE_HTML || $pageItem->type == \App\Repositories\Document::TYPE_SWAGGER)
+                @if($pageItem->isMarkDown() || $pageItem->isHtml() || $pageItem->isSwagger())
                 @include('components.page-menus-export', ['project' => $project, 'pageItem' => $pageItem])
                 @endif
                 @include('components.page-menus', ['project' => $project, 'pageItem' => $pageItem])
@@ -112,11 +112,7 @@
                     {!! $pageItem->content ?? '' !!}
                 @endif
                 @if($type === 'markdown')
-{{--                    @if($pageItem->html_code && config('wizard.markdown.direct_save_html'))--}}
-{{--                        {!! $pageItem->html_code ?? '' !!}--}}
-{{--                    @else--}}
-                        <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', processMarkdown($pageItem->content ?? '')) }}</textarea>
-{{--                    @endif--}}
+                    <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', processMarkdown($pageItem->content ?? '')) }}</textarea>
                 @endif
                 @if($type === 'table' || $type === 'sheet')
                     <textarea id="x-spreadsheet-content" class="d-none">{{ processSpreedSheet($pageItem->content) }}</textarea>

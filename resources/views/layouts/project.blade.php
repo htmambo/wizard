@@ -120,9 +120,9 @@
         // 侧边导航自动折叠
         $(function () {
             $.wz.navigator_tree($('.wz-left-nav'), {{ $project->catalog_fold_style }});
-//            window.setTimeout(function () {
-//                $('.wz-left-nav').removeClass('hide').addClass('animated fadeIn');
-//            }, 20);
+            // window.setTimeout(function () {
+            //    $('.wz-left-nav').removeClass('hide').addClass('animated fadeIn');
+            // }, 20);
 
             var rightPanel = $('.wz-panel-right');
             var leftPanel = $('.wz-left-main');

@@ -206,12 +206,13 @@ class BlogController extends Controller
                            ->orderBy('updated_at', 'desc')
                            ->limit(5)
                            ->get();
-
+        $type = $post->type;
         return view('blog.post', compact(
             'post',
             'relatedPosts',
             'tags',
-            'projectPosts'
+            'projectPosts',
+            'type'
         ));
     }
 
