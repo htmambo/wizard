@@ -29,16 +29,20 @@ Route::group(['middleware' => 'locale'], function () {
     ];
     Auth::routes($authRoutes);
 
-    // 博客子域名
-    Route::domain(env('BLOG_DOMAIN', 'blog.example.com'))->group(function () {
-        // 公共首页
-        Route::get('/{project?}', 'BlogController@home')->name('home');
-        Route::get('/{project?}/{id}/{alias?}', 'BlogController@post')->name('post');
-    });
-    Route::group(['prefix' => 'blog', 'as' => 'blog:'], function () {
-        Route::get('/{project?}', 'BlogController@home')->name('home');
-        Route::get('/{project?}/{id}/{alias?}', 'BlogController@post')->name('post');
-    });
+    // 博客子域名 或 /blog 前缀（二选一）
+    $blogDomain = env('BLOG_DOMAIN', ''); // 有配置就使用子域名，否则使用 /blog 前缀
+    if (!empty($blogDomain)) {
+        Route::domain($blogDomain)->as('blog:')->group(function () {
+            // 公共首页
+            Route::get('/{project?}', 'BlogController@home')->name('home');
+            Route::get('/{project?}/{id}/{alias?}', 'BlogController@post')->name('post');
+        });
+    } else {
+        Route::group(['prefix' => 'blog', 'as' => 'blog:'], function () {
+            Route::get('/{project?}', 'BlogController@home')->name('home');
+            Route::get('/{project?}/{id}/{alias?}', 'BlogController@post')->name('post');
+        });
+    }
 
     // 公共首页
     Route::get('/{catalog?}', 'HomeController@home')->name('home');
