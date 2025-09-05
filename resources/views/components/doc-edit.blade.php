@@ -75,7 +75,14 @@
                     <input type="text" class="form-control wz-input-long" name="sync_url" id="editor-sync_url" value="{{ $pageItem->sync_url ?? '' }}" placeholder="http://"/>
                 </div>
             @else
-                <input type="hiden" name="sync_url" value="{{ $pageItem->sync_url?? ''}}">
+                @if($pageItem->isMarkDown() || $pageItem->isHtml())
+                <div class="form-group wz-document-form-select">
+                    <label for="form-sync-url" class="bmd-label-static">文档来源地址</label>
+                    <input type="text" class="form-control wz-input-long" name="sync_url" id="editor-sync_url" value="{{ $pageItem->sync_url ?? '' }}" placeholder="http://"/>
+                </div>
+                @else
+                    <input type="hidden" class="form-control" name="sync_url" value="{{ $pageItem->sync_url?? ''}}">
+                @endif
                 <div class="form-group wz-document-form-select">
                     <label for="editor-title" class="bmd-label-static">@lang('document.title')</label>
                     <input type="text" class="form-control wz-input-long" name="title" id="editor-title"

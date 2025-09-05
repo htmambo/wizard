@@ -51,5 +51,10 @@
         "page": "options.html"
     },
     "permissions": [ "tabs", "storage", "contextMenus", "activeTab" ],
-    "version": "1.18.1"
+    "version": "1.18.1",
+    "browser_specific_settings": {
+	"gecko": {
+		"id": "wizarder@960880.xyz"
+	}
+    }
 }
