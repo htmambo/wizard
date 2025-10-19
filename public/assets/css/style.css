@@ -1645,9 +1645,6 @@ pre.prettyprint *,
 .topdf .copy-button {
     display: none;
 }
-.wz-dark-theme .wz-panel-breadcrumb {
-    overflow: hidden;
-}
 .wz-panel-breadcrumb .breadcrumb,
 .wz-dark-theme .breadcrumb {
     overflow: hidden;
