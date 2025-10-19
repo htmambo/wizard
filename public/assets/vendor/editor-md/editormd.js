@@ -1831,7 +1831,7 @@
                 startLineAttr: 'linenums',
                 smartLists: true,
                 smartypants: false,
-                headerIds: true,
+                headerIds: false,
                 mangle: false
             };
 
@@ -3788,7 +3788,7 @@
             startLineAttr: 'linenums',
             smartLists: true,
             smartypants: false,
-            headerIds: true,
+            headerIds: false,
             mangle: false,
         };
 
