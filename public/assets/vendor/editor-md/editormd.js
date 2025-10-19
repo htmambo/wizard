@@ -1819,18 +1819,20 @@
                 previewCodeHighlight: settings.previewCodeHighlight,
             };
 
-            var markedOptions = this.markedOptions = {
+            var markedOptions = {
                 renderer: editormd.markedRenderer(markdownToC, rendererOptions),
                 gfm: true,
                 tables: true,
                 breaks: false, // 避免手写table时产生多余的br
                 pedantic: false,
                 sanitize: (settings.htmlDecode) ? false : true,  // 关闭忽略HTML标签，即开启识别HTML标签，默认为false
-                smartLists: true,
-                smartypants: true,
                 lineNumCss: 'linenums',
                 noLineNumCss: 'no-line-numbers',
                 startLineAttr: 'linenums',
+                smartLists: true,
+                smartypants: false,
+                headerIds: true,
+                mangle: false
             };
 
             // marked.setOptions(markedOptions);
