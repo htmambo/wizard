@@ -1649,6 +1649,7 @@ pre.prettyprint *,
 .wz-dark-theme .breadcrumb {
     overflow: hidden;
     display: inline;
+    height: 40px;
     line-height: 36px;
     width: calc(100% - 240px);
     padding: 0.35rem 0 0;
