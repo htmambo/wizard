@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\Api\OAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,4 +14,4 @@ use App\Http\Controllers\Api\ApiController;
 */
 
 // OAuth v2 token endpoint
-Route::post('/oauth/v2/token', [ApiController::class, 'token']);
+Route::post('/oauth/v2/token', [OAuthController::class, 'token']);

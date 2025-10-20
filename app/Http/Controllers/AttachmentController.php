@@ -107,11 +107,11 @@ class AttachmentController extends Controller
      */
     private function getSaveAsName($file, $ext): string
     {
-        if (Str::endsWith($file, $ext)) {
-            return $file->hashName();
+        $guessedName = $file->hashName();
+        if (Str::endsWith($guessedName, ".{$ext}")) {
+            return $guessedName;
         }
 
-        $guessedName = $file->hashName();
         return substr($guessedName, 0, strrpos($guessedName, '.')) . '.' . $ext;
     }
 

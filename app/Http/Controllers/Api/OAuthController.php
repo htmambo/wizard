@@ -39,11 +39,17 @@ class OAuthController extends Controller
         ]);
 
         try {
-            // 获取 PSR-7 请求和响应对象
-            $serverRequest = app()->make(ServerRequestInterface::class);
+            // 将 Laravel Request 转为 PSR-7 请求
+            $psr17Factory = new Psr17Factory();
+            $psrHttpFactory = new \Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory(
+                $psr17Factory,
+                $psr17Factory,
+                $psr17Factory,
+                $psr17Factory
+            );
+            $psrRequest = $psrHttpFactory->createRequest($request);
 
             // 创建 PSR-7 响应对象
-            $psr17Factory = new Psr17Factory();
             $psrResponse = $psr17Factory->createResponse();
 
             // 使用 Laravel Passport 的内置控制器处理 OAuth 请求
@@ -52,9 +58,9 @@ class OAuthController extends Controller
                 app(TokenRepository::class)
             );
 
-            $response = $controller->issueToken($serverRequest, $psrResponse);
+            $response = $controller->issueToken($psrRequest, $psrResponse);
 
-            return response()->json(json_decode($response->getContent(), true));
+            return response()->json(json_decode((string) $response->getBody(), true));
 
         } catch (\Exception $e) {
             return response()->json([
