@@ -75,7 +75,7 @@
                     <input type="text" class="form-control wz-input-long" name="sync_url" id="editor-sync_url" value="{{ $pageItem->sync_url ?? '' }}" placeholder="http://"/>
                 </div>
             @else
-                @if($pageItem->isMarkDown() || $pageItem->isHtml())
+                @if($type === 'markdown' || $type === 'html')
                 <div class="form-group wz-document-form-select">
                     <label for="form-sync-url" class="bmd-label-static">文档来源地址</label>
                     <input type="text" class="form-control wz-input-long" name="sync_url" id="editor-sync_url" value="{{ $pageItem->sync_url ?? '' }}" placeholder="http://"/>
