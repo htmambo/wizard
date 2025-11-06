@@ -2496,18 +2496,18 @@ class XSServer extends XSComponent
 interface XSTokenizer
 {
 	const DFL = 0;
-	public function getTokens($value, XSDocument $doc = null);
+	public function getTokens($value, ?XSDocument $doc = null);
 }
 class XSTokenizerNone implements XSTokenizer
 {
-	public function getTokens($value, XSDocument $doc = null)
+	public function getTokens($value, ?XSDocument $doc = null)
 	{
 		return array();
 	}
 }
 class XSTokenizerFull implements XSTokenizer
 {
-	public function getTokens($value, XSDocument $doc = null)
+	public function getTokens($value, ?XSDocument $doc = null)
 	{
 		return array($value);
 	}
@@ -2521,7 +2521,7 @@ class XSTokenizerSplit implements XSTokenizer
 			$this->arg = $arg;
 		}
 	}
-	public function getTokens($value, XSDocument $doc = null)
+	public function getTokens($value, ?XSDocument $doc = null)
 	{
 		if (strlen($this->arg) > 2 && substr($this->arg, 0, 1) == '/' && substr($this->arg, -1, 1) == '/') {
 			return preg_split($this->arg, $value);
@@ -2541,7 +2541,7 @@ class XSTokenizerXlen implements XSTokenizer
 			}
 		}
 	}
-	public function getTokens($value, XSDocument $doc = null)
+	public function getTokens($value, ?XSDocument $doc = null)
 	{
 		$terms = array();
 		for ($i = 0; $i < strlen($value); $i += $this->arg) {
@@ -2562,7 +2562,7 @@ class XSTokenizerXstep implements XSTokenizer
 			}
 		}
 	}
-	public function getTokens($value, XSDocument $doc = null)
+	public function getTokens($value, ?XSDocument $doc = null)
 	{
 		$terms = array();
 		$i = $this->arg;
@@ -2609,7 +2609,7 @@ class XSTokenizerScws implements XSTokenizer
 			$this->setMulti($arg);
 		}
 	}
-	public function getTokens($value, XSDocument $doc = null)
+	public function getTokens($value, ?XSDocument $doc = null)
 	{
 		$tokens = array();
 		$this->setIgnore(true);
