@@ -90,13 +90,7 @@
 
                     @if(!empty($pageItem->sync_url))
                         <p>
-                            文档
-                            @if($pageItem->isSwagger())
-                                同步
-                            @else
-                                来源
-                            @endif
-                            地址：<a href="{{ $pageItem->sync_url }}" target="_blank">{{ $pageItem->sync_url }}</a>，最后同步于 {{ $pageItem->last_sync_at ?? '-' }}
+                            文档{{ $pageItem->isSwagger() ? '同步' : '来源' }}地址：<a href="{{ $pageItem->sync_url }}" target="_blank">{{ $pageItem->sync_url }}</a>，最后同步于 {{ $pageItem->last_sync_at ?? '-' }}
                             @if($pageItem->isSwagger())
                             @can('page-edit', $pageItem)
                                 <a href="#" wz-form-submit data-form="#form-document-sync" data-confirm="执行文档同步后，您将成为最后修改人，确定要执行文档同步吗？" class="ml-2" title="同步文档">
