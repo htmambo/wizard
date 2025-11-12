@@ -625,7 +625,7 @@ class XSDocument implements \ArrayAccess, \IteratorAggregate
 			$this->_texts[$field] .= "\n" . strval($text);
 		}
 	}
-	public function getIterator()
+	public function getIterator(): \ArrayIterator
 	{
 		if ($this->_charset !== null && $this->_charset !== 'UTF-8') {
 			$from = $this->_meta === null ? $this->_charset : 'UTF-8';
@@ -634,21 +634,21 @@ class XSDocument implements \ArrayAccess, \IteratorAggregate
 		}
 		return new \ArrayIterator($this->_data);
 	}
-	public function offsetExists($name)
+	public function offsetExists($name): bool
 	{
 		return isset($this->_data[$name]);
 	}
-	public function offsetGet($name)
+	public function offsetGet($name): mixed
 	{
 		return $this->__get($name);
 	}
-	public function offsetSet($name, $value)
+	public function offsetSet($name, $value): void
 	{
 		if (!is_null($name)) {
 			$this->__set(strval($name), $value);
 		}
 	}
-	public function offsetUnset($name)
+	public function offsetUnset($name): void
 	{
 		unset($this->_data[$name]);
 	}
@@ -777,7 +777,7 @@ class XSFieldScheme implements \IteratorAggregate
 		}
 		return true;
 	}
-	public function getIterator()
+	public function getIterator(): \ArrayIterator
 	{
 		return new \ArrayIterator($this->_fields);
 	}
@@ -1313,7 +1313,7 @@ class XSIndex extends XSServer
 		if ($this->_rebuild === true) {
 			try {
 				$this->endRebuild();
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 			}
 		}
 		foreach (self::$_adds as $srv) {
