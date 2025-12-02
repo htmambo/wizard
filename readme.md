@@ -13,11 +13,6 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 
 > 在Wizard中，正在编辑的文档会定时自动保存到本地的 Local Storage 中，避免错误关闭页面而造成编辑内容丢失。
 
-### 需要解决的：
-```
-Package yzalis/identicon is abandoned, you should avoid using it. No replacement was suggested.
-Package fzaninotto/faker is abandoned, you should avoid using it. No replacement was suggested.
-```
 目前主要包含以下功能
 
 - Swagger，Markdown，[Table](https://github.com/mylxsw/wizard/wiki/%E8%A1%A8%E6%A0%BC%E7%B1%BB%E5%9E%8B%E6%96%87%E6%A1%A3%E6%94%AF%E6%8C%81) 类型的文档管理
