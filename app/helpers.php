@@ -391,8 +391,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function user_face($id){
-        $identicon = new Identicon\Identicon();
-        return $identicon->getImageDataUri($id);
+        $svg = \Jdenticon\Jdenticon::toSvg($id, 100);
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
     /**

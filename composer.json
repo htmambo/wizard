@@ -28,7 +28,7 @@
         "sebastian/diff": "*",
         "soapbox/laravel-formatter": "^2.0",
         "symfony/psr-http-message-bridge": "^7.3",
-        "yzalis/identicon": "^2.0",
+        "jdenticon/jdenticon": "^1.0",
       "ext-iconv": "*"
     },
     "require-dev": {
