@@ -391,8 +391,10 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function user_face($id){
-        $svg = \Jdenticon\Jdenticon::toSvg($id, 100);
-        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+        $svg = new \Jdenticon\Identicon();
+        $svg->setValue($id);
+        $svg->setSize(100);
+        return $svg->getImageDataUri('svg');
     }
 
     /**
