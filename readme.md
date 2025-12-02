@@ -315,6 +315,35 @@ composer 会在在项目目录中创建 **vender** 目录，其中包含了项�
 
    最简单的办法是可以通过查看错误日志来排查问题，日志文件在 `storage/logs/` 目录。如果不够直观，可以在 `.env` 配置文件中修改 `APP_DEBUG=true` 来启用调试模式，在访问页面就会展示具体报错信息了。在 Docker 环境中，可以在启动命令中添加 `-e APP_DEBUG=true` 来启用 DEBUG 模式。
 
+7. 运行时提示 `LogicException: Invalid key supplied` (vendor/league/oauth2-server/src/CryptKey.php:77)
+
+   这个错误是因为 Laravel Passport OAuth2 加密密钥缺失导致的。解决方案：
+
+   **方法一：生成密钥文件（推荐）**
+   
+   在项目根目录执行以下命令生成密钥：
+   
+   ```bash
+   php artisan passport:keys
+   ```
+   
+   该命令会在 `storage` 目录下生成 `oauth-private.key` 和 `oauth-public.key` 两个密钥文件。
+   
+   **方法二：使用 OpenSSL 手动生成密钥**
+   
+   如果无法运行 artisan 命令，可以手动生成密钥：
+   
+   ```bash
+   # 生成私钥
+   openssl genrsa -out storage/oauth-private.key 4096
+   # 生成公钥
+   openssl rsa -in storage/oauth-private.key -pubout -out storage/oauth-public.key
+   ```
+   
+   **方法三：通过环境变量配置**
+   
+   在 `.env` 文件中配置 `PASSPORT_PRIVATE_KEY` 和 `PASSPORT_PUBLIC_KEY` 环境变量，将密钥内容作为环境变量的值（适合容器化部署）。
+
 
 ## Stargazers over time
 
