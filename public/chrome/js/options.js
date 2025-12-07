@@ -1,17 +1,17 @@
 import { CacheType } from './cache.js';
 import { Common } from './common.js';
-import { WallabagApi } from './wallabag-api.js';
+import { WizardApi } from './wizard-api.js';
 
 const cache = new CacheType(true);
-const api = new WallabagApi();
+const api = new WizardApi();
 api.init().then(data => {
     api.GetTags().then(tags => { cache.set('allTags', tags); });
 });
 
 const OptionsController = function () {
     this.protocolCheck_ = document.getElementById('protocol-checkbox');
-    this.protocolLabel_ = document.getElementById('input-group-wallabagurl');
-    this.wallabagurlinput_ = document.getElementById('input-wallabagurl');
+    this.protocolLabel_ = document.getElementById('input-group-wizardurl');
+    this.wizardurlinput_ = document.getElementById('input-wizardurl');
     this.checkedLabel_ = document.getElementById('checked-label');
     this.permissionLabel_ = document.getElementById('permission-label');
     this.permissionText_ = document.getElementById('permission-text');
@@ -70,7 +70,7 @@ OptionsController.prototype = {
         this.userPassword_.value = '';
         this.clientSecret_.value = '';
         this.clientId_.value = '';
-        this.wallabagurlinput_.value = 'localhost:8000';
+        this.wizardurlinput_.value = 'localhost:8000';
         this.protocolLabel_.textContent = 'https://';
         this.protocolCheck_.checked = true;
         this.checkedLabel_.textContent = Common.translate('Not_checked');
@@ -145,7 +145,7 @@ OptionsController.prototype = {
         this.port.postMessage({ request: 'setup-save', data: this.data });
     },
 
-    wallabagApiTokenGot: function () {
+    wixardApiTokenGot: function () {
         this.allowExistTextMessage();
         this._green(this.clientId_);
         this._green(this.clientSecret_);
@@ -189,7 +189,7 @@ OptionsController.prototype = {
         }
     },
 
-    wallabagApiTokenNotGot: function () {
+    wizardApiTokenNotGot: function () {
         this._red(this.clientId_);
         this._red(this.clientSecret_);
         this._red(this.userLogin_);
@@ -232,8 +232,8 @@ OptionsController.prototype = {
             api.PasswordToken()
                 .then(a => {
                     Object.assign(this.data, api.data);
-                    this.wallabagUrlChecked();
-                    this.wallabagApiTokenGot();
+                    this.wizardUrlChecked();
+                    this.wixardApiTokenGot();
                     if (!cache.check('allTags')) {
                         api.GetTags()
                             .then(data => { cache.set('allTags', data); });
@@ -246,14 +246,14 @@ OptionsController.prototype = {
                 .catch(a => {
                     Object.assign(this.data, api.data);
                     console.log(a);
-                    this.wallabagApiTokenNotGot();
+                    this.wizardApiTokenNotGot();
                 });
         }
     },
 
     setDataFromFields: function () {
         Object.assign(this.data, {
-            Url: this.protocolLabel_.textContent + this.cleanStr(this.wallabagurlinput_.value),
+            Url: this.protocolLabel_.textContent + this.cleanStr(this.wizardurlinput_.value),
             ClientId: this.cleanStr(this.clientId_.value),
             ClientSecret: this.cleanStr(this.clientSecret_.value),
             UserLogin: this.cleanStr(this.userLogin_.value),
@@ -298,16 +298,16 @@ OptionsController.prototype = {
         element.classList.remove('text-success');
     },
 
-    wallabagUrlChecked: function () {
+    wizardUrlChecked: function () {
         if (this.data.ApiVersion) {
             this.allowExistTextMessage();
             this.versionLabel_.textContent = this.data.ApiVersion;
             if (this.data.ApiVersion) {
                 this._textSuccess(this.checkedLabel_);
                 this.checkedLabel_.textContent = Common.translate('Ok');
-                this._green(this.wallabagurlinput_);
-                [...document.querySelectorAll('[data-wallabag-url]')].map(el => {
-                    const href = this.data.Url + el.dataset.wallabagUrl;
+                this._green(this.wizardurlinput_);
+                [...document.querySelectorAll('[data-wizard-url]')].map(el => {
+                    const href = this.data.Url + el.dataset.wizardUrl;
                     el.href = href;
                     el.innerText = href;
                     return el;
@@ -318,8 +318,8 @@ OptionsController.prototype = {
         }
     },
 
-    wallabagUrlNotChecked: function () {
-        this._red(this.wallabagurlinput_);
+    wizardUrlNotChecked: function () {
+        this._red(this.wizardurlinput_);
         this._hide(this.tokenSection_);
         this._hide(this.togglesSection);
         this.checkedLabel_.textContent = Common.translate('Not_checked');
@@ -358,7 +358,7 @@ OptionsController.prototype = {
         this[permissionMethod](this.permissionLabel_);
         this.permissionLabel_.textContent = Common.translate(permissionKey);
         if (granted === false) {
-            this._red(this.wallabagurlinput_);
+            this._red(this.wizardurlinput_);
             this._show(this.permissionText_);
         } else {
             this._hide(this.permissionText_);
@@ -382,11 +382,11 @@ OptionsController.prototype = {
     },
 
     _getUrl () {
-        return this.wallabagurlinput_.value;
+        return this.wizardurlinput_.value;
     },
 
     _setUrlInput (urlDirty) {
-        this.wallabagurlinput_.value = this._urlSanitized(urlDirty) || 'localhost:8000';
+        this.wizardurlinput_.value = this._urlSanitized(urlDirty) || 'localhost:8000';
     },
 
     _setClientIdInput (clientId) {
@@ -416,15 +416,15 @@ OptionsController.prototype = {
             this._setUrlInput(urlDirty);
         }
 
-        if (this.wallabagurlinput_.value !== '') {
+        if (this.wizardurlinput_.value !== '') {
             this._show(this.tokenSection_);
             this._show(this.togglesSection);
         }
-        this.wallabagUrlChecked();
+        this.wizardUrlChecked();
         if (this.data.isFetchPermissionGranted) {
             this.permissionLabelChecked();
         } else {
-            this._red(this.wallabagurlinput_);
+            this._red(this.wizardurlinput_);
             this._show(this.permissionText_);
         }
 
@@ -472,9 +472,9 @@ OptionsController.prototype = {
             case 'setup-checkurl':
                 Object.assign(this.data, msg.data);
                 if (msg.result) {
-                    this.wallabagUrlChecked();
+                    this.wizardUrlChecked();
                 } else {
-                    this.wallabagUrlNotChecked();
+                    this.wizardUrlNotChecked();
                 }
                 break;
             case 'setup-gettoken':
