@@ -614,11 +614,6 @@ PopupController.prototype = {
                             element.remove();
                             continue;
                         }
-                        // Remove elements likely to be ads
-                        if (element.className && element.className.toLowerCase().includes('ad')) {
-                            element.remove();
-                            continue;
-                        }
                         // Remove onclick handlers
                         element.removeAttribute('onclick');
                         if (element.tagName !== 'PRE' && element.tagName !== 'CODE') {

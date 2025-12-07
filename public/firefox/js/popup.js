@@ -603,10 +603,6 @@ PopupController.prototype = {
                             element.remove();
                             continue;
                         }
-                        if (element.className && element.className.toLowerCase().includes('ad')) {
-                            element.remove();
-                            continue;
-                        }
                         element.removeAttribute('onclick');
                             if (element.tagName !== 'PRE' && element.tagName !== 'CODE') {
                                 element.removeAttribute('class');
