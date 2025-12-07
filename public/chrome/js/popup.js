@@ -582,11 +582,11 @@ PopupController.prototype = {
             this.enableTagsInput();
 
             chrome.runtime.onMessage.addListener(event => {
-                if (typeof event.wallabagSaveArticleContent === 'undefined') {
+                if (typeof event.wizardSaveArticleContent === 'undefined') {
                     return;
                 }
 
-                this.port.postMessage({ request: 'save', tabUrl: tab.url, title: tab.title, content: event.wallabagSaveArticleContent });
+                this.port.postMessage({ request: 'save', tabUrl: tab.url, title: tab.title, content: event.wizardSaveArticleContent });
             });
 
             chrome.scripting.executeScript({
@@ -641,7 +641,7 @@ PopupController.prototype = {
                     origDocument.documentElement.innerHTML = origDocument.documentElement.innerHTML.replaceAll('<span>', '').replaceAll('</span>', '');
 
                     browser.runtime.sendMessage({
-                        wallabagSaveArticleContent: origDocument.documentElement.innerHTML
+                        wizardSaveArticleContent: origDocument.documentElement.innerHTML
                     });
                 }
             });

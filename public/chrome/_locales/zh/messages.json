@@ -47,7 +47,7 @@
       "description": "Options",
       "message": "已拒绝"
    },
-   "Do_you_want_to_remove_this_article_permanently_from_wallabag": {
+   "Do_you_want_to_remove_this_article_permanently_from_wizard": {
       "description": "Popup",
       "message": "您想从 Wizard 永久删除这篇文章吗？"
    },
@@ -59,7 +59,7 @@
       "description": "Options",
       "message": "由于安全原因，我们只允许HTTPS协议选项"
    },
-   "Edit_the_Wallabag_title_of_this_article": {
+   "Edit_the_Wizard_title_of_this_article": {
       "description": "Popup",
       "message": "编辑这篇文章标题"
    },
@@ -83,7 +83,7 @@
       "description": "Options",
       "message": "获取token"
    },
-   "Go_to_Wallabag_s_article_page": {
+   "Go_to_Wizard_s_article_page": {
       "description": "Popup",
       "message": "转到 Wizard 的文章页"
    },
@@ -95,11 +95,11 @@
       "description": "Options",
       "message": "授予"
    },
-   "Indicate_if_page_already_saved_into_wallabag_the_wallabagger_icon_is_green": {
+   "Indicate_if_page_already_saved_into_wizard_the_wizarder_icon_is_green": {
       "description": "Options",
       "message": "显示页面是否已保存(如果已经保存，APP图标呈现为绿色)"
    },
-   "Indicate_if_page_already_saved_this_sends_URL_of_each_tab_to_wallabag_use_HTTPS_protocol_for_better_security": {
+   "Indicate_if_page_already_saved_this_sends_URL_of_each_tab_to_wizard_use_HTTPS_protocol_for_better_security": {
       "description": "Options",
       "message": "显示页面是否已保存（这会将每个选项卡的URL发送到 Wizard，使用HTTPS协议以获得更好的安全性！)"
    },
@@ -107,7 +107,7 @@
       "description": "Options",
       "message": "从文件加载"
    },
-   "Loading_wallabag_API": {
+   "Loading_wizard_API": {
       "description": "Popup",
       "message": "加载 Wizard API…"
    },
@@ -143,7 +143,7 @@
       "description": "Options",
       "message": "其他"
    },
-   "Remove_this_article_from_Wallabag": {
+   "Remove_this_article_from_Wizard": {
       "description": "Popup",
       "message": "从 Wizard 删除这篇文章"
    },
@@ -167,7 +167,7 @@
       "description": "Popup",
       "message": "保存标签中…"
    },
-   "Saving_the_page_to_wallabag": {
+   "Saving_the_page_to_wizard": {
       "description": "background",
       "message": "正在保存页面到 Wizard…"
    },
@@ -207,35 +207,35 @@
       "description": "Options",
       "message": "用户密码"
    },
-   "Wallabag_API_token": {
+   "Wizard_API_token": {
       "description": "Options",
       "message": "Wizard API token"
    },
-   "Wallabag_API_version": {
+   "Wizard_API_version": {
       "description": "Options",
       "message": "Wizard 版本"
    },
-   "Wallabag_URL": {
+   "Wizard_URL": {
       "description": "Options",
       "message": "Wizard URL"
    },
-   "Wallabag_URL_checked": {
+   "Wizard_URL_checked": {
       "description": "Options",
       "message": "Wizard URL 检查"
    },
-   "Wallabag_it": {
+   "Wizard_it": {
       "description": "background",
       "message": "Wizarder it!"
    },
-   "Wallabag_it_description": {
+   "Wizard_it_description": {
       "description": "Manifest.json",
       "message": "在不打开弹出窗口的情况下将页面保存到 Wizard 中"
    },
-   "Wallabag_permission_checked": {
+   "Wizard_permission_checked": {
       "description": "Options",
       "message": "已检查 Wizard 权限"
    },
-   "We_need_an_access_to_your_wallabag_instance_to_read_write_and_update_content_Please_test_the_URL_again_and_accept_the_permission_request": {
+   "We_need_an_access_to_your_wizard_instance_to_read_write_and_update_content_Please_test_the_URL_again_and_accept_the_permission_request": {
       "description": "Options",
       "message": "我们需要访问您的 Wizard 实例来读取、写入和更新内容。请再次测试 URL 并接受请求。"
    },

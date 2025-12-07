@@ -47,9 +47,9 @@
       "description": "Options",
       "message": "Denied"
    },
-   "Do_you_want_to_remove_this_article_permanently_from_wallabag": {
+   "Do_you_want_to_remove_this_article_permanently_from_wizard": {
       "description": "Popup",
-      "message": "Do you want to remove this article permanently from wallabag?"
+      "message": "Do you want to remove this article permanently from wizard?"
    },
    "Download_file": {
       "description": "Options",
@@ -59,9 +59,9 @@
       "description": "Options",
       "message": "Due to security reason, we allow this option only for HTTPS protocol"
    },
-   "Edit_the_Wallabag_title_of_this_article": {
+   "Edit_the_Wizard_title_of_this_article": {
       "description": "Popup",
-      "message": "Edit the wallabag title of this article"
+      "message": "Edit the wizard title of this article"
    },
    "Enable_this_only_if_developers_told_you_to": {
       "description": "Options",
@@ -77,15 +77,15 @@
    },
    "Extension_description": {
       "description": "Manifest.json",
-      "message": "This wallabag v2 extension has the ability to edit title and tags or delete states."
+      "message": "This wizard v2 extension has the ability to edit title and tags or delete states."
    },
    "Get_token": {
       "description": "Options",
       "message": "Get token"
    },
-   "Go_to_Wallabag_s_article_page": {
+   "Go_to_Wizard_s_article_page": {
       "description": "Popup",
-      "message": "Go to wallabag's article page"
+      "message": "Go to wizard's article page"
    },
    "Go_to_this_article_page": {
       "description": "Popup",
@@ -95,21 +95,21 @@
       "description": "Options",
       "message": "Granted"
    },
-   "Indicate_if_page_already_saved_into_wallabag_the_wallabagger_icon_is_green": {
+   "Indicate_if_page_already_saved_into_wizard_the_wizarder_icon_is_green": {
       "description": "Options",
-      "message": "Indicate if page already saved (the wallabagger icon is green)"
+      "message": "Indicate if page already saved (the wizarder icon is green)"
    },
-   "Indicate_if_page_already_saved_this_sends_URL_of_each_tab_to_wallabag_use_HTTPS_protocol_for_better_security": {
+   "Indicate_if_page_already_saved_this_sends_URL_of_each_tab_to_wizard_use_HTTPS_protocol_for_better_security": {
       "description": "Options",
-      "message": "Indicate if page already saved (this sends URL of each tab to wallabag, use HTTPS protocol for better security!)"
+      "message": "Indicate if page already saved (this sends URL of each tab to wizard, use HTTPS protocol for better security!)"
    },
    "Load_from_file": {
       "description": "Options",
       "message": "Load from file"
    },
-   "Loading_wallabag_API": {
+   "Loading_wizard_API": {
       "description": "Popup",
-      "message": "Loading wallabag API…"
+      "message": "Loading wizard API…"
    },
    "No_leave_it": {
       "description": "Popup",
@@ -137,15 +137,15 @@
    },
    "Options_not_defined": {
       "description": "Background",
-      "message": "Wallabagger not configured"
+      "message": "Wizarder not configured"
    },
    "Others": {
       "description": "Options",
       "message": "Others"
    },
-   "Remove_this_article_from_Wallabag": {
+   "Remove_this_article_from_Wizard": {
       "description": "Popup",
-      "message": "Remove this article from wallabag"
+      "message": "Remove this article from wizard"
    },
    "Reset_parameters": {
       "description": "Options",
@@ -167,9 +167,9 @@
       "description": "Popup",
       "message": "Saving tags…"
    },
-   "Saving_the_page_to_wallabag": {
+   "Saving_the_page_to_wizard": {
       "description": "background",
-      "message": "Saving the page to wallabag…"
+      "message": "Saving the page to wizard…"
    },
    "Settings": {
       "description": "Options",
@@ -211,37 +211,37 @@
       "description": "Options",
       "message": "User password"
    },
-   "Wallabag_API_token": {
+   "Wizard_API_token": {
       "description": "Options",
-      "message": "wallabag API token"
+      "message": "wizard API token"
    },
-   "Wallabag_API_version": {
+   "Wizard_API_version": {
       "description": "Options",
-      "message": "wallabag API version"
+      "message": "wizard API version"
    },
-   "Wallabag_URL": {
+   "Wizard_URL": {
       "description": "Options",
-      "message": "wallabag URL"
+      "message": "wizard URL"
    },
-   "Wallabag_URL_checked": {
+   "Wizard_URL_checked": {
       "description": "Options",
-      "message": "wallabag URL checked"
+      "message": "wizard URL checked"
    },
-   "Wallabag_it": {
+   "Wizard_it": {
       "description": "background",
-      "message": "wallabag it!"
+      "message": "wizard it!"
    },
-   "Wallabag_it_description": {
+   "Wizard_it_description": {
       "description": "Manifest.json",
-      "message": "Save the page into Wallabag without opening the popup"
+      "message": "Save the page into Wizard without opening the popup"
    },
-   "Wallabag_permission_checked": {
+   "Wizard_permission_checked": {
       "description": "Options",
-      "message": "wallabag permission checked"
+      "message": "wizard permission checked"
    },
-   "We_need_an_access_to_your_wallabag_instance_to_read_write_and_update_content_Please_test_the_URL_again_and_accept_the_permission_request": {
+   "We_need_an_access_to_your_wizard_instance_to_read_write_and_update_content_Please_test_the_URL_again_and_accept_the_permission_request": {
       "description": "Options",
-      "message": "We need an access to your wallabag instance to read, write and update content. Please, test the URL again and accept the request."
+      "message": "We need an access to your wizard instance to read, write and update content. Please, test the URL again and accept the request."
    },
    "Yes_delete_it": {
       "description": "Popup",
