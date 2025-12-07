@@ -598,12 +598,27 @@ PopupController.prototype = {
                         elements = origDocument.getElementsByTagName('*');
                         for (var i = 0; i < elements.length; i++) {
                             var element = elements[i];
+                        const nonContentElements = ['INPUT', 'SELECT', 'BUTTON', 'FORM', 'IFRAME'];
+                        if (nonContentElements.includes(element.tagName)) {
+                            element.remove();
+                            continue;
+                        }
+                        if (element.className && element.className.toLowerCase().includes('ad')) {
+                            element.remove();
+                            continue;
+                        }
+                        element.removeAttribute('onclick');
                             if (element.tagName !== 'PRE' && element.tagName !== 'CODE') {
                                 element.removeAttribute('class');
                             }
                             element.removeAttribute('id');
                             element.removeAttribute('style');
                             element.removeAttribute('title');
+                            for (let attr of element.attributes) {
+                                if (attr.name.startsWith('data-')) {
+                                    element.removeAttribute(attr.name);
+                                }
+                            }
                         }
                         // 使用正则移除所有的<!-- -->注释
                         var re = /<!--[\s\S]*?-->/g;

@@ -608,12 +608,32 @@ PopupController.prototype = {
                     elements = origDocument.getElementsByTagName('*');
                     for (var i = 0; i < elements.length; i++) {
                         var element = elements[i];
+                        // Remove non-content elements
+                        const nonContentElements = ['INPUT', 'SELECT', 'BUTTON', 'FORM', 'IFRAME'];
+                        if (nonContentElements.includes(element.tagName)) {
+                            element.remove();
+                            continue;
+                        }
+                        // Remove elements likely to be ads
+                        if (element.className && element.className.toLowerCase().includes('ad')) {
+                            element.remove();
+                            continue;
+                        }
+                        // Remove onclick handlers
+                        element.removeAttribute('onclick');
                         if (element.tagName !== 'PRE' && element.tagName !== 'CODE') {
                             element.removeAttribute('class');
                         }
                         element.removeAttribute('id');
                         element.removeAttribute('style');
                         element.removeAttribute('title');
+                        // 删除`data-*`属性（以 `data-`开头，后面是任意内容
+                        for (let attr of element.attributes) {
+                            if (attr.name.startsWith('data-')) {
+                                element.removeAttribute(attr.name);
+                            }
+                        }
+                        
                     }
                     // 使用正则移除所有的<!-- -->注释
                     var re = /<!--[\s\S]*?-->/g;
