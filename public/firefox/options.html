@@ -36,7 +36,7 @@
             width: 64px;
             height: 64px;
             content: '';
-            background: url(img/wallabag-icon-128.png) center / 64px no-repeat;
+            background: url(img/wizard-icon-128.png) center / 64px no-repeat;
         }
         .columns {
             display: block;
@@ -80,7 +80,7 @@
           margin-top: 5px;
         }
 
-        .wallabag-url-group {
+        .wizard-url-group {
             flex-wrap: wrap;
         }
 
@@ -119,18 +119,18 @@
 
     <div class="columns">
         <div class="column main-column">
-            <form action="." id="wallabagurl-section">
+            <form action="." id="wizardurl-section">
                 <div class="form-group">
-                    <label class="form-label" for="input-wallabagurl" data-i18n="Wallabag_URL">Wallabag URL</label>
-                    <div class="input-group wallabag-url-group">
+                    <label class="form-label" for="input-wizardurl" data-i18n="Wizard_URL">Wizard URL</label>
+                    <div class="input-group wizard-url-group">
                         <span class="url-group">
-                            <span class="input-group-addon" id="input-group-wallabagurl">https://</span>
-                            <input class="form-input wallabag-url" type="text" id="input-wallabagurl" placeholder="doc.imzhp.com" />
+                            <span class="input-group-addon" id="input-group-wizardurl">https://</span>
+                            <input class="form-input wizard-url" type="text" id="input-wizardurl" placeholder="doc.imzhp.com" />
                         </span>
                         <button class="btn input-group-btn" id="checkurl-button" data-i18n="Check_URL">Check URL</button>
 
                     </div>
-                    <p id="permission-text" class="permission-text d-hide text-error" data-i18n="We_need_an_access_to_your_wallabag_instance_to_read_write_and_update_content_Please_test_the_URL_again_and_accept_the_permission_request">We need an access to your wallabag instance to read, write and update content. Please, test the URL again and accept the request.</p>
+                    <p id="permission-text" class="permission-text d-hide text-error" data-i18n="We_need_an_access_to_your_wizard_instance_to_read_write_and_update_content_Please_test_the_URL_again_and_accept_the_permission_request">We need an access to your wizard instance to read, write and update content. Please, test the URL again and accept the request.</p>
                 </div>
                 <div class="form-group">
                     <label class="form-switch">
@@ -140,7 +140,7 @@
                 </div>
             </form>
             <form action="." class="token-section d-hide" id="token-section">
-                <p><span data-i18n="You_can_find_your_credentials_here">You can find your credentials here:</span> <a target="_blank" data-wallabag-url="/admin/api-clients"></a>.</p>
+                <p><span data-i18n="You_can_find_your_credentials_here">You can find your credentials here:</span> <a target="_blank" data-wizard-url="/admin/api-clients"></a>.</p>
                 <div class="form-group">
                     <label class="form-label" for="clientid-input" data-i18n="Client_ID">Client ID</label>
                     <div class="input-group">
@@ -182,19 +182,19 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td data-i18n="Wallabag_URL_checked">Wallabag URL checked</td>
+                        <td data-i18n="Wizard_URL_checked">Wizard URL checked</td>
                         <td class="text-right" id="checked-label" data-i18n="Not_checked">Not checked</td>
                     </tr>
                     <tr>
-                        <td data-i18n="Wallabag_permission_checked">Permission checked</td>
+                        <td data-i18n="Wizard_permission_checked">Permission checked</td>
                         <td class="text-right" id="permission-label" data-i18n="Not_checked">Not checked</td>
                     </tr>
                     <tr>
-                        <td data-i18n="Wallabag_API_version">Wallabag API version</td>
+                        <td data-i18n="Wizard_API_version">Wizard API version</td>
                         <td class="text-right" id="apiversion-label" data-i18n="Not_checked">Not checked</td>
                     </tr>
                     <tr>
-                        <td data-i18n="Wallabag_API_token">Wallabag API token</td>
+                        <td data-i18n="Wizard_API_token">Wizard API token</td>
                         <td class="text-right" id="apitoken-label" data-i18n="Not_granted">Not granted</td>
                     </tr>
                     <tr>
@@ -228,8 +228,8 @@
                     <label class="form-switch">
                         <input type="checkbox" id="allow-exist-checkbox"/>
                         <i class="form-icon"></i>
-                        <span id="allow-exist-secure-text" data-i18n="Indicate_if_page_already_saved_into_wallabag_the_wallabagger_icon_is_green">Indicate if page already saved (the wallabagger icon is green)</span>
-                        <span id="allow-exist-insecure-text" data-i18n="Indicate_if_page_already_saved_this_sends_URL_of_each_tab_to_wallabag_use_HTTPS_protocol_for_better_security">Indicate if page already saved (this sends URL of each tab to wallabag, use HTTPS protocol for better security!)</span>
+                        <span id="allow-exist-secure-text" data-i18n="Indicate_if_page_already_saved_into_wizard_the_wizarder_icon_is_green">Indicate if page already saved (the wizarder icon is green)</span>
+                        <span id="allow-exist-insecure-text" data-i18n="Indicate_if_page_already_saved_this_sends_URL_of_each_tab_to_wizard_use_HTTPS_protocol_for_better_security">Indicate if page already saved (this sends URL of each tab to wizard, use HTTPS protocol for better security!)</span>
                     </label>
                 </div>
 

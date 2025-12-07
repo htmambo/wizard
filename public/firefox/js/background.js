@@ -1,4 +1,4 @@
-//* globals WallabagApi */
+//* globals WizardApi */
 
 // declarations
 
@@ -43,10 +43,10 @@ CacheType.prototype = {
     }
 };
 
-const wallabagContextMenus = [
+const wizardContextMenus = [
     {
-        id: 'wallabagger-add-link',
-        title: Common.translate('Wallabag_it'),
+        id: 'wizarder-add-link',
+        title: Common.translate('Wizard_it'),
         contexts: ['link', 'page']
     },
     {
@@ -66,7 +66,7 @@ const cache = new CacheType(true); // TODO - here checking option
 const dirtyCache = new CacheType(true);
 const existCache = new CacheType(true);
 
-const api = new WallabagApi();
+const api = new WizardApi();
 
 // Code
 
@@ -83,7 +83,7 @@ createContextMenus();
 
 // Functions
 function createContextMenus () {
-    wallabagContextMenus.map(menu => browser.contextMenus.create(menu));
+    wizardContextMenus.map(menu => browser.contextMenus.create(menu));
 }
 
 function onTabActivatedListener (activeInfo) {
@@ -154,15 +154,15 @@ function openOptionsPage () {
 
 function onContextMenusClicked (info) {
     switch (info.menuItemId) {
-        case 'wallabagger-add-link':
+        case 'wizarder-add-link':
             if (typeof (info.linkUrl) === 'string' && info.linkUrl.length > 0) {
-                savePageToWallabag(info.linkUrl, true);
+                savePageToWizard(info.linkUrl, true);
             } else {
-                savePageToWallabag(info.pageUrl, false);
+                savePageToWizard(info.pageUrl, false);
             }
             break;
         case 'tag':
-            GotoWallabag(info.menuItemId);
+            GotoWizard(info.menuItemId);
             break;
     }
 }
@@ -171,7 +171,7 @@ function onCommandsCommand (command) {
     if (command === 'wizarder-it') {
         browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             if (tabs[0] != null) {
-                savePageToWallabag(tabs[0].url, false);
+                savePageToWizard(tabs[0].url, false);
             }
         });
     }
@@ -185,7 +185,7 @@ function onPortMessage (msg) {
     try {
         switch (msg.request) {
             case 'save':
-                savePageToWallabag(msg.tabUrl, false, msg.title, msg.content);
+                savePageToWizard(msg.tabUrl, false, msg.title, msg.content);
                 break;
             case 'projects':
                 if (!cache.check('allProjects')) {
@@ -331,9 +331,9 @@ function addListeners () {
 const browserIcon = {
     images: {
         default: browser.runtime.getManifest().browser_action.default_icon,
-        good: 'img/wallabagger-green.svg',
-        wip: 'img/wallabagger-yellow.svg',
-        bad: 'img/wallabagger-red.svg'
+        good: 'img/wizarder-green.svg',
+        wip: 'img/wizarder-yellow.svg',
+        bad: 'img/wizarder-red.svg'
     },
 
     timedToDefault: function () {
@@ -429,7 +429,7 @@ function moveToDirtyCache (url) {
     }
 }
 
-function savePageToWallabag (url, resetIcon, title, content) {
+function savePageToWizard (url, resetIcon, title, content) {
     if (isServicePage(url)) {
         return;
     }
@@ -450,7 +450,7 @@ function savePageToWallabag (url, resetIcon, title, content) {
     // real saving
     browserIcon.set('wip');
     existCache.set(url, existStates.wip);
-    postIfConnected({ response: 'info', text: Common.translate('Saving_the_page_to_wallabag') });
+    postIfConnected({ response: 'info', text: Common.translate('Saving_the_page_to_wizard') });
 
     const savePageOptions = {
         url: url,
@@ -490,7 +490,7 @@ function savePageToWallabag (url, resetIcon, title, content) {
         });
 };
 
-const GotoWallabag = (part) => api.checkParams() && browser.tabs.create({ url: `${api.data.Url}/${part}/list` });
+const GotoWizard = (part) => api.checkParams() && browser.tabs.create({ url: `${api.data.Url}/${part}/list` });
 
 const checkExist = (dirtyUrl) => {
     if (isServicePage(dirtyUrl)) { return; }

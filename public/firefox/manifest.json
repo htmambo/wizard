@@ -1,11 +1,11 @@
 {
     "browser_action": {
-        "default_icon": "img/wallabag-icon-48.png",
+        "default_icon": "img/wizard-icon-48.png",
         "default_popup": "popup.html",
         "default_title": "Wizarder",
         "theme_icons": [ {
-            "dark": "img/wallabagger.svg",
-            "light": "img/wallabagger-light.svg",
+            "dark": "img/wizarder.svg",
+            "light": "img/wizarder-light.svg",
             "size": 32
         } ]
     },
@@ -16,7 +16,7 @@
             "js/deps/asmcrypto.all.es5.min.js",
             "js/deps/webcrypto-liner.shim.min.js",
             "js/fetch-api.js",
-            "js/wallabag-api.js",
+            "js/wizard-api.js",
             "js/background.js"
         ]
     },
@@ -34,14 +34,14 @@
                 "mac": "Alt+Shift+W",
                 "windows": "Alt+Shift+W"
             },
-            "description": "__MSG_Wallabag_it_description__"
+            "description": "__MSG_Wizard_it_description__"
         }
     },
     "default_locale": "en",
     "description": "__MSG_Extension_description__",
     "icons": {
-        "128": "img/wallabag-icon-128.png",
-        "48": "img/wallabag-icon-48.png"
+        "128": "img/wizard-icon-128.png",
+        "48": "img/wizard-icon-48.png"
     },
     "manifest_version": 2,
     "name": "Wizarder",

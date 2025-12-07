@@ -14,9 +14,9 @@ const hashUrl = function (url) {
     });
 };
 
-const WallabagApi = function () { };
+const WizardApi = function () { };
 
-WallabagApi.prototype = {
+WizardApi.prototype = {
 
     defaultValues: {
         Url: null,

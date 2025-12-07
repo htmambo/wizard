@@ -579,13 +579,13 @@ PopupController.prototype = {
             this.enableTagsInput();
 
             browser.runtime.onMessage.addListener(event => {
-                if (typeof event.wallabagSaveArticleContent === 'undefined') {
+                if (typeof event.wizardSaveArticleContent === 'undefined') {
                     return;
                 }
-                var content = event.wallabagSaveArticleContent;
+                var content = event.wizardSaveArticleContent;
                 try {
                     var parser = new DOMParser();
-                    var origDocument = parser.parseFromString(event.wallabagSaveArticleContent, 'text/html');
+                    var origDocument = parser.parseFromString(event.wizardSaveArticleContent, 'text/html');
                     if (origDocument.body) {
                         var elements = ['comment', 'header', 'footer', 'nav', 'aside', 'script', 'style', 'link', 'textarea'];
                         elements.forEach(element => {
@@ -639,7 +639,7 @@ PopupController.prototype = {
             browser.tabs.executeScript(
                 tab.id,
                 {
-                    code: 'if(typeof(browser) === "undefined" && typeof (chrome) === "object") { browser = chrome; }; browser.runtime.sendMessage({"wallabagSaveArticleContent": window.document.body.innerHTML});'
+                    code: 'if(typeof(browser) === "undefined" && typeof (chrome) === "object") { browser = chrome; }; browser.runtime.sendMessage({"wizardSaveArticleContent": window.document.body.innerHTML});'
                 }
             );
         });
