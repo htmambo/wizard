@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Events\DocumentCreated;
@@ -80,13 +81,13 @@ class ProjectController extends Controller
             if (!empty($userGroups)) {
                 $query->orWhere(function ($query) use ($userGroups) {
                     $query->where('visibility', '!=', Project::VISIBILITY_PUBLIC)
-                          ->whereHas('groups', function ($query) use ($userGroups) {
-                              $query->where('groups.id', $userGroups);
-                          });
+                        ->whereHas('groups', function ($query) use ($userGroups) {
+                            $query->where('groups.id', $userGroups);
+                        });
                 });
             }
         });
-        $projects = $projectModel->select(['id', 'name'])->orderBy('catalog_id', 'ASC')->orderBy('sort_level', 'ASC')->get();
+        $projects = $projectModel->select(['id', 'name'])->orderBy('catalog_id', 'ASC')->orderBy('sort_level', 'ASC')->orderBy('id', 'ASC')->get();
         $sql = $projectModel->toSql();
         return $this->success($projects, 'Projects retrieved successfully', [
             'sql' => $sql,
