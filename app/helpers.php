@@ -725,7 +725,12 @@ HEADER;
      * @return string
      */
     function processSpreedSheet(string $content): string{
-        if(config('wizard.spreedsheet.disabled', false)){
+        // disabled 默认 true：processSpreedSheet 是为已废弃的 x-spreadsheet 组件所写，
+        // 对当前在用的 LuckySheet 格式（关联对象，含 container/data 等 create options）不兼容，
+        // 且函数体存在空 cells 行导致 array+int 崩溃的潜伏 bug。在存储与展示路径共 6 处被调用，
+        // 激活后会导致表格文档查看/保存崩溃。还原为禁用状态以止血。
+        // 后续任务（独立立项）：移除整套 x-spreadsheet 残留逻辑，表格文档直接使用 LuckySheet 原始内容。
+        if(config('wizard.spreedsheet.disabled', true)){
             // 如果禁用表格功能，则直接返回内容
             return $content;
         }
