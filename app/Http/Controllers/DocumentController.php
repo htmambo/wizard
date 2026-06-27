@@ -143,8 +143,6 @@ class DocumentController extends Controller
                     'content' => ['页面内容不合法，表格页面必须为合法的json格式'],
                 ]);
             }
-
-            $content = $this->processTableRequest($content);
         }
         else if ($type === 'markdown') {
             $content_html = $request->input('editormd-html-code', '');
@@ -249,7 +247,6 @@ class DocumentController extends Controller
                     'content' => ['页面内容不合法，表格页面必须为合法的json格式'],
                 ]);
             }
-            $content = $this->processTableRequest($content);
         }
         else if ($pageItem->isMarkdown()) {
             $orig_content = trim($pageItem->content);
@@ -831,18 +828,6 @@ class DocumentController extends Controller
     private function traverseNavigators(array $navigators, \Closure $callback, array $parents = [])
     {
         traverseNavigators($navigators, $callback, $parents);
-    }
-
-    /**
-     * 预处理表格存储内容
-     *
-     * @param string $content 原始内容
-     *
-     * @return string 重新编码后的内容
-     */
-    protected function processTableRequest($content)
-    {
-        return processSpreedSheet($content);
     }
 
     public function unBlog(Request $request, $id, $page_id)

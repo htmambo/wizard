@@ -115,7 +115,7 @@
                     <textarea class="d-none wz-markdown-content">{{ str_replace('[SUB]', '<div class="wz-nav-container-in-doc"></div>', processMarkdown($pageItem->content ?? '')) }}</textarea>
                 @endif
                 @if($type === 'table' || $type === 'sheet')
-                    <textarea id="x-spreadsheet-content" class="d-none">{{ processSpreedSheet($pageItem->content) }}</textarea>
+                    <textarea id="x-spreadsheet-content" class="d-none">{{ $pageItem->content }}</textarea>
                     <div class="wz-spreadsheet">
                         <div id="x-spreadsheet"></div>
                     </div>

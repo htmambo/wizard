@@ -24,7 +24,7 @@
 {{--        @endif--}}
     @endif
     @if($type == 'table' || $type == 'sheet')
-        <textarea id="x-spreadsheet-content" class="d-none">{{ processSpreedSheet($pageItem->content) }}</textarea>
+        <textarea id="x-spreadsheet-content" class="d-none">{{ $pageItem->content }}</textarea>
         <div id="x-spreadsheet"></div>
     @endif
 </div>

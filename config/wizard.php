@@ -107,6 +107,10 @@ return [
 
     /**
      * 表格类型文档配置
+     *
+     * 注：自移除 processSpreedSheet 死逻辑后，max_rows/max_cols 仍被
+     * doc/table.blade.php 前端使用；min_cols/min_rows 原消费方已移除，
+     * 当前为孤立键，保留待后续连同 x-spreadsheet 残留一并清理。
      */
     'spreedsheet'                => [
         /**
@@ -118,11 +122,11 @@ return [
          */
         'max_cols' => env('WIZARD_SPREEDSHEET_MAX_COLS', 26),
         /**
-         * 最小展示行数
+         * 最小展示行数（已孤立：原消费方 processSpreedSheet 已移除）
          */
         'min_rows' => env('WIZARD_SPREEDSHEET_MIN_ROWS', 10),
         /**
-         * 最小展示的列数
+         * 最小展示的列数（已孤立：原消费方 processSpreedSheet 已移除）
          */
         'min_cols' => env('WIZARD_SPREEDSHEET_MIN_COLS', 6),
     ],
