@@ -516,13 +516,12 @@ class DocumentController extends Controller
     /**
      * 获取Swagger文档内容
      *
-     * @param Request $request
      * @param $id
      * @param $page_id
      *
      * @return string
      */
-    private function getSwaggerContent(Request $request, $id, $page_id): string
+    private function getSwaggerContent($id, $page_id): string
     {
         /** @var Project $project */
         $project = Project::findOrFail($id);
@@ -607,7 +606,15 @@ class DocumentController extends Controller
 
         $synced = false;
         if (!empty($pageItem->sync_url)) {
-            $client   = new \GuzzleHttp\Client();
+            $client   = new \GuzzleHttp\Client([
+                'timeout' => 10,
+                'connect_timeout' => 5,
+                'max_redirects' => 3,
+                'http_errors' => false,
+                'headers' => [
+                    'Accept' => 'application/json, application/yaml, text/yaml, text/plain'
+                ],
+            ]);
             $resp     = $client->get($pageItem->sync_url);
             $respCode = $resp->getStatusCode();
             $respBody = $resp->getBody()->getContents();

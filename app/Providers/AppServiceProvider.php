@@ -47,7 +47,6 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         // 启用所有的授权类型
-        Passport::enableImplicitGrant();
 
         // 配置令牌过期时间
         Passport::tokensExpireIn(CarbonInterval::days(15));
@@ -55,7 +54,6 @@ class AppServiceProvider extends ServiceProvider
         Passport::personalAccessTokensExpireIn(CarbonInterval::months(6));
 
         // 启用密码授权类型
-        Passport::enablePasswordGrant();
 
         \Illuminate\Pagination\Paginator::useBootstrap();
         $this->addProjectExistRules('project_exist');
@@ -67,12 +65,14 @@ class AppServiceProvider extends ServiceProvider
         $this->addInvitationCodeRules('invitation_code');
 
         // 在日志中输出sql历史
-        \DB::listen(function (QueryExecuted $query) {
-            \Log::debug('sql_execute', [
-                'sql'   => $query->sql,
-                'binds' => $query->bindings,
-            ]);
-        });
+        if (config('app.debug')) {
+            \DB::listen(function (QueryExecuted $query) {
+                \Log::debug('sql_execute', [
+                    'sql'   => $query->sql,
+                    'binds' => $query->bindings,
+                ]);
+            });
+        }
     }
 
     /**

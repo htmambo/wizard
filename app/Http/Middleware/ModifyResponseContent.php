@@ -35,14 +35,18 @@ class ModifyResponseContent
         $currentRoute = Route::current();
 
         if (!$currentRoute) {
-            Log::warning('No current route found for request', ['request' => $request->all()]);
+            if (config('app.debug')) {
+                Log::warning('No current route found for request', ['request' => $request->all()]);
+            }
             return false;
         }
 
         // 检查路由名称
         $routeName = $currentRoute->getName();
         if (!$routeName) {
-            Log::warning('No route name found for current route', ['route' => $currentRoute]);
+            if (config('app.debug')) {
+                Log::warning('No route name found for current route', ['route' => $currentRoute]);
+            }
             return false;
         }
         if ($routeName && str_contains($routeName, 'scramble')) {
