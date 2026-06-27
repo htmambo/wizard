@@ -54,6 +54,9 @@ class AppServiceProvider extends ServiceProvider
         Passport::personalAccessTokensExpireIn(CarbonInterval::months(6));
 
         // 启用密码授权类型
+        // 注意：Passport 13 的 Password Grant 默认未注册，必须显式启用，
+        // 否则 grant_type=password 的令牌请求（浏览器扩展登录）会返回 unsupported_grant_type
+        Passport::enablePasswordGrant();
 
         \Illuminate\Pagination\Paginator::useBootstrap();
         $this->addProjectExistRules('project_exist');
