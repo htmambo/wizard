@@ -75,7 +75,7 @@ class BlogController extends Controller
     {
         return $this->tagRepo
             ->select('tags.id', 'tags.name')
-            ->selectRaw('count(pt.page_id) as tag_count')
+            ->selectRaw('count(*) as tag_count')
             ->join('page_tag as pt', 'tags.id', '=', 'pt.tag_id')
             ->join('pages as p', 'pt.page_id', '=', 'p.id')
             ->where('p.is_blog', true)
