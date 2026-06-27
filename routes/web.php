@@ -24,7 +24,10 @@ use App\Http\Controllers\ApiClientController;
 Route::group(['middleware' => 'locale'], function () {
     $authRoutes = [
         'reset'    => true,
-        'verify'   => true,
+        // 项目未启用 Laravel 内置邮箱验证（User 未实现 MustVerifyEmail，且使用
+        // WIZARD_NEED_ACTIVATE 邀请码激活机制），关闭 verify 路由以避免注册指向
+        // 不存在的 VerificationController 的死路由（致 route:list 崩溃）
+        'verify'   => false,
         'register' => register_enabled(),
     ];
     Auth::routes($authRoutes);
