@@ -28,7 +28,12 @@
 - 展示路径 5 处调用 `processSpreedSheet`，对 LuckySheet 数据也会跑（崩溃来源）
 - 库中 `TYPE_TABLE=3` 旧数据 0 条（含软删除），`TYPE_SHEET=6` 数据 2 条格式正确 → **无需数据迁移**
 - `wizard.spreedsheet` 配置键（`disabled`/`max_rows`/`max_cols`/`min_rows`/`min_cols`）仅被
-  `processSpreedSheet` 内部引用，移除函数后该配置段成为孤立键（按决策保留不动）
+  `processSpreedSheet` 内部引用，移除函数后该配置段成为孤立键（按决策保留不动，加废弃注释）
+- **x-spreadsheet 前端自处理行列数**：`table.blade.php` 的 `loadData` 前会
+  `data[i].cols.len = options.col.len` / `rows.len = options.row.len` 重置，
+  后端 `processSpreedSheet` 的行列规范化对 x-spreadsheet 是冗余的；
+  且其 `cells` 对象→数组的 JSON round-trip 改写可能有害 → 移除不损 x-spreadsheet 功能
+- **无动态调用**：全项目无 `call_user_func` 等动态引用 `processSpreedSheet`，grep 零残留检查足够安全
 
 ## 3. 改动清单
 
@@ -53,6 +58,12 @@
 | `resources/views/doc/history-doc.blade.php` | 56 | `processSpreedSheet($history->content)` → `$history->content` |
 | `resources/views/project/project.blade.php` | 118 | `processSpreedSheet($pageItem->content)` → `$pageItem->content` |
 | `resources/views/share-show.blade.php` | 27 | `processSpreedSheet($pageItem->content)` → `$pageItem->content` |
+
+### 3.4 `config/wizard.php` — 标注配置段废弃
+
+`spreedsheet` 配置段加注释说明自本次清理起仅 `max_rows`/`max_cols` 仍被
+`table.blade.php` 前端使用，`disabled`/`min_rows`/`min_cols` 已成孤立键
+（原消费方 `processSpreedSheet` 已移除），便于后续清理识别。配置值保留不动。
 
 ## 4. 数据流变更
 
