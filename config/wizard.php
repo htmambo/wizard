@@ -12,6 +12,10 @@ return [
      */
     'version'                    => '1.3.2',
     /**
+     * 仪表盘统计缓存时长（秒）
+     */
+    'dashboard_cache_ttl'        => env('WIZARD_DASHBOARD_CACHE_TTL', 300),
+    /**
      * 版本检查，暂时不可用
      */
     'version-check'              => env('WIZARD_VERSION_CHECK', false),

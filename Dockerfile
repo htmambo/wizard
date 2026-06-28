@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:8.2-apache
 
 WORKDIR /webroot
 ENV APACHE_DOCUMENT_ROOT /webroot/public
@@ -13,7 +13,6 @@ RUN echo "memory_limit=-1" > "$PHP_INI_DIR/conf.d/memory-limit.ini" \
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
-        libmcrypt-dev \
         libpng-dev \
         libzip-dev \
         wget \
@@ -25,7 +24,7 @@ RUN apt-get update && apt-get install -y \
         mercurial \
         --no-install-recommends && rm -r /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) pcntl exif pdo_mysql zip \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 RUN wget https://mirrors.aliyun.com/composer/composer.phar \
     && mv composer.phar /usr/bin/composer.phar \

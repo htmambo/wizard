@@ -54,7 +54,7 @@ class CommentController extends Controller
         }
 
         $comment = Comment::create([
-            'content'     => comment_filter($content),// TODO XSS过滤
+            'content'     => comment_filter($content), // XSS 防护由 Blade {{ }} 的 e() 转义承担
             'user_id'     => \Auth::user()->id,
             'reply_to_id' => 0,
             'page_id'     => $page_id,

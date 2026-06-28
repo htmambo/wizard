@@ -88,10 +88,7 @@ class ProjectController extends Controller
             }
         });
         $projects = $projectModel->select(['id', 'name'])->orderBy('catalog_id', 'ASC')->orderBy('sort_level', 'ASC')->orderBy('id', 'ASC')->get();
-        $sql = $projectModel->toSql();
         return $this->success($projects, 'Projects retrieved successfully', [
-            'sql' => $sql,
-            'bindings' => $projectModel->getBindings(),
             'usergroups' => $userGroups,
             'user' => $user ? $user->only(['id', 'name']) : null
         ]);
