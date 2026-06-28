@@ -64,9 +64,7 @@
             // @某人自动提示
             $('#wz-comment-textarea').atwho({
                 at: '@',
-                data: [
-                    {!! ui_usernames(users()) !!}
-                ]
+                data: {!! json_encode(users()->map(function ($u) { return e($u->name); })->all(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!}
             });
 
             // 发表评论
@@ -85,7 +83,7 @@
             var markdown = window.markdownit();
 
             // 评论内容解析，高亮@用户
-            var users = { {!! users()->map(function ($user) { return "'{$user->id}': {name: '{$user->name}', email: '{$user->email}'}";})->implode(',') !!} };
+            var users = {!! json_encode(users()->keyBy('id')->map(function ($u) { return ['name' => $u->name, 'email' => $u->email]; })->all(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!};
             $('.wz-comment-body').map(function () {
                 var content = markdown.render($(this).html());
                 var html = content

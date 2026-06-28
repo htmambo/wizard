@@ -7,12 +7,15 @@
     "require": {
         "php": "^8.2",
         "ext-gd": "*",
+        "ext-iconv": "*",
         "dedoc/scramble": "^0.12.30",
         "erusev/parsedown": "^1.7",
+        "ezyang/htmlpurifier": "^4.17",
         "gotenberg/gotenberg-php": "^2.14",
         "greenlion/php-sql-parser": "^4.7",
         "guzzlehttp/guzzle": "^7.9",
         "intervention/image": "^3.11",
+        "jdenticon/jdenticon": "^1.0",
         "lab404/laravel-impersonate": "*",
         "laravel/framework": "^12",
         "laravel/passport": "^13.0",
@@ -27,9 +30,7 @@
         "psr/http-factory-implementation": "*",
         "sebastian/diff": "*",
         "soapbox/laravel-formatter": "^2.0",
-        "symfony/psr-http-message-bridge": "^7.3",
-        "jdenticon/jdenticon": "^1.0",
-      "ext-iconv": "*"
+        "symfony/psr-http-message-bridge": "^7.3"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

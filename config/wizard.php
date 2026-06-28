@@ -16,6 +16,23 @@ return [
      */
     'dashboard_cache_ttl'        => env('WIZARD_DASHBOARD_CACHE_TTL', 300),
     /**
+     * 导航数据缓存开关(true=启用,NavigatorCache;false=每次重算)。
+     *
+     * 灰度开关: 出现缓存相关问题时可临时关停,快速回退到原行为。
+     */
+    'navigator_cache_enabled'    => env('WIZARD_NAVIGATOR_CACHE_ENABLED', true),
+    /**
+     * 导航数据缓存时长(秒)
+     */
+    'navigator_cache_ttl'        => env('WIZARD_NAVIGATOR_CACHE_TTL', 600),
+    /**
+     * 分享 token 默认有效期(天)。
+     *
+     * T5:取代原 sha1 + microtime 弱随机,Str::random(40) + expires_at 控制生命周期。
+     * 配置 0 或负值表示永不过期(expired_at=null,兼容历史数据)。
+     */
+    'share_token_ttl'            => (int) env('WIZARD_SHARE_TOKEN_TTL', 7),
+    /**
      * 版本检查，暂时不可用
      */
     'version-check'              => env('WIZARD_VERSION_CHECK', false),
