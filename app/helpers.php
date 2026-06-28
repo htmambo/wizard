@@ -77,49 +77,8 @@ if (!function_exists('wzRoute')) {
      * @return array
      */
     function navigatorSort($navItems, $sortStyle = Project::SORT_STYLE_DIR_FIRST){
-        $sortItem = function ($a, $b){
-            try {
-                if ($a['sort_level'] > $b['sort_level']) {
-                    return 1;
-                } else {
-                    if ($a['sort_level'] < $b['sort_level']) {
-                        return -1;
-                    } else {
-                        return $b['updated_at']->greaterThan($a['updated_at']);
-                    }
-                }
-            } catch (Exception $e) {
-            \App\Support\ErrorLogger::record($e, ['context' => 'helpers']);
-                return 0;
-            }
-        };
-
-        usort(
-            $navItems,
-            function ($a, $b) use ($sortItem, $sortStyle){
-                if ($sortStyle == Project::SORT_STYLE_FREE) {
-                    return $sortItem($a, $b);
-                }
-
-                $aIsFolder = !empty($a['nodes']);
-                $bIsFolder = !empty($b['nodes']);
-
-                $bothIsFolder  = $aIsFolder && $bIsFolder;
-                $bothNotFolder = !$aIsFolder && !$bIsFolder;
-
-                if ($bothIsFolder || $bothNotFolder) {
-                    return $sortItem($a, $b);
-                } else {
-                    if ($aIsFolder) {
-                        return -1;
-                    }
-
-                    return 1;
-                }
-            }
-        );
-
-        return $navItems;
+        // T7 续:委托给 App\Support\MiscHelper
+        return \App\Support\MiscHelper::navigatorSort($navItems, (int) $sortStyle);
     }
 
     /**
@@ -213,17 +172,8 @@ if (!function_exists('wzRoute')) {
      * @return \Lcobucci\JWT\UnencryptedToken
      */
     function jwt_create_token(array $payloads, $expire = 3600 * 2){
-        $builder = \Lcobucci\JWT\Token\Builder::new(new Lcobucci\JWT\Encoding\JoseEncoder(), Lcobucci\JWT\Encoding\ChainedFormatter::default());
-        foreach ($payloads as $key => $payload) {
-            $builder = $builder->withClaim($key, $payload);
-        }
-        $now        = new DateTimeImmutable();
-        $algorithm  = new \Lcobucci\JWT\Signer\Hmac\Sha256();
-        $signingKey = Lcobucci\JWT\Signer\Key\InMemory::plainText(config('wizard.jwt_secret'));
-
-        return $builder->issuedAt($now)
-            ->expiresAt($now->modify("+$expire seconds"))
-            ->getToken($algorithm, $signingKey);
+        // T7 续:委托给 App\Support\JwtFactory
+        return \App\Support\JwtFactory::create($payloads, (int) $expire);
     }
 
     /**
@@ -234,15 +184,8 @@ if (!function_exists('wzRoute')) {
      * @return \Lcobucci\JWT\Token
      */
     function jwt_parse_token(string $token){
-        $token = (new \Lcobucci\JWT\Token\Parser(new Lcobucci\JWT\Encoding\JoseEncoder()))->parse($token);
-        $algorithm = new \Lcobucci\JWT\Signer\Hmac\Sha256();
-        $signingKey = Lcobucci\JWT\Signer\Key\InMemory::plainText(config('wizard.jwt_secret'));
-        $validator = new Lcobucci\JWT\Validation\Validator();
-        if (!$validator->validate($token, new Lcobucci\JWT\Validation\Constraint\SignedWith($algorithm, $signingKey))) {
-            // AD2:改为抛异常,走 Laravel Handler 统一渲染(避免 exit 强杀进程)
-            throw new \App\Exceptions\TokenExpiredException('页面已过期，请刷新页面后重新提交');
-        }
-        return $token;
+        // T7 续:委托给 App\Support\JwtFactory
+        return \App\Support\JwtFactory::parse($token);
     }
 
     /**
@@ -322,12 +265,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function statistics(): string{
-        $customFile = base_path('custom');
-        if (file_exists("{$customFile}/statistics.html")) {
-            return file_get_contents("{$customFile}/statistics.html");
-        }
-
-        return '';
+        // T7 续:委托给 App\Support\MiscHelper
+        return \App\Support\MiscHelper::statistics();
     }
 
     /**
@@ -338,9 +277,8 @@ if (!function_exists('wzRoute')) {
      * @return bool
      */
     function isJson($content): bool{
-        // 尝试解析为json
-        json_decode($content);
-        return json_last_error() === JSON_ERROR_NONE;
+        // T7 续:委托给 App\Support\MiscHelper
+        return \App\Support\MiscHelper::isJson($content);
     }
 
     /**
@@ -406,15 +344,8 @@ if (!function_exists('wzRoute')) {
         array    $parents = [],
                  $callbackWithFullNavItem = false
     ){
-        foreach ($navigators as $nav) {
-            $callback($callbackWithFullNavItem ? $nav : $nav['id'], $parents);
-
-            if (!empty($nav['nodes'])) {
-                array_push($parents, ['id' => $nav['id'], 'name' => $nav['name']]);
-                traverseNavigators($nav['nodes'], $callback, $parents, $callbackWithFullNavItem);
-                array_pop($parents);
-            }
-        }
+        // T7 续:委托给 App\Support\MiscHelper
+        \App\Support\MiscHelper::traverseNavigators($navigators, $callback, $parents, $callbackWithFullNavItem);
     }
 
     /**
@@ -458,12 +389,8 @@ if (!function_exists('wzRoute')) {
      * @return mixed
      */
     function sortDocumentBySortIds(LengthAwarePaginator $docs, $sortIds = NULL){
-        if (empty($sortIds)) {
-            return $docs;
-        }
-        return $docs->sortBy(function ($doc) use ($sortIds) {
-            return array_search($doc->id, $sortIds);
-        });
+        // T7 续:委托给 App\Support\MiscHelper
+        return \App\Support\MiscHelper::sortDocumentBySortIds($docs, $sortIds);
     }
 
     /**
@@ -472,13 +399,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function getThemeByCookie(){
-        $name = \Illuminate\Support\Facades\Cookie::get('wizard-theme');
-        if ($name == 'dark') {
-            $name = 'wz-dark-theme';
-        } else {
-            $name = '';
-        }
-        return $name;
+        // T7 续:委托给 App\Support\MiscHelper
+        return \App\Support\MiscHelper::getThemeByCookie();
     }
 
     /**
