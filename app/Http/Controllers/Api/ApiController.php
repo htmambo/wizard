@@ -74,6 +74,7 @@ class ApiController extends Controller
                 'limit' => $limit,
             ]);
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'ApiController']);
             return $this->error(config('app.debug')?$e->getMessage():'Search failed', 500);
         }
     }

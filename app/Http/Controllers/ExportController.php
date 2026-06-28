@@ -111,6 +111,7 @@ class ExportController extends Controller
                 $mpdf->WriteHTML($page);
             }
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'ExportController']);
             Log::error('html_to_pdf_failed', [
                 'error' => $ex->getMessage(),
                 'code'  => $ex->getCode(),
@@ -193,6 +194,7 @@ class ExportController extends Controller
         } catch (GotenbergApiErrored $e) {
             return $e->getResponse();
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'ExportController']);
             return $e->getMessage();
         }
     }

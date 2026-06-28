@@ -33,6 +33,7 @@ class ApiClientController extends Controller
             $op = 'clients';
             return view('api-clients.index', compact('op', 'clients'));
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'ApiClientController']);
             return back()->withErrors(['error' => 'Laravel Passport 未正确配置：' . $e->getMessage()]);
         }
     }
@@ -84,6 +85,7 @@ class ApiClientController extends Controller
                 ]);
 
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'ApiClientController']);
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['error' => '创建客户端失败：' . $e->getMessage()]);
@@ -160,6 +162,7 @@ class ApiClientController extends Controller
                 ->with('success', '客户端信息更新成功！');
 
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'ApiClientController']);
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['error' => '更新失败：' . $e->getMessage()]);

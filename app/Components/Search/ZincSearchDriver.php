@@ -162,6 +162,7 @@ class ZincSearchDriver implements Driver
 
             return null;
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'ZincSearchDriver']);
             Log::error('search failed', ['message' => $ex->getMessage()]);
         }
 

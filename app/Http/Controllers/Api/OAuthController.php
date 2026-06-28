@@ -63,6 +63,7 @@ class OAuthController extends Controller
             return response()->json(json_decode((string) $response->getBody(), true));
 
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'OAuthController']);
             return response()->json([
                                         'error' => 'invalid_request',
                                         'error_description' => $e->getMessage(),

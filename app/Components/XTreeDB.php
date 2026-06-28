@@ -250,6 +250,7 @@ class XTreeDB
             return true;
 
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'XTreeDB']);
             throw new \Exception('Invalid format configuration: ' . $e->getMessage());
         }
     }

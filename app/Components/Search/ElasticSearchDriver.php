@@ -193,6 +193,7 @@ var_dump($resp->getBody()->getContents());
 
             return null;
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'ElasticSearchDriver']);
             Log::error('search failed', ['message' => $ex->getMessage()]);
         }
 

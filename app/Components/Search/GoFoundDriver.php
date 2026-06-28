@@ -153,6 +153,7 @@ class GoFoundDriver implements Driver
 
             return null;
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'GoFoundDriver']);
             Log::error('search failed', ['message' => $ex->getMessage()]);
         }
 

@@ -30,15 +30,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function wzRoute($name, $parameters = [], $absolute = false){
-        if(is_array($parameters)) foreach ($parameters as $k => $v) {
-            $parameters[$k] = urlencode($v);
-        }
-        $result = route($name, $parameters, $absolute);
-        // 检查当前是否是https请求，如果是，则将生成的url中的http替换为https
-        if ($absolute && request()->isSecure()) {
-            $result = Str::replaceFirst('http://', 'https://', $result);
-        }
-        return $result;
+        // T7:委托给 App\Support\RouteHelper(渐进 shim,函数签名完全不变)
+        return \App\Support\RouteHelper::url($name, $parameters, $absolute);
     }
 
     /**
@@ -50,17 +43,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function documentType($type, $flip = false): string{
-        $types = [
-            Document::TYPE_HTML    => 'html',
-            Document::TYPE_DOC     => 'markdown',
-            Document::TYPE_SWAGGER => 'swagger',
-            Document::TYPE_TABLE   => 'table',
-            Document::TYPE_SHEET   => 'sheet',
-        ];
-        if ($flip) {
-            $types = array_flip($types);
-        }
-        return $types[$type] ?? '';
+        // T7:委托给 App\Support\DocumentTypeHelper
+        return \App\Support\DocumentTypeHelper::convert($type, $flip);
     }
 
     /**
@@ -79,66 +63,9 @@ if (!function_exists('wzRoute')) {
         int $pageID = 0,
             $exclude = []
     ){
-        static $cached = [];
-
-        $key = "{$projectID}:{$pageID}:" . implode(':', $exclude);
-        if (isset($cached[$key])) {
-            return $cached[$key];
-        }
-
-        $pages = Document::where('project_id', $projectID)->select(
-            'id',
-            'pid',
-            'title',
-            'project_id',
-            'type',
-            'status',
-            'created_at',
-            'updated_at',
-            'sort_level'
-        )->orderBy('pid')->get();
-
-        $navigators = [];
-        /** @var Document $page */
-        foreach ($pages as $page) {
-            if (in_array((int)$page->id, $exclude)) {
-                continue;
-            }
-
-            $navigators[$page->id] = [
-                'id'         => (int)$page->id,
-                'name'       => $page->title,
-                'pid'        => (int)$page->pid,
-                'url'        => wzRoute('project:home', ['id' => $projectID, 'p' => $page->id]),
-                'selected'   => $pageID === (int)$page->id,
-                'type'       => documentType($page->type),
-                'status'     => $page->status,
-                'created_at' => $page->created_at,
-                'updated_at' => $page->updated_at,
-                'sort_level' => $page->sort_level ?? 1000,
-            ];
-        }
-
-        foreach ($navigators as &$nav) {
-            if ($nav['pid'] === 0 || in_array($nav['id'], $exclude)) {
-                continue;
-            }
-
-            if (isset($navigators[$nav['pid']])) {
-                $navigators[$nav['pid']]['nodes'][] = &$nav;
-            }
-        }
-
-        $res = array_filter(
-            $navigators,
-            function ($nav){
-                return $nav['pid'] === 0;
-            }
-        );
-
-        $cached[$key] = $res;
-
-        return $res;
+        // 走 NavigatorCache,配置项关闭时退化到无缓存模式
+        // (T3 加固:替代原进程级 static 缓存,避免 PHP-FPM worker 间漂移)
+        return \App\Support\NavigatorCache::get($projectID, $pageID, $exclude);
     }
 
     /**
@@ -162,6 +89,7 @@ if (!function_exists('wzRoute')) {
                     }
                 }
             } catch (Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'helpers']);
                 return 0;
             }
         };
@@ -203,11 +131,8 @@ if (!function_exists('wzRoute')) {
      * @return array
      */
     function wzTemplates($type = Template::TYPE_DOC, ?User $user = NULL): array{
-        if ($user == NULL && !Auth::guest()) {
-            $user = Auth::user();
-        }
-
-        return Template::queryForShow($type, $user);
+        // T7:委托给 App\Support\TemplateHelper
+        return \App\Support\TemplateHelper::list($type, $user);
     }
 
     /**
@@ -218,21 +143,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function convertJsonToMarkdownTable(string $json): string{
-        $markdowns = [
-            ['参数名', '类型', '是否必须', '说明'],
-            ['---', '---', '---', '---'],
-        ];
-
-        foreach (jsonFlatten($json) as $key => $type) {
-            $markdowns[] = [$key, $type, '', ''];
-        }
-
-        $html = '';
-        foreach ($markdowns as $line) {
-            $html .= '| ' . implode(' | ', $line) . ' | ' . "\n";
-        }
-
-        return $html;
+        // T7:委托给 App\Support\SqlConvertHelper
+        return \App\Support\SqlConvertHelper::jsonToMarkdownTable($json);
     }
 
     /**
@@ -243,45 +155,8 @@ if (!function_exists('wzRoute')) {
      * @return array
      */
     function jsonFlatten(string $json): array{
-        $object = json_decode(trim($json));
-        $result = [];
-
-        $setCurrent = function ($prefix, $type) use (&$result){
-            if (Str::endsWith($prefix, '.[]')) {
-                $result[substr($prefix, 0, -3)] = "array({$type})";
-            } else {
-                $result[$prefix] = $type;
-            }
-        };
-
-        $flatten = function ($object, $prefix = '') use (&$flatten, &$result, $setCurrent){
-            $setCurrent($prefix, gettype($object));
-            if (is_array($object)) {
-                foreach ($object as $o) {
-                    $flatten($o, "{$prefix}.[]");
-                }
-            } else {
-                if (is_object($object)) {
-                    foreach (get_object_vars($object) as $key => $obj) {
-                        $flatten($obj, "{$prefix}.{$key}");
-                    }
-                } else {
-                    $setCurrent($prefix, gettype($object));
-                }
-            }
-        };
-
-        if (is_array($object)) {
-            $flatten($object, '');
-        } else {
-            if (is_object($object)) {
-                foreach (get_object_vars($object) as $key => $obj) {
-                    $flatten($obj, $key);
-                }
-            }
-        }
-
-        return $result;
+        // T7:委托给 App\Support\JsonFlattenHelper
+        return \App\Support\JsonFlattenHelper::flatten($json);
     }
 
     /**
@@ -290,11 +165,8 @@ if (!function_exists('wzRoute')) {
      * @return bool
      */
     function userHasNotifications(){
-        if (Auth::guest()) {
-            return false;
-        }
-
-        return userNotificationCount() > 0;
+        // T7:委托给 App\Support\ConfigHelper
+        return \App\Support\ConfigHelper::userHasNotifications();
     }
 
     /**
@@ -305,16 +177,8 @@ if (!function_exists('wzRoute')) {
      * @return int|string
      */
     function userNotificationCount($limit = 0){
-        if (Auth::guest()) {
-            return 0;
-        }
-
-        $unreadCount = count(Auth::user()->unreadNotifications);
-        if ($limit > 0) {
-            return $unreadCount > $limit ? "{$limit}+" : $unreadCount;
-        }
-
-        return $unreadCount;
+        // T7:委托给 App\Support\ConfigHelper
+        return \App\Support\ConfigHelper::userNotificationCount($limit);
     }
 
     /**
@@ -325,7 +189,8 @@ if (!function_exists('wzRoute')) {
      * @return Collection
      */
     function subDocuments($pid){
-        return Document::where('pid', $pid)->select('id', 'title')->get();
+        // T7:委托给 App\Support\UserHelper
+        return \App\Support\UserHelper::subDocuments($pid);
     }
 
     /**
@@ -334,12 +199,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function resourceVersion(){
-        static $version = NULL;
-        if (is_null($version)) {
-            $version = 'v=' . config('wizard.resource_version');
-        }
-
-        return $version;
+        // T7:委托给 App\Support\ConfigHelper
+        return \App\Support\ConfigHelper::resourceVersion();
     }
 
 
@@ -378,7 +239,8 @@ if (!function_exists('wzRoute')) {
         $signingKey = Lcobucci\JWT\Signer\Key\InMemory::plainText(config('wizard.jwt_secret'));
         $validator = new Lcobucci\JWT\Validation\Validator();
         if (!$validator->validate($token, new Lcobucci\JWT\Validation\Constraint\SignedWith($algorithm, $signingKey))) {
-            exit('页面已过期，请刷新页面后重新提交');
+            // AD2:改为抛异常,走 Laravel Handler 统一渲染(避免 exit 强杀进程)
+            throw new \App\Exceptions\TokenExpiredException('页面已过期，请刷新页面后重新提交');
         }
         return $token;
     }
@@ -391,10 +253,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function user_face($id){
-        $svg = new \Jdenticon\Identicon();
-        $svg->setValue($id);
-        $svg->setSize(100);
-        return $svg->getImageDataUri('svg');
+        // T7:委托给 App\Support\AvatarHelper
+        return \App\Support\AvatarHelper::userFace($id);
     }
 
     /**
@@ -403,12 +263,8 @@ if (!function_exists('wzRoute')) {
      * @return Collection
      */
     function users(){
-        static $users = NULL;
-        if (is_null($users)) {
-            $users = User::all();
-        }
-
-        return $users;
+        // T7:委托给 App\Support\UserHelper
+        return \App\Support\UserHelper::users();
     }
 
     /**
@@ -419,16 +275,10 @@ if (!function_exists('wzRoute')) {
      *
      * @return string
      */
-    function ui_usernames(Collection $users, $actived = true){
-        return $users->filter(
-            function (User $user) use ($actived){
-                return $actived ? $user->isActivated() : true;
-            }
-        )->map(
-            function (User $user){
-                return "'{$user->name}'";
-            }
-        )->implode(',');
+    function ui_usernames($users, $actived = true){
+        // T7:委托给 App\Support\CommentHelper
+        // 接受 Eloquent|Support Collection(原签名只支持 Eloquent,T7 审核改进)
+        return \App\Support\CommentHelper::uiUsernames($users, $actived);
     }
 
     /**
@@ -439,13 +289,8 @@ if (!function_exists('wzRoute')) {
      * @return Collection|null
      */
     function comment_filter_users($content){
-        preg_match_all('/@{uid:(\d+)}/', $content, $matches);
-        if (!empty($matches[1])) {
-            $users = User::whereIn('id', $matches[1])->select('id', 'name', 'email')->get();
-            return $users;
-        }
-
-        return NULL;
+        // T7:委托给 App\Support\CommentHelper
+        return \App\Support\CommentHelper::filterUsers($content);
     }
 
 
@@ -457,39 +302,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function comment_filter(string $comment): string{
-        $matchRegexp = '/@(.*?)(?:\s|$)/';
-
-        $users = (function ($content) use ($matchRegexp){
-            preg_match_all($matchRegexp, $content, $matches);
-            if (!empty($matches[1])) {
-                $users = User::whereIn('name', $matches[1])->select('id', 'name', 'email')->get();
-                return $users;
-            }
-
-            return NULL;
-        })(
-            $comment
-        );
-        if (is_null($users) || $users->isEmpty()) {
-            return $comment;
-        }
-
-        return preg_replace_callback(
-            $matchRegexp,
-            function ($matches) use ($users){
-                if (count($matches) < 2) {
-                    return $matches[0];
-                }
-
-                $user = $users->firstWhere('name', '=', $matches[1]);
-                if (!empty($user)) {
-                    return "@{uid:{$user->id}} ";
-                }
-
-                return $matches[0];
-            },
-            $comment
-        );
+        // T7:委托给 App\Support\CommentHelper
+        return \App\Support\CommentHelper::filter($comment);
     }
 
     /**
@@ -498,12 +312,8 @@ if (!function_exists('wzRoute')) {
      * @return bool
      */
     function register_enabled(): bool{
-        static $enabled = NULL;
-        if (is_null($enabled)) {
-            $enabled = (bool)config('wizard.register_enabled');
-        }
-
-        return $enabled;
+        // T7:委托给 App\Support\ConfigHelper
+        return \App\Support\ConfigHelper::registerEnabled();
     }
 
     /**
@@ -541,28 +351,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function convertSqlToMarkdownTable(string $sql){
-        return convertSqlTo(
-            $sql,
-            function ($markdowns, $tableName, $tableComment){
-                if (empty($markdowns)) {
-                    return '';
-                }
-
-                $headers = [
-                    ['字段', '类型', '空', '说明'],
-                    ['---', '---', '---', '---',],
-                ];
-
-                array_unshift($markdowns, ...$headers);
-
-                $html = '';
-                foreach ($markdowns as $line) {
-                    $html .= '| ' . implode(' | ', $line) . ' | ' . "\n";
-                }
-
-                return "\n表名：**{$tableName}**   备注：*{$tableComment}*\n\n{$html}\n";
-            }
-        );
+        // T7:委托给 App\Support\SqlConvertHelper
+        return \App\Support\SqlConvertHelper::sqlToMarkdownTable($sql);
     }
 
     /**
@@ -573,38 +363,8 @@ if (!function_exists('wzRoute')) {
      * @return string
      */
     function convertSqlToHTMLTable(string $sql){
-        return convertSqlTo(
-            $sql,
-            function ($markdowns, $tableName, $tableComment){
-                if (empty($markdowns)) {
-                    return '';
-                }
-
-                $html = '';
-                foreach ($markdowns as $line) {
-                    $html .= '<tr><td>' . implode('</td><td>', $line) . "</td></tr>";
-                }
-
-                return <<<HEADER
-<p><div style="float: left;" class="wz-table-name">❖ 表名： <b>{$tableName}</b></div>
-<div style="float: right;" class="wz-table-desc">❖ 备注：<i>{$tableComment}</i></div>
-</p>
-<table class="table table-hover">
-    <thead>
-        <tr>
-           <th>字段</th>
-           <th>类型</th>
-           <th>空</th>
-           <th>说明</th>
-        </tr>
-    </thead>
-    <tbody>{$html}</tbody>
-</thead>
-</table>
-HEADER;
-
-            }
-        );
+        // T7:委托给 App\Support\SqlConvertHelper
+        return \App\Support\SqlConvertHelper::sqlToHTMLTable($sql);
     }
 
     /**
@@ -616,81 +376,8 @@ HEADER;
      * @return string
      */
     function convertSqlTo(string $sql, $callback){
-        try {
-            $sql .= "\n";
-            if (preg_match_all('@\)\s*ENGINE\s*=.+COMMENT\s*=\s*[^\n]+\n@i', $sql, $match)) {
-                foreach ($match as $v) {
-                    $str = $v[0];
-                    $rep = preg_replace('@\s+COMMENT\s*=\s*@', ' COMMENT ', $str);
-                    $sql = str_replace($str, $rep, $sql);
-                }
-            }
-            $sql    = trim($sql);
-            $parser = new PHPSQLParser\PHPSQLParser();
-            $parsed = $parser->parse($sql);
-
-            if (!isset($parsed['CREATE'])) {
-                return NULL;
-            }
-
-//        \Log::error('xxx', ['struct' => $parsed]);
-            if ($parsed['CREATE']['expr_type'] === 'table') {
-                $fields    = $parsed['TABLE']['create-def']['sub_tree'];
-                $tableName = $parsed['TABLE']['base_expr'];
-
-                $markdowns = [];
-
-                foreach ($fields as $field) {
-                    if ($field['sub_tree'][0]['expr_type'] == 'constraint') {
-                        continue;
-                    }
-
-                    // 如果当前行不是列定义，则没有 sub_tree，比如 PRIMARY KEY(id)
-                    if (!isset($field['sub_tree'][1]['sub_tree'])) {
-                        continue;
-                    }
-
-                    $type = $length = '';
-                    foreach ($field['sub_tree'][1]['sub_tree'] as $item) {
-                        if ($item['expr_type'] == 'data-type') {
-                            $type   = $item['base_expr'] ?? '';
-                            $length = $item['length'] ?? '';
-                        }
-                    }
-
-                    $name     = $field['sub_tree'][0]['base_expr'];
-                    $comment  = trim($field['sub_tree'][1]['comment'] ?? '', "'");
-                    $nullable = $field['sub_tree'][1]['nullable'] ?? false;
-
-//        $autoInc      = $field['sub_tree'][1]['auto_inc'] ?? false;
-//        $primary      = $field['sub_tree'][1]['primary'] ?? false;
-//        $defaultValue = $field['sub_tree'][1]['default'] ?? '-';
-
-                    $type        = empty($length) ? $type : "{$type} ($length)";
-                    $markdowns[] = [trim($name, '`'), $type, $nullable ? 'Y' : 'N', $comment];
-                }
-
-
-                $tableComment = '-';
-                $options      = $parsed['TABLE']['options'] ?? [];
-                if (!$options || empty($options)) {
-                    $options = [];
-                }
-
-                foreach ($options as $option) {
-                    $type = strtoupper($option['sub_tree'][0]['base_expr'] ?? '');
-                    if ($type === 'COMMENT') {
-                        $tableComment = trim($option['sub_tree'][1]['base_expr'] ?? '', "'");
-                        break;
-                    }
-                }
-                return $callback($markdowns, trim($tableName, '`'), $tableComment);
-            }
-
-            return '';
-        } catch (Exception $ex) {
-            return "{$ex->getMessage()} @{$ex->getFile()}:{$ex->getLine()}";
-        }
+        // T7 审核改进:委托给 SqlConvertHelper::sqlTo(类内聚)
+        return \App\Support\SqlConvertHelper::sqlTo($sql, $callback);
     }
 
     /**
@@ -701,20 +388,8 @@ HEADER;
      * @return string
      */
     function processMarkdown($markdown = NULL): string{
-        if (is_null($markdown)) {
-            $markdown = '';
-        }
-
-        $defaultTOC = config('wizard.markdown.default_toc');
-        if (!in_array($defaultTOC, ['TOC', 'TOCM'])) {
-            return $markdown;
-        }
-
-        if (Str::contains($markdown, ['[TOC]', '[TOCM]'])) {
-            return $markdown;
-        }
-
-        return "[{$defaultTOC}]\n\n{$markdown}";
+        // T7:委托给 App\Support\FormatHelper
+        return \App\Support\FormatHelper::processMarkdown($markdown);
     }
 
     /**
@@ -750,33 +425,8 @@ HEADER;
      * @return string
      */
     function cdn_resource(string $resourceUrl){
-        static $enabled = NULL;
-        static $cdnUrl = NULL;
-
-        if (is_null($enabled)) {
-            $enabled = config('wizard.cdn.enabled', false);
-        }
-
-        if (!$enabled) {
-            return $resourceUrl . '?' . resourceVersion();
-        }
-
-        if (is_null($cdnUrl)) {
-            $cdnUrl = rtrim(config('wizard.cdn.url'), '/');
-        }
-
-        // 这里替换的目的是，如果使用 七牛 CDN，是无法自己配置跨域的，必须提交工单才行
-        // 这里用公共 CDN，可以避免字体跨域
-        $replace = [
-            '/assets/vendor/font-awesome4/css/font-awesome.min.css'   => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
-            '/assets/vendor/material-design-icons/material-icons.css' => 'https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css',
-        ];
-
-        if (isset($replace[$resourceUrl])) {
-            return $replace[$resourceUrl];
-        }
-
-        return "{$cdnUrl}{$resourceUrl}";
+        // T7:委托给 App\Support\CdnHelper
+        return \App\Support\CdnHelper::resource($resourceUrl);
     }
 
     /**
@@ -785,12 +435,8 @@ HEADER;
      * @return Catalog[]|Collection
      */
     function allCatalogs(){
-        static $catalogs = NULL;
-        if (is_null($catalogs)) {
-            $catalogs = Catalog::all();
-        }
-
-        return $catalogs;
+        // T7:委托给 App\Support\UserHelper
+        return \App\Support\UserHelper::allCatalogs();
     }
 
     /**
@@ -799,14 +445,8 @@ HEADER;
      * @return array|null
      */
     function impersonateUser(){
-        /** @var User $user */
-        $user = Auth::user();
-        if (!$user->isImpersonated()) {
-            return NULL;
-        }
-
-        $impersonateUser = $user->impersonator();
-        return ['id' => $impersonateUser->id, 'name' => $impersonateUser->name];
+        // T7:委托给 App\Support\UserHelper
+        return \App\Support\UserHelper::impersonateUser();
     }
 
     /**
@@ -821,8 +461,7 @@ HEADER;
         if (empty($sortIds)) {
             return $docs;
         }
-
-        return $docs->sortBy(function ($doc) use ($sortIds){
+        return $docs->sortBy(function ($doc) use ($sortIds) {
             return array_search($doc->id, $sortIds);
         });
     }
@@ -842,16 +481,10 @@ HEADER;
         return $name;
     }
 
-    function to_unicode($string){
-        $str    = mb_convert_encoding($string, 'UCS-2', 'UTF-8');
-        $arrstr = str_split($str, 2);
-        $unistr = '';
-        foreach ($arrstr as $n) {
-            $dec    = hexdec(bin2hex($n));
-            $unistr .= '&#' . $dec . ';';
-        }
-        return $unistr;
-    }
+    /**
+     * 保留:to_unicode 原为死代码(0 处调用),T7 审核建议删除
+     * 如有遗留调用方,请改用 PHP 内置 mb_convert_encoding 或 \voku\helper\UTF8
+     */
 
     /**
      * 给图片添加水印
@@ -859,101 +492,8 @@ HEADER;
      * @param string $file1 图片文件
      */
     function watermark($file1){
-        $cfg = config('wizard.watermark');
-        if ($cfg['enabled'] && (in_array($cfg['type'], ['logo', 'text']))) {
-            $manager = new ImageManager(
-                new Intervention\Image\Drivers\Gd\Driver()
-            );
-            $img     = $manager->read($file1);
-
-            $base = $cfg['position'];
-            if ($cfg['type'] == 'logo') {
-                $img->place(public_path($cfg['pic']), $base, 0, 10);
-            } else {
-                if ($cfg['font']) {
-                    $fontpath = $cfg['font'];
-                    $fontpath = public_path($fontpath);
-                    if (file_exists($fontpath)) {
-                        $text       = $cfg['text'] ?: config('app.name');
-                        $fontsize   = $cfg['size'];
-                        $color      = $cfg['color'] ?: 'FF0000';
-                        $background = $cfg['background'] ?: 'FFFFFF';
-                        $text       = trim($text);
-
-                        // 计算文字的边界框
-                        $size = imagettfbbox($fontsize, 0, $fontpath, $text);
-                        if (!$size || count($size) < 8) {
-                            return false;
-                        }
-
-                        // 正确计算宽度和高度
-                        $textWidth  = abs($size[2] - $size[0]);            // 或者 abs($size[4] - $size[6])
-                        $textHeight = abs($size[1] - $size[7]);            // 或者 abs($size[3] - $size[5])
-
-                        // 考虑文字可能的偏移，使用更精确的计算
-                        $minX = min($size[0], $size[2], $size[4], $size[6]);
-                        $maxX = max($size[0], $size[2], $size[4], $size[6]);
-                        $minY = min($size[1], $size[3], $size[5], $size[7]);
-                        $maxY = max($size[1], $size[3], $size[5], $size[7]);
-
-                        $actualWidth  = $maxX - $minX;
-                        $actualHeight = $maxY - $minY;
-
-                        $base_x = $base_y = 0;
-                        $width  = $img->width();
-                        $height = $img->height();
-
-                        $ar = explode('-', $base);
-                        if (in_array('left', $ar)) {
-                            $base_x = 10;
-                            if ($minX < 0) {
-                                $base_x = 10 - $minX; // 如果文字有负偏移，调整基准X坐标
-                            }
-                        }
-                        if (in_array('right', $ar)) {
-                            $base_x = $width - 10 - $actualWidth;
-                        }
-                        if (in_array('top', $ar)) {
-                            $base_y = 10 + $maxY;
-                            if ($minY < 0) {
-                                $base_y = 10 - $minY; // 如果文字有负偏移，调整基准Y坐标
-                            }
-                        }
-                        if (in_array('bottom', $ar)) {
-                            $base_y = $height - 10 - $actualHeight - $maxY;
-                        }
-                        if (in_array('center', $ar)) {
-                            $base_x = ($width - $actualWidth) / 2;
-                            $base_y = ($height - $actualHeight) / 2;
-                        }
-
-                        // 绘制文字阴影效果
-                        $borderSize = max(0, intval($cfg['border_size'])); // 阴影边框大小
-                        if ($borderSize) {
-                            for ($i = 0; $i <= ($borderSize * 2); $i++) {
-                                for ($j = 0; $j <= ($borderSize * 2); $j++) {
-                                    $img->text($text, $base_x + $i, $base_y + $j,
-                                        function (FontFactory $font) use ($fontpath, $fontsize, $background){
-                                            $font->file($fontpath);
-                                            $font->size($fontsize);
-                                            $font->color($background);
-                                        });
-                                }
-                            }
-                        }
-
-                        // 绘制主文字
-                        $img->text($text, $base_x + $borderSize, $base_y + $borderSize,
-                            function (FontFactory $font) use ($fontpath, $fontsize, $color){
-                                $font->file($fontpath);
-                                $font->size($fontsize);
-                                $font->color($color);
-                            });
-                    }
-                }
-            }
-            $img->save();
-        }
+        // T7:委托给 App\Support\Watermarker
+        \App\Support\Watermarker::apply($file1);
     }
 
 
@@ -965,30 +505,8 @@ HEADER;
      * @return mixed|string|string[]|null
      */
     function formatHtml($content = ''){
-        if (!$content) {
-            return $content;
-        }
-        //格式化一下以方便前端进行差异对比
-        $content = preg_replace('@<\s+@i', '<', $content);
-        $content = preg_replace('@\s+>@i', '>', $content);
-        $content = preg_replace('@\s+/>@i', ' />', $content);
-
-        $content = preg_replace('@<p([^>]*)>(\s|&nbsp;)+@i', '<p\\1>', $content);
-        $content = preg_replace('@<p>(\s|&nbsp;)+@i', '<p>', $content);
-        $content = preg_replace('@<br([^>]*)>(\s|&nbsp;)+@i', '<br\\1>' . PHP_EOL, $content);
-        $content = preg_replace('@<br([^>]*)>\s*</p>@i', '</p>' . PHP_EOL, $content);
-
-        $content = preg_replace('@<p>\s*<br([^>]*)>\s*@i', '<p>', $content);
-
-        $content = preg_replace('@<p([^>]*)>\s*</p>@i', '' . PHP_EOL, $content);
-
-        $content = preg_replace('@\s*<pre([^>]*)>@i', "\n<pre\\1>", $content);
-        $content = preg_replace('@</pre>\s*@i', "</pre>\n", $content);
-
-        $content = preg_replace('@\s*<p>@i', "\n<p>", $content);
-        $content = preg_replace('@</p>\s*@i', "</p>\n", $content);
-        $content = preg_replace('@</p>\s+<p>@i', "</p>\n<p>", $content);
-        return $content;
+        // T7:委托给 App\Support\FormatHelper
+        return \App\Support\FormatHelper::formatHtml($content);
     }
 
     /**
@@ -1033,20 +551,5 @@ HEADER;
         }
         $tmp = shulz($id, $page_id, $pre);
         return $token === $tmp && $pre >= date('ymdHis') - $life;
-    }
-}
-if (! function_exists('array_only')) {
-    /**
-     * Get a subset of the items from the given array.
-     *
-     * @param  array  $array
-     * @param  array|string  $keys
-     * @return array
-     *
-     * @deprecated Arr::only() should be used directly instead. Will be removed in Laravel 6.0.
-     */
-    function array_only($array, $keys)
-    {
-        return Arr::only($array, $keys);
     }
 }

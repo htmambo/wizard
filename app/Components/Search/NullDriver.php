@@ -48,6 +48,7 @@ class NullDriver implements Driver
                 count($ids)
             );
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'NullDriver']);
             Log::error('search failed', ['message' => $ex->getMessage()]);
         }
 

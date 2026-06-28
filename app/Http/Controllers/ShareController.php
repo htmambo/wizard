@@ -76,6 +76,11 @@ class ShareController extends Controller
         /** @var PageShare $share */
         $share = PageShare::where('code', $hash)->firstOrFail();
 
+        // T5:分享链接过期校验
+        if ($share->isExpired()) {
+            abort(410, '分享链接已过期');
+        }
+
         $projectId = $share->project_id;
         $pageId    = $share->page_id;
 
@@ -97,6 +102,7 @@ class ShareController extends Controller
                 $this->authorize('page-edit', $page);
             }
             catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'ShareController']);
                 $inppwd = $request->input('password');
                 if (!$inppwd) {
                     $inppwd = Cookie::get('share-page-' . $share->id);
@@ -180,13 +186,17 @@ class ShareController extends Controller
             ->where('user_id', \Auth::user()->id)
             ->first();
         if (empty($share)) {
-            $code  = sha1("{$project_id}-{$page_id}-" . microtime() . rand(0, 9999999999));
+            // T5:用 Str::random(40) 替代 sha1 + microtime + rand 弱随机
+            $code = \Str::random(40);
+            // T5:为分享设置过期时间(单位:天,0 或负值 = 永不过期,兼容历史数据)
+            $ttlDays = (int) config('wizard.share_token_ttl', 7);
             $share = PageShare::create([
                 'code'       => $code,
                 'project_id' => $project_id,
                 'page_id'    => $page_id,
                 'user_id'    => \Auth::user()->id,
                 'password'   => (string)$password,
+                'expired_at' => $ttlDays > 0 ? now()->addDays($ttlDays) : null,
             ]);
         }
 

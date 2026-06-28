@@ -94,6 +94,8 @@ class GroupController extends Controller
 
         $group = Group::where('id', $id)->firstOrFail();
         $group->users()->attach($user_ids);
+        // AD3:组成员变更触发关联项目导航缓存失效
+        \App\Support\NavigatorCache::flushGroup((int) $group->id);
 
         $this->alertSuccess(__('common.operation_success'));
 
@@ -113,6 +115,8 @@ class GroupController extends Controller
     {
         $group = Group::where('id', $id)->firstOrFail();
         $group->users()->detach($user_id);
+        // AD3:组成员移除触发关联项目导航缓存失效
+        \App\Support\NavigatorCache::flushGroup((int) $group->id);
 
         $this->alertSuccess(__('common.operation_success'));
 
@@ -256,6 +260,8 @@ class GroupController extends Controller
         $group = Group::where('id', $id)->firstOrFail();
         $group->projects()->detach($projectIds);
         $group->projects()->attach($projectIds, ['privilege' => $privilege == 'r' ? 2 : 1]);
+        // AD3:组项目授权变更触发关联项目导航缓存失效
+        \App\Support\NavigatorCache::flushGroup((int) $group->id);
 
         $this->alertSuccess(__('common.operation_success'));
 

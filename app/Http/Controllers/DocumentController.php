@@ -125,6 +125,17 @@ class DocumentController extends Controller
 
         $this->authorize('page-add', $id);
 
+        // SSRF 防护:校验 sync_url,失败抛 422
+        if ($request->filled('sync_url')) {
+            try {
+                \App\Services\SyncUrlGuard::validate($request->input('sync_url'));
+            } catch (\InvalidArgumentException $e) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'sync_url' => [$e->getMessage()],
+                ]);
+            }
+        }
+
         $pid       = $request->input('pid', 0);
         $projectID = $request->input('project_id');
         $title     = $request->input('title');
@@ -152,6 +163,8 @@ class DocumentController extends Controller
             }
         }
         else if ($type === 'html') {
+            // XSS 净化(AD5:写入时净化,渲染时直接输出)
+            $content = \App\Support\HtmlPurifierService::clean($content);
             //简介信息
             $description = mb_substr(strip_tags($content), 0, 300);
             $content     = formatHtml($content);
@@ -258,6 +271,8 @@ class DocumentController extends Controller
             }
         }
         else if ($pageItem->isHtml()) {
+            // XSS 净化(AD5:写入时净化,渲染时直接输出)
+            $content = \App\Support\HtmlPurifierService::clean($content);
             //简介信息
             $pageItem->description = mb_substr(strip_tags($content), 0, 300);
             $content               = formatHtml($content);
@@ -285,6 +300,17 @@ class DocumentController extends Controller
         $pageItem->title      = $title;
         $pageItem->content    = $content;
         $pageItem->sort_level = $sortLevel;
+
+        // SSRF 防护:更新 sync_url 前校验,失败抛 422
+        if (!empty($syncUrl)) {
+            try {
+                \App\Services\SyncUrlGuard::validate($syncUrl);
+            } catch (\InvalidArgumentException $e) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'sync_url' => [$e->getMessage()],
+                ]);
+            }
+        }
         $pageItem->sync_url   = $syncUrl;
         $changed              = $pageItem->getDirty();
         if ($changed) {
@@ -603,13 +629,30 @@ class DocumentController extends Controller
 
         $synced = false;
         if (!empty($pageItem->sync_url)) {
+            // SSRF 防护:解析 host → 黑名单 → 锁定 IP(防 DNS rebinding)
+            $lockedIp = \App\Services\SyncUrlGuard::validate($pageItem->sync_url);
+            $syncHost = parse_url($pageItem->sync_url, PHP_URL_HOST);
+            // IPv6 字面量在锁定时需方括号
+            $resolveHost = filter_var($syncHost, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+                ? "[{$syncHost}]"
+                : $syncHost;
+
             $client   = new \GuzzleHttp\Client([
-                'timeout' => 10,
+                'timeout'         => 10,
                 'connect_timeout' => 5,
-                'max_redirects' => 3,
-                'http_errors' => false,
-                'headers' => [
-                    'Accept' => 'application/json, application/yaml, text/yaml, text/plain'
+                // AD1:禁重定向,避免 302 绕过黑名单
+                'allow_redirects' => false,
+                'http_errors'     => false,
+                'headers'         => [
+                    'Accept' => 'application/json, application/yaml, text/yaml, text/plain',
+                ],
+                // CURLOPT_RESOLVE 锁定 host → IP,防止 DNS rebinding
+                'force_ip_resolve' => filter_var($lockedIp, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? 'v6' : 'v4',
+                'curl'             => [
+                    CURLOPT_RESOLVE => [
+                        "{$resolveHost}:80:{$lockedIp}",
+                        "{$resolveHost}:443:{$lockedIp}",
+                    ],
                 ],
             ]);
             $resp     = $client->get($pageItem->sync_url);

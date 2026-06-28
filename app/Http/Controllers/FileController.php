@@ -43,6 +43,7 @@ class FileController extends Controller
         try {
             watermark($file1);
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'FileController']);
             $path = $file->storePublicly(sprintf('public/%s', date('Y/m-d')));
         }
         return $this->response(true, __('common.upload.success'), \Storage::url($path));

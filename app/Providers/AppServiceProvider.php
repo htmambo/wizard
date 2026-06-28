@@ -8,6 +8,9 @@
 
 namespace App\Providers;
 
+use App\Observers\DocumentObserver;
+use App\Observers\GroupObserver;
+use App\Observers\ProjectObserver;
 use App\Repositories\Document;
 use App\Repositories\Group;
 use App\Repositories\InvitationCode;
@@ -76,6 +79,11 @@ class AppServiceProvider extends ServiceProvider
                 ]);
             });
         }
+
+        // 注册导航缓存 Observer(AD3:文档/项目/用户组变更触发失效)
+        Document::observe(DocumentObserver::class);
+        Project::observe(ProjectObserver::class);
+        Group::observe(GroupObserver::class);
     }
 
     /**

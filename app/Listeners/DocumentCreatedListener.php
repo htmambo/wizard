@@ -53,6 +53,7 @@ class DocumentCreatedListener
         try {
             Search::get()->syncIndex($doc);
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'DocumentCreatedListener']);
             Log::error('create document index failed', ['message' => $ex->getMessage()]);
         }
     }

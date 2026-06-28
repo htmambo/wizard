@@ -526,6 +526,7 @@ class Readability implements LoggerAwareInterface
                 $articleContent->setInnerHtml($content);
                 unset($content);
             } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'Readability']);
                 $this->logger->error('Cleaning output HTML failed. Ignoring: ' . $e->getMessage());
             }
         }
@@ -842,6 +843,7 @@ class Readability implements LoggerAwareInterface
         try {
             $curTitle = $origTitle = $this->getInnerText($this->dom->getElementsByTagName('title')->item(0));
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'Readability']);
             $curTitle = '';
             $origTitle = '';
         }
@@ -1051,6 +1053,7 @@ class Readability implements LoggerAwareInterface
                         --$nodeIndex;
                         $nodesToScore[] = $newNode;
                     } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'Readability']);
                         $this->logger->error('Could not alter div/article to p, reverting back to div: ' . $e->getMessage());
                     }
                 } else {
@@ -1360,6 +1363,7 @@ class Readability implements LoggerAwareInterface
                         $nodeToAppend->setAttribute('alt', $siblingNodeName);
                         $nodeToAppend->setInnerHtml($siblingNode->getInnerHTML());
                     } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'Readability']);
                         $this->logger->debug('Could not alter siblingNode "' . $siblingNodeName . '" to "div", reverting to original.');
                         $nodeToAppend = $siblingNode;
                         --$s;

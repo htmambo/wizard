@@ -51,6 +51,7 @@ class SyncDocumentToIndex extends Command
                         $this->info($msg . ' 成功');
                     }
                 } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'SyncDocumentToIndex']);
                     $this->error("{$ex->getFile()}:{$ex->getLine()} {$ex->getMessage()}");
                 }
             }

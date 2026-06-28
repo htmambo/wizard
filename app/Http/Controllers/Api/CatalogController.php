@@ -22,6 +22,7 @@ class CatalogController extends Controller
             }
             return $this->success($catalogs);
         } catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'CatalogController']);
             // 捕获异常并返回错误信息
             return $this->error('Failed to fetch catalogs', 500);
         }

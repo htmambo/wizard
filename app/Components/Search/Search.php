@@ -48,6 +48,7 @@ class Search implements Driver
         try {
             return $this->driver->deleteIndex($id);
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'Search']);
             Log::error("search: delete index for documents failed", [
                 'id'      => $id,
                 'message' => $ex->getMessage(),
@@ -71,6 +72,7 @@ class Search implements Driver
         try {
             return $this->driver->syncIndex($doc);
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'Search']);
             Log::error("search: sync index for documents failed", [
                 'id'      => $doc->id,
                 'message' => $ex->getMessage(),

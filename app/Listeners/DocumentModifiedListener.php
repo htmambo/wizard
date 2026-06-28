@@ -68,6 +68,7 @@ class DocumentModifiedListener
         try {
             Search::get()->syncIndex($doc);
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'DocumentModifiedListener']);
             Log::error('update document index failed', ['message' => $ex->getMessage()]);
         }
     }

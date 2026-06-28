@@ -252,6 +252,7 @@ class BatchExportController extends Controller
                 try {
                     $mpdf->WriteHTML($html);
                 } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'BatchExportController']);
                     Log::error('html_to_pdf_failed', [
                         'error' => $ex->getMessage(),
                         'code'  => $ex->getCode(),

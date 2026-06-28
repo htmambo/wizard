@@ -41,4 +41,41 @@ class Handler extends ExceptionHandler
 
         return redirect()->guest(wzRoute('login'));
     }
+
+    /**
+     * AD2:渲染 TokenExpiredException。
+     *
+     * Web 请求 → redirect 到登录页 + flash 友好提示
+     * API 请求 → 401 JSON
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Exceptions\TokenExpiredException  $exception
+     */
+    protected function renderTokenExpired($request, TokenExpiredException $exception)
+    {
+        // 用 expectsJson() 精确判断,覆盖 XHR/Ajax + Accept: application/json + api 路径
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'token_expired',
+                'message' => $exception->getMessage(),
+            ], 401);
+        }
+
+        return redirect()
+            ->guest(wzRoute('login'))
+            ->withErrors(['token' => $exception->getMessage()]);
+    }
+
+    /**
+     * Register the exception handling callbacks for the application.
+     *
+     * AD2:把 TokenExpiredException 渲染到自定义方法。
+     */
+    public function register(): void
+    {
+        $this->renderable(function (TokenExpiredException $e, $request) {
+            return $this->renderTokenExpired($request, $e);
+        });
+    }
 }

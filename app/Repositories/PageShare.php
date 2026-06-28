@@ -50,4 +50,17 @@ class PageShare extends Model
             'expired_at',
             'password',
         ];
+
+    /**
+     * T5:判断分享是否已过期。
+     *
+     * expired_at 为 null 表示永不过期(兼容历史数据)。
+     */
+    public function isExpired(): bool
+    {
+        if ($this->expired_at === null) {
+            return false;
+        }
+        return \Carbon\Carbon::parse($this->expired_at)->isPast();
+    }
 }

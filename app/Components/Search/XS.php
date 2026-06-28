@@ -1314,6 +1314,7 @@ class XSIndex extends XSServer
 			try {
 				$this->endRebuild();
 			} catch (\Exception $e) {
+            \App\Support\ErrorLogger::record($e, ['context' => 'XS']);
 			}
 		}
 		foreach (self::$_adds as $srv) {

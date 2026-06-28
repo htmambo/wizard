@@ -78,6 +78,7 @@ class MindMappingController extends Controller
      */
     private function createRefId()
     {
-        return md5(microtime(true) . '_' . Auth::user()->id . uniqid('mind-mapping'));
+        // T5:用 Str::random(40) 替代 md5(microtime + user_id + uniqid) 弱随机
+        return \Str::random(40);
     }
 }

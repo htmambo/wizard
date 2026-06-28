@@ -102,12 +102,23 @@ class DashboardController extends Controller
         $commentCount = Comment::count();
 
 
-        $documentStat = Document::groupBy(\DB::raw('date_format(created_at, "%Y-%m")'))
-            ->select(\DB::raw('date_format(created_at, "%Y-%m") as month, count(id) as document_count'))
-            ->where('created_at', '>=', Carbon::now()->addMonth(-10))
+        $documentStat = Document::select(
+                \DB::raw('YEAR(created_at) as year, MONTH(created_at) as month'),
+                \DB::raw('count(id) as document_count')
+            )
+            ->whereNotNull('created_at')   // 防御历史脏数据,YEAR(NULL) 会返回 NULL
+            ->where('created_at', '>=', Carbon::now()->addMonths(-10))
+            ->groupBy(\DB::raw('YEAR(created_at)'), \DB::raw('MONTH(created_at)'))
+            ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
             ->limit(10)
             ->get()
+            ->map(function ($row) {
+                return [
+                    'month'          => sprintf('%04d-%02d', $row->year, $row->month),
+                    'document_count' => $row->document_count,
+                ];
+            })
             ->toArray();
 
         return [

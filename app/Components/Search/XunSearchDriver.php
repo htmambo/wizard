@@ -176,6 +176,7 @@ class XunSearchDriver implements Driver
                 $finded
             );
         } catch (\Exception $ex) {
+            \App\Support\ErrorLogger::record($ex, ['context' => 'XunSearchDriver']);
             Log::error('search failed', ['message' => $ex->getMessage()]);
         }
 
