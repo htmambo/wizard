@@ -14,6 +14,12 @@ use App\Events\UserCreated;
 use App\Listeners\CommentCreatedListener;
 use App\Listeners\DocumentMarkModifiedListener;
 use App\Listeners\UserCreatedListener;
+use App\Observers\ClearDashboardCache;
+use App\Repositories\Comment;
+use App\Repositories\Document;
+use App\Repositories\Group;
+use App\Repositories\Project;
+use App\Repositories\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -66,6 +72,11 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        //
+        // 业务实体变更时清空 Dashboard 统计缓存
+        $flush = [ClearDashboardCache::class, 'flush'];
+        foreach ([Project::class, Document::class, Comment::class, User::class, Group::class] as $model) {
+            $model::saved($flush);
+            $model::deleted($flush);
+        }
     }
 }

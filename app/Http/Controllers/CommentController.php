@@ -54,7 +54,7 @@ class CommentController extends Controller
         }
 
         $comment = Comment::create([
-            'content'     => comment_filter($content),// TODO XSS过滤
+            'content'     => htmlspecialchars(comment_filter($content), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
             'user_id'     => \Auth::user()->id,
             'reply_to_id' => 0,
             'page_id'     => $page_id,

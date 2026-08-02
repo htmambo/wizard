@@ -17,13 +17,50 @@ use App\Repositories\Project;
 use App\Repositories\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
 
     public function index(Request $request)
     {
-        // 用户统计
+        $ttl = (int) config('wizard.dashboard_cache_ttl', 300);
+
+        $payload = $ttl > 0
+            ? Cache::remember('dashboard:stats', $ttl, function () {
+                return $this->computeStats();
+            })
+            : $this->computeStats();
+
+        return view('admin.dashboard', [
+            'op'       => 'dashboard',
+            'user'     => [
+                'counts'      => $payload['userCounts'],
+                'group_count' => $payload['groupCount'],
+            ],
+            'project'  => [
+                'counts'        => $payload['projectCounts'],
+                'catalog_count' => $payload['catalogCount'],
+            ],
+            'document' => [
+                'counts'        => $payload['documentCounts'],
+                'comment_count' => $payload['commentCount'],
+            ],
+            'stats'    => [
+                'document' => $payload['documentStat'],
+            ]
+        ]);
+    }
+
+    /**
+     * 计算 Dashboard 统计数据
+     *
+     * 提取为独立方法以支持：
+     * 1) Cache::remember() 缓存命中
+     * 2) ttl<=0 时直查（绕过 Cache 永久存储语义陷阱）
+     */
+    private function computeStats(): array
+    {
         $userCounts = User::groupBy('role')
             ->select(\DB::raw('role, count(id) as user_count'))
             ->get()
@@ -34,7 +71,6 @@ class DashboardController extends Controller
             })->toArray();
         $groupCount = Group::count();
 
-        // 项目统计
         $projectCounts = Project::groupBy('visibility')
             ->select(\DB::raw('visibility, count(id) as project_count'))
             ->get()
@@ -45,9 +81,8 @@ class DashboardController extends Controller
                     $visibility => $item['project_count']
                 ];
             })->toArray();
-        $catalogCount  = Catalog::count();
+        $catalogCount = Catalog::count();
 
-        // 文档统计
         $total = 0;
         $documentCounts = Document::groupBy('type')
             ->select(\DB::raw('type, count(id) as document_count'))
@@ -61,9 +96,7 @@ class DashboardController extends Controller
             });
         $documentCounts['total'] = $total;
 
-        // 评论统计
         $commentCount = Comment::count();
-
 
         $documentStat = Document::groupBy(\DB::raw('date_format(created_at, "%Y-%m")'))
             ->select(\DB::raw('date_format(created_at, "%Y-%m") as month, count(id) as document_count'))
@@ -73,23 +106,14 @@ class DashboardController extends Controller
             ->get()
             ->toArray();
 
-        return view('admin.dashboard', [
-            'op'       => 'dashboard',
-            'user'     => [
-                'counts'      => $userCounts,
-                'group_count' => $groupCount,
-            ],
-            'project'  => [
-                'counts'        => $projectCounts,
-                'catalog_count' => $catalogCount,
-            ],
-            'document' => [
-                'counts'        => $documentCounts,
-                'comment_count' => $commentCount,
-            ],
-            'stats'    => [
-                'document' => $documentStat,
-            ]
-        ]);
+        return [
+            'userCounts'     => $userCounts,
+            'groupCount'     => $groupCount,
+            'projectCounts'  => $projectCounts,
+            'catalogCount'   => $catalogCount,
+            'documentCounts' => $documentCounts,
+            'commentCount'   => $commentCount,
+            'documentStat'   => $documentStat,
+        ];
     }
 }

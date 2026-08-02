@@ -39,7 +39,8 @@
         "laravel/pint": "^1.24",
         "laravel/ui": "^4.6",
         "mockery/mockery": "^1.6",
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "fakerphp/faker": "^1.23"
     },
     "autoload": {
         "classmap": [
