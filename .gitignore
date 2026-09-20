@@ -32,3 +32,6 @@ composer.lock
 /public/wework.php
 /public/firefox/wizarder.zip
 /.omc
+
+.phpunit.result.cache
+*.swp

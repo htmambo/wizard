@@ -33,6 +33,8 @@ Route::middleware('auth:api')->group(function () {
         Route::put('update/{id}', [ProjectController::class, 'update']);
         // 项目删除
         Route::delete('delete/{id}', [ProjectController::class, 'delete']);
+        // 项目文档列表
+        Route::get('{id}/documents', [ProjectController::class, 'documents']);
         // 项目成员列表
         Route::get('{id}/members', [ProjectController::class, 'members']);
         // 添加项目成员

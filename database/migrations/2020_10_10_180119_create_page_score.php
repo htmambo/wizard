@@ -18,7 +18,7 @@ class CreatePageScore extends Migration
             $table->unsignedInteger('page_id')->comment('页面 ID');
             $table->unsignedInteger('user_id')->comment('用户 ID');
             $table->tinyInteger('score_type', false, true)->comment('评分类型：');
-            $table->index('page_id', 'idx_page_id');
+            $table->index('page_id', 'idx_page_score_page_id');
             $table->timestamps();
         });
     }
