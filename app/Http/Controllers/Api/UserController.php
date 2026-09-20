@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use Dedoc\Scramble\Attributes\Group;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,6 +13,7 @@ class UserController extends Controller
     /**
      * 获取用户信息
      */
+    #[Response(401, '未认证')]
     public function profile(Request $request){
         $user = Auth::user();
         return $this->success([

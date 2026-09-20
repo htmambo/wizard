@@ -6,6 +6,7 @@ use App\Repositories\Document;
 use App\Repositories\Project;
 use App\Services\ProjectService;
 use Dedoc\Scramble\Attributes\Group;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\OperationLogs;
@@ -31,6 +32,9 @@ class ProjectController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
     public function documents(Request $request, $id)
     {
         $perPage = $request->input('per_page', 20);
@@ -78,12 +82,11 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
-     * @response 401 {"success":false,"message":"Unauthorized"}
-     * @response 403 {"success":false,"message":"Unauthorized"}
-     * @response 404 {"success":false,"message":"Project not found"}
-     *
      * @return \Illuminate\Http\JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
     public function view(Request $request, $id)
     {
         $project = Project::with(['catalog', 'user'])->find($id);
@@ -116,13 +119,12 @@ class ProjectController extends Controller
      *
      * @param Request $request
      *
-     * @response 401 {"success":false,"message":"Unauthorized"}
-     * @response 403 {"success":false,"message":"Unauthorized"}
-     * @response 422 {"success":false,"message":"Validation failed"}
-     *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(422, '验证失败')]
     public function create(Request $request)
     {
         // 检查用户是否有创建项目的权限
@@ -164,14 +166,13 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
-     * @response 401 {"success":false,"message":"Unauthorized"}
-     * @response 403 {"success":false,"message":"Unauthorized"}
-     * @response 404 {"success":false,"message":"Project not found"}
-     * @response 422 {"success":false,"message":"Validation failed"}
-     *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
+    #[Response(422, '验证失败')]
     public function update(Request $request, $id)
     {
         $project = Project::find($id);
@@ -213,13 +214,12 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
-     * @response 401 {"success":false,"message":"Unauthorized"}
-     * @response 403 {"success":false,"message":"Unauthorized"}
-     * @response 404 {"success":false,"message":"Project not found"}
-     *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
     public function delete(Request $request, $id)
     {
         $project = Project::find($id);
@@ -243,12 +243,11 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
-     * @response 401 {"success":false,"message":"Unauthorized"}
-     * @response 403 {"success":false,"message":"Unauthorized"}
-     * @response 404 {"success":false,"message":"Project not found"}
-     *
      * @return \Illuminate\Http\JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
     public function members(Request $request, $id)
     {
         $project = Project::find($id);
@@ -272,14 +271,13 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
-     * @response 401 {"success":false,"message":"Unauthorized"}
-     * @response 403 {"success":false,"message":"Unauthorized"}
-     * @response 404 {"success":false,"message":"Project not found"}
-     * @response 422 {"success":false,"message":"Validation failed"}
-     *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
+    #[Response(422, '验证失败')]
     public function addMember(Request $request, $id)
     {
         $project = Project::find($id);
@@ -319,12 +317,11 @@ class ProjectController extends Controller
      * @param int     $id       项目ID
      * @param int     $memberId 用户组ID
      *
-     * @response 401 {"success":false,"message":"Unauthorized"}
-     * @response 403 {"success":false,"message":"Unauthorized"}
-     * @response 404 {"success":false,"message":"Project or member not found"}
-     *
      * @return \Illuminate\Http\JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目或成员不存在')]
     public function deleteMember(Request $request, $id, $memberId)
     {
         $project = Project::find($id);
@@ -350,12 +347,11 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
-     * @response 401 {"success":false,"message":"Unauthorized"}
-     * @response 403 {"success":false,"message":"Unauthorized"}
-     * @response 404 {"success":false,"message":"Project not found"}
-     *
      * @return \Illuminate\Http\JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
     public function logs(Request $request, $id)
     {
         $perPage = $request->input('per_page', 20);

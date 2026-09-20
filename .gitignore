@@ -34,3 +34,6 @@ custom/
 
 .phpunit.result.cache
 *.swp
+
+# Scramble generated artifacts
+/api.json

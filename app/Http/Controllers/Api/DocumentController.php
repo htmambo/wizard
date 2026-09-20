@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SoapBox\Formatter\Formatter;
 use Dedoc\Scramble\Attributes\Group;
+use Dedoc\Scramble\Attributes\Response;
 use League\HTMLToMarkdown\HtmlConverter;
 use App\Repositories\Tag;
 
@@ -43,6 +44,9 @@ class DocumentController extends Controller
      *
      * @return JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '文档或标签不存在')]
     public function deleteTag(Request $request, $id, $tag_id, $format = 'json'){
         $document = Document::find($id);
         if (!$document) {
@@ -68,6 +72,7 @@ class DocumentController extends Controller
      *
      * @return JsonResponse
      */
+    #[Response(401, '未认证')]
     public function exists(Request $request){
         $url = $request->input('url');
         $exists = Document::exists($url);
@@ -82,6 +87,9 @@ class DocumentController extends Controller
      *
      * @return JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '页面不存在')]
     public function delete(Request $request, $id){
         $document = Document::find($id);
         if (!$document) {
@@ -111,6 +119,9 @@ class DocumentController extends Controller
      *
      * @return JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '页面不存在')]
     public function update(Request $request, $id){
         $document = Document::find($id);
         if (!$document) {
@@ -183,6 +194,8 @@ class DocumentController extends Controller
      * @return JsonResponse
      * @throws ValidationException
      */
+    #[Response(401, '未认证')]
+    #[Response(422, '验证失败')]
     public function create(Request $request){
         $this->validate($request, [
             // 标题
@@ -276,6 +289,9 @@ class DocumentController extends Controller
      * @return JsonResponse
      * @throws CommonMarkException
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '页面不存在')]
     public function view(Request $request, $id){
         $document = Document::find($id);
         if (!$document) {
