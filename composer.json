@@ -29,6 +29,7 @@
         "php-http/guzzle7-adapter": "^1.1",
         "psr/http-factory-implementation": "*",
         "sebastian/diff": "*",
+        "sentry/sentry-laravel": "^4.0",
         "soapbox/laravel-formatter": "^2.0",
         "symfony/psr-http-message-bridge": "^7.3"
     },
@@ -38,6 +39,7 @@
         "doctrine/dbal": "^4.3",
         "filp/whoops": "^2.18",
         "laravel/pint": "^1.24",
+        "laravel/ui": "^4.6",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^13.0",
         "fakerphp/faker": "^1.23"

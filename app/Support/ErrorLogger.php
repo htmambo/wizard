@@ -77,6 +77,113 @@ class ErrorLogger
                   . PHP_EOL;
             @error_log($line, 3, $fallbackPath);
         }
+
+        // Sentry 上报(可选,DSN 缺失时 SDK 自动 noop)
+        self::captureToSentry($e, $context, $requestContext);
+    }
+
+    /**
+     * 把异常同时上报到 Sentry。
+     *
+     * 仅当:
+     *   1. 异常不在 4xx 过滤列表(NotFoundHttpException/AuthenticationException/
+     *      ValidationException/ModelNotFoundException)
+     *   2. Sentry 已通过 sentry/sentry-laravel 注册(容器 'sentry' 已存在)
+     *   3. 全局 Sentry 函数可用(包装类加载完成)
+     *
+     * 把当前请求的 request_id / route_name / user_id 等写入 Sentry Scope 的
+     * tags / extra,便于在 Sentry 控制台按请求上下文过滤事件。
+     *
+     * 失败静默:Sentry 异常不能影响主流程(已写入本地日志)。
+     */
+    private static function captureToSentry(
+        \Throwable $e,
+        array $context,
+        array $requestContext
+    ): void {
+        try {
+            if (!function_exists('\\Sentry\\captureException')) {
+                return;
+            }
+
+            if (!self::isReportingException($e)) {
+                return;
+            }
+
+            $app = function_exists('app') ? \app() : null;
+            if ($app === null || !$app->bound('sentry')) {
+                return;
+            }
+
+            \Sentry\configureScope(function (\Sentry\State\Scope $scope) use ($e, $context, $requestContext): void {
+                // 顶层 tag — 便于在 Sentry UI 按维度筛选
+                $scope->setTag('wizard.runtime', (string) ($requestContext['runtime'] ?? 'unknown'));
+                if (isset($requestContext['route_name']) && $requestContext['route_name'] !== self::PLACEHOLDER) {
+                    $scope->setTag('wizard.route_name', (string) $requestContext['route_name']);
+                }
+                if (isset($requestContext['http_method']) && $requestContext['http_method'] !== self::PLACEHOLDER) {
+                    $scope->setTag('wizard.http_method', (string) $requestContext['http_method']);
+                }
+                if (isset($requestContext['user_id']) && $requestContext['user_id'] !== self::PLACEHOLDER) {
+                    $scope->setTag('wizard.user_id', (string) $requestContext['user_id']);
+                }
+
+                // User 上下文 — Sentry 控制台对 UserDataBag 的索引/告警更友好。
+                if (isset($requestContext['user_id']) && $requestContext['user_id'] !== self::PLACEHOLDER) {
+                    $userData = ['id' => (string) $requestContext['user_id']];
+                    try {
+                        $email = \Auth::user()?->email ?? \Auth::user()?->mail;
+                        if (is_string($email) && $email !== '') {
+                            $userData['email'] = $email;
+                        }
+                        $username = \Auth::user()?->username ?? \Auth::user()?->name;
+                        if (is_string($username) && $username !== '') {
+                            $userData['username'] = $username;
+                        }
+                    } catch (\Throwable $ignored) {
+                        // Auth facade 未就绪时(CLI)跳过 username/email
+                    }
+                    $scope->setUser($userData);
+                }
+
+                // extra — 完整请求上下文 + 业务上下文(冲突时业务优先)
+                $extra = array_merge($requestContext, $context, [
+                    'wizard.exception_class' => get_class($e),
+                    'wizard.error_logger'    => true,
+                ]);
+                foreach ($extra as $key => $value) {
+                    if (is_scalar($value) || $value === null) {
+                        $scope->setExtra('wizard.' . $key, $value);
+                    }
+                }
+            });
+
+            \Sentry\captureException($e);
+        } catch (\Throwable $sentryFailure) {
+            // Sentry 自身故障不应影响 ErrorLogger 主流程(本地日志已写)
+            $fallbackPath = storage_path('logs/error_logger_fallback.log');
+            $line = '[' . now()->format('Y-m-d H:i:s') . '] Sentry Fallback: '
+                  . $sentryFailure->getMessage()
+                  . ' | original: ' . get_class($e) . ' - ' . $e->getMessage()
+                  . PHP_EOL;
+            @error_log($line, 3, $fallbackPath);
+        }
+    }
+
+    /**
+     * 是否应把此异常上报到 Sentry。
+     *
+     * 复用 SentryEventFilter::ignoredClasses()(单一可信源),在 ErrorLogger::record
+     * 入口先过滤,避免无谓的 Sentry 调用。
+     */
+    private static function isReportingException(\Throwable $e): bool
+    {
+        foreach (\App\Support\SentryEventFilter::ignoredClasses() as $class) {
+            if ($e instanceof $class) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

@@ -82,6 +82,57 @@ class Handler extends ExceptionHandler
             return $this->renderTokenExpired($request, $e);
         });
 
+        // Sentry 上报钩子:对未预期的 5xx 异常显式上报。
+        // sentry-laravel 已通过 reporter() 钩子自动接管,但本闭包提供额外保障:
+        //   - 显式过滤 4xx 噪声(与 config/sentry.php::before_send 共享 SentryEventFilter)
+        //   - 即使 SDK 因 DSN 缺失被禁用,本闭包也安全 noop(仅做过滤)
+        //   - 注入登录用户的 user.id 到 Sentry scope,便于在控制台按用户追踪
+        $this->reportable(function (\Throwable $e): bool {
+            try {
+                if (!function_exists('\\Sentry\\captureException')) {
+                    return true;
+                }
+                $app = function_exists('app') ? \app() : null;
+                if ($app === null || !$app->bound('sentry')) {
+                    return true;
+                }
+                foreach (\App\Support\SentryEventFilter::ignoredClasses() as $class) {
+                    if ($e instanceof $class) {
+                        return true;
+                    }
+                }
+
+                // 注入用户上下文到当前 scope(登录用户的 user.id 索引)
+                try {
+                    $authId = \Auth::id();
+                    if ($authId !== null && $authId !== '') {
+                        \Sentry\configureScope(function (\Sentry\State\Scope $scope) use ($authId): void {
+                            $userData = ['id' => (string) $authId];
+                            try {
+                                $email = \Auth::user()?->email ?? \Auth::user()?->mail;
+                                if (is_string($email) && $email !== '') {
+                                    $userData['email'] = $email;
+                                }
+                                $username = \Auth::user()?->username ?? \Auth::user()?->name;
+                                if (is_string($username) && $username !== '') {
+                                    $userData['username'] = $username;
+                                }
+                            } catch (\Throwable $ignored) {
+                            }
+                            $scope->setUser($userData);
+                        });
+                    }
+                } catch (\Throwable $ignored) {
+                    // Auth facade 未就绪时跳过
+                }
+
+                \Sentry\captureException($e);
+            } catch (\Throwable $sentryFailure) {
+                // Sentry 异常不能阻塞 Laravel 自有的 report 流,放行
+            }
+            return true;
+        });
+
         $this->renderable(function (\Throwable $e, $request) {
             if (!$request->is('api/*')) {
                 return null;
