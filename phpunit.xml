@@ -27,5 +27,8 @@
         <env name="QUEUE_DRIVER" value="sync"/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
+        <env name="MAIL_DRIVER" value="array"/>
+        <env name="MAIL_FROM_ADDRESS" value="noreply@example.com"/>
+        <env name="MAIL_FROM_NAME" value="Wizard Test"/>
     </php>
 </phpunit>

@@ -47,6 +47,27 @@ Route::group(['middleware' => 'locale'], function () {
     | 命名 limiter 在 AppServiceProvider::registerRateLimiters() 中定义。
     */
     Auth::routes($authRoutes);
+
+    /*
+    |--------------------------------------------------------------------------
+    | 2FA（TOTP）路由
+    |--------------------------------------------------------------------------
+    | 三类:
+    |   - 中间步骤(/auth/2fa GET/POST):已通过密码但尚未完成 TOTP 的半登录态;
+    |     controller 自检 session('2fa_pending_user_id') 防止越权访问。
+    |   - 启用(/auth/2fa/enable GET/POST):需已登录用户主动启用。
+    |   - 禁用(/auth/2fa/disable POST):需已登录用户主动禁用。
+    | 2FA 路由不在 Auth::routes() 默认注册范围内,因此手动追加到 LoginController。
+    */
+    Route::get('/auth/2fa', 'Auth\LoginController@show2faForm')->name('auth.2fa.show');
+    Route::post('/auth/2fa', 'Auth\LoginController@verify2fa')->name('auth.2fa.verify');
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/auth/2fa/enable', 'Auth\LoginController@showEnable2fa')->name('auth.2fa.enable.show');
+        Route::post('/auth/2fa/enable', 'Auth\LoginController@enable2fa')->name('auth.2fa.enable');
+        Route::post('/auth/2fa/disable', 'Auth\LoginController@disable2fa')->name('auth.2fa.disable');
+    });
+
     // 博客子域名 或 /blog 前缀（二选一）
     $blogDomain = env('BLOG_DOMAIN', ''); // 有配置就使用子域名，否则使用 /blog 前缀
     if (!empty($blogDomain)) {
