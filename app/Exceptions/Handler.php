@@ -71,11 +71,58 @@ class Handler extends ExceptionHandler
      * Register the exception handling callbacks for the application.
      *
      * AD2:把 TokenExpiredException 渲染到自定义方法。
+     *
+     * AD-X:api/* 路径下未捕获异常统一返回
+     *      {success:false, message:'Internal Server Error', request_id}
+     *      跳过 ValidationException(交给 Laravel 默认 422 渲染,保证 FormRequest 不变)。
      */
     public function register(): void
     {
         $this->renderable(function (TokenExpiredException $e, $request) {
             return $this->renderTokenExpired($request, $e);
+        });
+
+        $this->renderable(function (\Throwable $e, $request) {
+            if (!$request->is('api/*')) {
+                return null;
+            }
+
+            // 保留 Laravel/项目已有的特殊渲染:Validation 422 / TokenExpired 401 / Auth 401 等
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                return null;
+            }
+            if ($e instanceof \App\Exceptions\TokenExpiredException) {
+                return null;
+            }
+            if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                return null;
+            }
+            if ($e instanceof \Illuminate\Auth\Access\AuthorizationException) {
+                return null;
+            }
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+                return null;
+            }
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                return null;
+            }
+            if ($e instanceof \Illuminate\Session\TokenMismatchException) {
+                return null;
+            }
+
+            $requestId = $request->attributes->get('request_id');
+            if (!is_string($requestId) || $requestId === '') {
+                $requestId = '-';
+            }
+
+            $status = 500;
+            $message = 'Internal Server Error';
+
+            return response()->json([
+                'success'    => false,
+                'message'    => $message,
+                'request_id' => $requestId,
+            ], $status);
         });
     }
 }
