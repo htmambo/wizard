@@ -10,9 +10,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Exceptions\InvalidUploadException;
 use App\Repositories\Attachment;
 use App\Repositories\Document;
 use App\Repositories\Project;
+use App\Support\UploadWhitelist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -44,6 +46,23 @@ class AttachmentController extends Controller
 
         $file = $request->file('attachment');
         $extension = $this->getFileExtension($file);
+
+        try {
+            UploadWhitelist::validateDocument($file);
+        } catch (InvalidUploadException $e) {
+            // 把 UploadWhitelist 抛出的安全错误归并到 'extension' 字段下,
+            // 复用现有 422 渲染逻辑(API → JSON,Web → redirect back)。
+            // extension 故意用一个永远不在白名单内的占位值,
+            // 确保 validateParameters 必定抛 ValidationException。
+            $message = str_contains($e->getMessage(), '不支持') || str_contains($e->getMessage(), '不允许')
+                ? '上传文件类型不支持'
+                : '附件上传失败';
+            $this->validateParameters(
+                ['extension' => 'invalid-' . strtolower($extension)],
+                ['extension' => 'in:' . implode(',', $this->getSupportExtensions())],
+                ['extension.in' => $message]
+            );
+        }
 
         $this->validateParameters(
             [

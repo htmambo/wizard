@@ -6,6 +6,7 @@ use App\Http\Middleware\AdminAuth;
 use App\Http\Middleware\GlobalAuth;
 use App\Http\Middleware\Locale;
 use App\Http\Middleware\RequestId;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SharePermission;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -25,6 +26,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\TrimStrings::class,
             \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
             RequestId::class,
+            SecurityHeaders::class,
         ];
 
     /**

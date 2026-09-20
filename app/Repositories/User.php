@@ -8,6 +8,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Casts\Encrypted;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -100,6 +101,20 @@ class User extends Authenticatable
         = [
             'password',
             'remember_token',
+        ];
+
+    /**
+     * 加密落库的字段:对称加密存储,读取时自动解密。
+     *
+     * - totp_secret : TOTP 共享密钥,仅 2FA 启用时写入,单因素登录用户永远为 null。
+     * - backup_codes: 备用码数组(JSON),Agent-13 引入。
+     *
+     * password / remember_token 仍由 Hash 承担,不在此处处理。
+     */
+    protected $casts
+        = [
+            'totp_secret'  => Encrypted::class,
+            'backup_codes' => Encrypted::class . ':array',
         ];
 
     /**
