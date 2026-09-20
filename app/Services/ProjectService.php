@@ -17,6 +17,7 @@ use App\Repositories\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * 项目（Project）域业务服务
@@ -35,6 +36,18 @@ use Illuminate\Support\Collection as SupportCollection;
 class ProjectService
 {
     /**
+     * 项目列表缓存的版本键（单调递增）。
+     * 写入侧（create/update/delete/addMember/removeMember）通过
+     * bumpCacheVersion() 让版本号 +1，所有旧版本键即自动失效。
+     */
+    private const CACHE_VERSION_KEY = 'projects:list:version';
+
+    /**
+     * 列表缓存 TTL（秒）。短 TTL + 主动失效 = 数据安全性。
+     */
+    private const CACHE_TTL_SECONDS = 300;
+
+    /**
      * 列出用户可见的项目
      *
      * 业务规则：
@@ -44,31 +57,66 @@ class ProjectService
      *
      * 排序：catalog_id ASC, sort_level ASC, id ASC
      *
+     * 缓存：按 user 维度 + 单调递增版本号缓存 5 分钟；
+     * 任何写入操作都会让版本号 +1，旧键自动失效。
+     *
      * @return Collection<int, Project>
      */
     public function listVisibleForUser(User $user): Collection
     {
-        $userGroupIds = $user->groups->pluck('id')->all();
+        $version = $this->getCacheVersion();
+        $cacheKey = "projects:list:v{$version}:user:{$user->id}";
 
-        return Project::query()
-            ->where(function ($query) use ($user, $userGroupIds) {
-                $query->where('visibility', Project::VISIBILITY_PUBLIC)
-                      ->orWhere('user_id', $user->id);
+        return Cache::remember($cacheKey, self::CACHE_TTL_SECONDS, function () use ($user) {
+            $userGroupIds = $user->groups->pluck('id')->all();
 
-                if (!empty($userGroupIds)) {
-                    $query->orWhere(function ($query) use ($userGroupIds) {
-                        $query->where('visibility', '!=', Project::VISIBILITY_PUBLIC)
-                              ->whereHas('groups', function ($query) use ($userGroupIds) {
-                                  $query->whereIn('groups.id', $userGroupIds);
-                              });
-                    });
-                }
-            })
-            ->select(['id', 'name', 'catalog_id', 'sort_level'])
-            ->orderBy('catalog_id', 'ASC')
-            ->orderBy('sort_level', 'ASC')
-            ->orderBy('id', 'ASC')
-            ->get();
+            return Project::query()
+                ->where(function ($query) use ($user, $userGroupIds) {
+                    $query->where('visibility', Project::VISIBILITY_PUBLIC)
+                          ->orWhere('user_id', $user->id);
+
+                    if (!empty($userGroupIds)) {
+                        $query->orWhere(function ($query) use ($userGroupIds) {
+                            $query->where('visibility', '!=', Project::VISIBILITY_PUBLIC)
+                                  ->whereHas('groups', function ($query) use ($userGroupIds) {
+                                      $query->whereIn('groups.id', $userGroupIds);
+                                  });
+                        });
+                    }
+                })
+                ->select(['id', 'name', 'catalog_id', 'sort_level'])
+                ->orderBy('catalog_id', 'ASC')
+                ->orderBy('sort_level', 'ASC')
+                ->orderBy('id', 'ASC')
+                ->get();
+        });
+    }
+
+    /**
+     * 获取项目列表缓存的当前版本号。
+     *
+     * 用 Cache::add() 兜底确保键存在（首次访问时初始化为 0），
+     * 然后返回 int 值。该键本身以较长的 TTL 持久存在，避免
+     * 每次都重建。
+     */
+    private function getCacheVersion(): int
+    {
+        Cache::add(self::CACHE_VERSION_KEY, 0, now()->addDays(30));
+
+        return (int) Cache::get(self::CACHE_VERSION_KEY, 0);
+    }
+
+    /**
+     * 让项目列表缓存版本号 +1，使所有旧版本的 per-user 缓存键
+     * 自动失效（无需主动 forget 所有用户键）。
+     */
+    private function bumpCacheVersion(): void
+    {
+        if (!Cache::increment(self::CACHE_VERSION_KEY)) {
+            // 文件/数组等驱动下 increment 在键不存在时返回 false
+            // 这里直接 put 一个大于当前值的版本，避免并发场景下的回退
+            Cache::put(self::CACHE_VERSION_KEY, 1, now()->addDays(30));
+        }
     }
 
     /**
@@ -94,6 +142,7 @@ class ProjectService
             'catalog_id'  => $data['catalog'],
         ]);
 
+        $this->bumpCacheVersion();
         event(new ProjectCreated($project));
 
         return $project;
@@ -123,6 +172,7 @@ class ProjectService
 
         if ($project->isDirty()) {
             $project->save();
+            $this->bumpCacheVersion();
             event(new ProjectModified($project, 'basic'));
         }
 
@@ -135,6 +185,7 @@ class ProjectService
     public function delete(Project $project): void
     {
         $project->delete();
+        $this->bumpCacheVersion();
         event(new ProjectDeleted($project));
     }
 
@@ -152,6 +203,7 @@ class ProjectService
         $project->groups()->detach($groupId);
         $project->groups()->attach($groupId, ['privilege' => $privilegeValue]);
 
+        $this->bumpCacheVersion();
         event(new ProjectModified($project, 'privilege'));
     }
 
@@ -167,6 +219,7 @@ class ProjectService
         }
 
         $project->groups()->detach($groupId);
+        $this->bumpCacheVersion();
         event(new ProjectModified($project, 'privilege'));
 
         return true;

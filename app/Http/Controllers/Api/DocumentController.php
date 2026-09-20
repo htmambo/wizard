@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Api\CreateDocumentRequest;
+use App\Http\Requests\Api\UpdateDocumentRequest;
 use Illuminate\Validation\ValidationException;
 use App\Components\Readability\Readability;
 use App\Events\DocumentCreated;
@@ -122,7 +124,7 @@ class DocumentController extends Controller
     #[Response(401, '未认证')]
     #[Response(403, '无权限')]
     #[Response(404, '页面不存在')]
-    public function update(Request $request, $id){
+    public function update(UpdateDocumentRequest $request, $id){
         $document = Document::find($id);
         if (!$document) {
             return $this->error('Document not found', 404);
@@ -196,18 +198,7 @@ class DocumentController extends Controller
      */
     #[Response(401, '未认证')]
     #[Response(422, '验证失败')]
-    public function create(Request $request){
-        $this->validate($request, [
-            // 标题
-            'title' => 'required|string|max:255',
-            // 内容
-            'content' => 'required|string',
-            // 来源网址
-            'url' => 'required|url',
-            // 格式，raw或markdown
-            'format' => 'in:html,markdown',
-            // 'project_id' => 'required|integer|exists:projects,id',
-        ]);
+    public function create(CreateDocumentRequest $request){
         $url = $request->input('url');
         $content = $request->input('content');
         $readability = new Readability($content, $url, 'libxml', false);

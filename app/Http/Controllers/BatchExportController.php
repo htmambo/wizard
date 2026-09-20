@@ -8,11 +8,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ExportBatchJob;
 use App\Policies\ProjectPolicy;
 use App\Repositories\Project;
 use App\Services\ExportService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class BatchExportController extends Controller
 {
@@ -26,16 +27,22 @@ class BatchExportController extends Controller
     /**
      * 批量导出文档
      *
+     * PDF 渲染 + ZIP 打包是重操作,改为异步任务执行:
+     *  - 入参校验 / 授权 / 导航树收集仍在本方法内（轻量）
+     *  - 重活 dispatch 给 ExportBatchJob,完成后通过通知送达用户
+     *  - 同步立即返回 202 Accepted + queued 标记
+     *
+     * 同步队列 (QUEUE_DRIVER=sync) 下 dispatch 立即执行,
+     * 保留原有同步行为,生产环境切换 database/redis 即可获得真异步。
+     *
      * @param Request $request
      * @param         $project_id
      *
-     * @return BinaryFileResponse
+     * @return JsonResponse
      *
      * @throws \Illuminate\Validation\ValidationException
-     * @throws \Mpdf\MpdfException
-     * @throws \ZipStream\Exception\OverflowException
      */
-    public function batchExport(Request $request, $project_id)
+    public function batchExport(Request $request, $project_id): JsonResponse
     {
         $this->canExport($project_id);
 
@@ -55,17 +62,13 @@ class BatchExportController extends Controller
 
         $navigators = $this->exportService->collectNavigators($project, $pid);
 
-        $filePath = $this->exportService->exportBatch(\Auth::user(), $project, $navigators, $type);
+        ExportBatchJob::dispatch(\Auth::user(), $project, $navigators, $type);
 
-        $downloadName = $type === 'pdf'
-            ? "{$project->name}.pdf"
-            : "{$project->name}.zip";
-
-        $this->exportService->notifyExportComplete(\Auth::user(), $filePath, $downloadName);
-
-        return response()
-            ->download($filePath, $downloadName)
-            ->deleteFileAfterSend(true);
+        return new JsonResponse([
+            'success' => true,
+            'queued'  => true,
+            'message' => '导出任务已开始，完成后会通过通知送达',
+        ], 202);
     }
 
     /**

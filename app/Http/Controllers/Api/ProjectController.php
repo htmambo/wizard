@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Api\AddProjectMemberRequest;
+use App\Http\Requests\Api\CreateProjectRequest;
+use App\Http\Requests\Api\UpdateProjectRequest;
 use App\Repositories\Document;
 use App\Repositories\Project;
 use App\Services\ProjectService;
@@ -125,30 +128,14 @@ class ProjectController extends Controller
     #[Response(401, '未认证')]
     #[Response(403, '无权限')]
     #[Response(422, '验证失败')]
-    public function create(Request $request)
+    public function create(CreateProjectRequest $request)
     {
         // 检查用户是否有创建项目的权限
         if (!Auth::user()->can('project-create')) {
             return $this->error('Unauthorized', 403);
         }
 
-        $this->validate(
-            $request,
-            [
-                'name'        => 'required|between:1,100',
-                'description' => 'max:255',
-                'visibility'  => 'required|in:1,2',
-                'sort_level'  => 'integer|between:-9999999999,999999999',
-                'catalog'     => 'required|integer',
-            ],
-            [
-                'name.required'   => __('project.validation.project_name_required'),
-                'name.between'    => __('project.validation.project_name_between'),
-                'description.max' => __('project.validation.project_description_max'),
-            ]
-        );
-
-        $project = $this->projectService->create(Auth::user(), $request->all());
+        $project = $this->projectService->create(Auth::user(), $request->validated());
 
         return $this->success([
             'id'          => $project->id,
@@ -173,7 +160,7 @@ class ProjectController extends Controller
     #[Response(403, '无权限')]
     #[Response(404, '项目不存在')]
     #[Response(422, '验证失败')]
-    public function update(Request $request, $id)
+    public function update(UpdateProjectRequest $request, $id)
     {
         $project = Project::find($id);
         if (empty($project)) {
@@ -185,25 +172,7 @@ class ProjectController extends Controller
             return $this->error('Unauthorized', 403);
         }
 
-        $this->validate(
-            $request,
-            [
-                'name'               => 'required|between:1,100',
-                'description'        => 'max:255',
-                'visibility'         => 'required|in:1,2',
-                'sort_level'         => 'integer|between:-999999999,999999999',
-                'catalog'            => 'required|integer',
-                'catalog_sort_style' => 'in:0,1',
-                'catalog_fold_style' => 'in:0,1,2',
-            ],
-            [
-                'name.required'   => __('project.validation.project_name_required'),
-                'name.between'    => __('project.validation.project_name_between'),
-                'description.max' => __('project.validation.project_description_max'),
-            ]
-        );
-
-        $updated = $this->projectService->update($project, Auth::user(), $request->all());
+        $updated = $this->projectService->update($project, Auth::user(), $request->validated());
 
         return $this->success($updated->fresh()->toArray(), 'Project updated successfully');
     }
@@ -278,7 +247,7 @@ class ProjectController extends Controller
     #[Response(403, '无权限')]
     #[Response(404, '项目不存在')]
     #[Response(422, '验证失败')]
-    public function addMember(Request $request, $id)
+    public function addMember(AddProjectMemberRequest $request, $id)
     {
         $project = Project::find($id);
         if (empty($project)) {
@@ -290,16 +259,9 @@ class ProjectController extends Controller
             return $this->error('Unauthorized', 403);
         }
 
-        $this->validate(
-            $request,
-            [
-                'group_id'  => 'required|integer|min:1|exists:groups,id',
-                'privilege' => 'in:wr,r',
-            ]
-        );
-
-        $groupID = (int)$request->input('group_id');
-        $privilege = (string)$request->input('privilege', 'r');
+        $data = $request->validated();
+        $groupID = (int)$data['group_id'];
+        $privilege = (string)($data['privilege'] ?? 'r');
 
         $this->projectService->addMember($project, $groupID, $privilege);
 
