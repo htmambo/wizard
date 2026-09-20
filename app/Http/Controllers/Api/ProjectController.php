@@ -19,6 +19,7 @@ use App\Repositories\PageShare;
 use App\Repositories\Project;
 use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -105,6 +106,10 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
+     * @response 401 {"success":false,"message":"Unauthorized"}
+     * @response 403 {"success":false,"message":"Unauthorized"}
+     * @response 404 {"success":false,"message":"Project not found"}
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function view(Request $request, $id)
@@ -138,6 +143,10 @@ class ProjectController extends Controller
      * 创建新项目
      *
      * @param Request $request
+     *
+     * @response 401 {"success":false,"message":"Unauthorized"}
+     * @response 403 {"success":false,"message":"Unauthorized"}
+     * @response 422 {"success":false,"message":"Validation failed"}
      *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
@@ -199,6 +208,11 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
+     * @response 401 {"success":false,"message":"Unauthorized"}
+     * @response 403 {"success":false,"message":"Unauthorized"}
+     * @response 404 {"success":false,"message":"Project not found"}
+     * @response 422 {"success":false,"message":"Validation failed"}
+     *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -258,6 +272,10 @@ class ProjectController extends Controller
      * @param Request $request
      * @param int     $id 项目ID
      *
+     * @response 401 {"success":false,"message":"Unauthorized"}
+     * @response 403 {"success":false,"message":"Unauthorized"}
+     * @response 404 {"success":false,"message":"Project not found"}
+     *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
@@ -286,6 +304,10 @@ class ProjectController extends Controller
      *
      * @param Request $request
      * @param int     $id 项目ID
+     *
+     * @response 401 {"success":false,"message":"Unauthorized"}
+     * @response 403 {"success":false,"message":"Unauthorized"}
+     * @response 404 {"success":false,"message":"Project not found"}
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -321,6 +343,11 @@ class ProjectController extends Controller
      *
      * @param Request $request
      * @param int     $id 项目ID
+     *
+     * @response 401 {"success":false,"message":"Unauthorized"}
+     * @response 403 {"success":false,"message":"Unauthorized"}
+     * @response 404 {"success":false,"message":"Project not found"}
+     * @response 422 {"success":false,"message":"Validation failed"}
      *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
@@ -368,6 +395,10 @@ class ProjectController extends Controller
      * @param int     $id       项目ID
      * @param int     $memberId 用户组ID
      *
+     * @response 401 {"success":false,"message":"Unauthorized"}
+     * @response 403 {"success":false,"message":"Unauthorized"}
+     * @response 404 {"success":false,"message":"Project or member not found"}
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function deleteMember(Request $request, $id, $memberId)
@@ -399,6 +430,10 @@ class ProjectController extends Controller
      *
      * @param Request $request
      * @param int     $id 项目ID
+     *
+     * @response 401 {"success":false,"message":"Unauthorized"}
+     * @response 403 {"success":false,"message":"Unauthorized"}
+     * @response 404 {"success":false,"message":"Project not found"}
      *
      * @return \Illuminate\Http\JsonResponse
      */
