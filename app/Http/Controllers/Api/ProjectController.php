@@ -2,34 +2,27 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\DocumentCreated;
-use App\Events\DocumentDeleted;
-use App\Events\DocumentMarkModified;
-use App\Events\DocumentModified;
-use App\Events\ProjectCreated;
-use App\Events\ProjectDeleted;
-use App\Events\ProjectModified;
-use App\Policies\ProjectPolicy;
 use App\Repositories\Document;
-use App\Repositories\DocumentHistory;
-use App\Repositories\DocumentScore;
-use App\Repositories\Group as GroupModel;
-use App\Repositories\OperationLogs;
-use App\Repositories\PageShare;
 use App\Repositories\Project;
-use Carbon\Carbon;
+use App\Services\ProjectService;
 use Dedoc\Scramble\Attributes\Group;
-use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use League\CommonMark\CommonMarkConverter;
-use SoapBox\Formatter\Formatter;
+use App\Repositories\OperationLogs;
 
 #[Group('项目相关', '项目相关API', 3)]
 class ProjectController extends Controller
 {
+
+    /**
+     * @var ProjectService
+     */
+    protected $projectService;
+
+    public function __construct(ProjectService $projectService)
+    {
+        $this->projectService = $projectService;
+    }
 
     /**
      * 获取项目文档
@@ -51,16 +44,7 @@ class ProjectController extends Controller
             return $this->error('Unauthorized', 403);
         }
 
-        // 获取项目文档
-        $result = Document::where('project_id', $id)
-            ->orderBy('sort_level', 'ASC')
-            ->with(['user' => function ($query) {
-                $query->select('id', 'name');
-            }, 'project' => function ($query) {
-                $query->select('id', 'name');
-            }])
-            ->select(['id', 'title', 'description', 'project_id', 'user_id'])
-            ->paginate($perPage);
+        $result = $this->projectService->listDocuments($project, (int)$perPage);
         $documents = $result->items();
         $meta = [
             'total'        => $result->total(),
@@ -79,21 +63,9 @@ class ProjectController extends Controller
      */
     public function lists(Request $request, $format = 'json')
     {
-        $projectModel = Project::query();
         $user = Auth::user();
-        $userGroupIds = empty($user) ? [] : $user->groups->pluck('id')->all();
-        $projectModel->where(function ($query) use ($user, $userGroupIds) {
-            $query->where('visibility', Project::VISIBILITY_PUBLIC)->orWhere('user_id', $user->id);
-            if (!empty($userGroupIds)) {
-                $query->orWhere(function ($query) use ($userGroupIds) {
-                    $query->where('visibility', '!=', Project::VISIBILITY_PUBLIC)
-                        ->whereHas('groups', function ($query) use ($userGroupIds) {
-                            $query->whereIn('groups.id', $userGroupIds);
-                        });
-                });
-            }
-        });
-        $projects = $projectModel->select(['id', 'name', 'catalog_id', 'sort_level'])->orderBy('catalog_id', 'ASC')->orderBy('sort_level', 'ASC')->orderBy('id', 'ASC')->get();
+        $projects = $this->projectService->listVisibleForUser($user);
+        $userGroupIds = $user->groups->pluck('id')->all();
         return $this->success($projects, 'Projects retrieved successfully', [
             'usergroups' => $userGroupIds,
             'user' => $user ? $user->only(['id', 'name']) : null
@@ -174,23 +146,7 @@ class ProjectController extends Controller
             ]
         );
 
-        if (Auth::user()->can('project-sort')) {
-            $sortLevel = $request->input('sort_level', 1000);
-        } else {
-            $sortLevel = 1000;
-        }
-
-        $project = Project::create([
-            'name'        => $request->input('name'),
-            'description' => $request->input('description'),
-            'user_id'     => Auth::user()->id,
-            'visibility'  => $request->input('visibility'),
-            'sort_level'  => (int)$sortLevel,
-            'catalog_id'  => $request->input('catalog'),
-        ]);
-
-        // 触发项目创建事件（记录操作日志、通知管理员）
-        event(new ProjectCreated($project));
+        $project = $this->projectService->create(Auth::user(), $request->all());
 
         return $this->success([
             'id'          => $project->id,
@@ -246,24 +202,9 @@ class ProjectController extends Controller
             ]
         );
 
-        $project->name = $request->input('name');
-        $project->description = $request->input('description');
-        $project->visibility = $request->input('visibility');
-        $project->catalog_id = $request->input('catalog');
-        $project->catalog_sort_style = $request->input('catalog_sort_style', Project::SORT_STYLE_DIR_FIRST);
-        $project->catalog_fold_style = $request->input('catalog_fold_style', Project::FOLD_STYLE_AUTO);
-        if (Auth::user()->can('project-sort') && $request->input('sort_level') != null) {
-            $project->sort_level = (int)$request->input('sort_level');
-        }
+        $updated = $this->projectService->update($project, Auth::user(), $request->all());
 
-        if ($project->isDirty()) {
-            $project->save();
-
-            // 触发项目基本信息更新事件（记录操作日志）
-            event(new ProjectModified($project, 'basic'));
-        }
-
-        return $this->success($project->fresh()->toArray(), 'Project updated successfully');
+        return $this->success($updated->fresh()->toArray(), 'Project updated successfully');
     }
 
     /**
@@ -291,10 +232,7 @@ class ProjectController extends Controller
             return $this->error('Unauthorized', 403);
         }
 
-        $project->delete();
-
-        // 触发项目删除事件（记录操作日志、清理搜索索引）
-        event(new ProjectDeleted($project));
+        $this->projectService->delete($project);
 
         return $this->success(null, 'Project deleted successfully');
     }
@@ -323,17 +261,7 @@ class ProjectController extends Controller
             return $this->error('Unauthorized', 403);
         }
 
-        $members = $project->groups()
-            ->select('groups.id', 'groups.name', 'groups.user_id')
-            ->get()
-            ->map(function (GroupModel $group) {
-                return [
-                    'id'         => $group->id,
-                    'name'       => $group->name,
-                    'privilege'  => $group->pivot->privilege,
-                    'created_at' => $group->pivot->created_at,
-                ];
-            });
+        $members = $this->projectService->getMembers($project);
 
         return $this->success($members, 'Project members retrieved successfully');
     }
@@ -373,18 +301,14 @@ class ProjectController extends Controller
         );
 
         $groupID = (int)$request->input('group_id');
-        $privilege = $request->input('privilege', 'r');
+        $privilege = (string)$request->input('privilege', 'r');
 
-        $project->groups()->detach($groupID);
-        $project->groups()->attach($groupID, ['privilege' => $privilege == 'r' ? Project::PRIVILEGE_RO : Project::PRIVILEGE_WR]);
-
-        // 触发项目权限更新事件（记录操作日志）
-        event(new ProjectModified($project, 'privilege'));
+        $this->projectService->addMember($project, $groupID, $privilege);
 
         return $this->success([
             'project_id' => $project->id,
             'group_id'   => $groupID,
-            'privilege'  => $privilege == 'r' ? Project::PRIVILEGE_RO : Project::PRIVILEGE_WR,
+            'privilege'  => $privilege === 'r' ? Project::PRIVILEGE_RO : Project::PRIVILEGE_WR,
         ], 'Project member added successfully');
     }
 
@@ -413,14 +337,9 @@ class ProjectController extends Controller
             return $this->error('Unauthorized', 403);
         }
 
-        if (!$project->groups()->where('groups.id', $memberId)->exists()) {
+        if (!$this->projectService->removeMember($project, (int)$memberId)) {
             return $this->error('Member not found', 404);
         }
-
-        $project->groups()->detach($memberId);
-
-        // 触发项目权限更新事件（记录操作日志）
-        event(new ProjectModified($project, 'privilege'));
 
         return $this->success(null, 'Project member deleted successfully');
     }

@@ -9,16 +9,23 @@
 namespace App\Http\Controllers;
 
 
-use App\Events\CommentCreated;
-use App\Notifications\CommentReplied;
-use App\Notifications\DocumentCommented;
 use App\Policies\ProjectPolicy;
-use App\Repositories\Comment;
 use App\Repositories\Document;
+use App\Services\CommentService;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    /**
+     * @var CommentService
+     */
+    protected $commentService;
+
+    public function __construct(CommentService $commentService)
+    {
+        $this->commentService = $commentService;
+    }
+
     /**
      * 发表评论
      *
@@ -53,18 +60,12 @@ class CommentController extends Controller
             abort(404);
         }
 
-        $comment = Comment::create([
-            'content'     => comment_filter($content), // XSS 防护由 Blade {{ }} 的 e() 转义承担
-            'user_id'     => \Auth::user()->id,
-            'reply_to_id' => 0,
-            'page_id'     => $page_id,
-        ]);
+        $document = Document::findOrFail($page_id);
 
-        event(new CommentCreated($comment));
+        $comment = $this->commentService->create(\Auth::user(), $document, $content);
 
         return [
             'id' => $comment->id
         ];
     }
-
 }
