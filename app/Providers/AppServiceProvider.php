@@ -18,7 +18,10 @@ use App\Repositories\Project;
 use App\Repositories\Template;
 use App\Repositories\User;
 use Carbon\Carbon;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +87,100 @@ class AppServiceProvider extends ServiceProvider
         Document::observe(DocumentObserver::class);
         Project::observe(ProjectObserver::class);
         Group::observe(GroupObserver::class);
+
+        $this->registerRateLimiters();
+    }
+
+    /**
+     * 注册命名限速器(throttle:<name> 中间件引用)。
+     *
+     * 阈值集中在 config/ratelimit.php,便于调整。
+     * 429 响应统一为 ApiResponse 格式(success/message/request_id),
+     * 同时复用 RequestId 中间件写入的 X-Request-Id 属性,
+     * 方便客户端排错与日志关联。
+     */
+    private function registerRateLimiters(): void
+    {
+        $buildJsonResponse = static function (Request $request, array $headers): \Illuminate\Http\JsonResponse {
+            return response()->json([
+                'success'    => false,
+                'message'    => 'Too Many Requests',
+                'request_id' => $request->attributes->get('request_id', '-'),
+            ], 429)->withHeaders($headers);
+        };
+
+        // 通用只读 API:已登录按 user.id,匿名按 IP(Limit 默认行为)
+        RateLimiter::for('api-read', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.api-read', 120);
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response($buildJsonResponse);
+        });
+
+        // 通用写 API:已登录按 user.id,匿名按 IP
+        RateLimiter::for('api-write', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.api-write', 30);
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response($buildJsonResponse);
+        });
+
+        // 项目列表:按 user.id(浏览器扩展高频轮询)
+        RateLimiter::for('api-lists', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.api-lists', 300);
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response($buildJsonResponse);
+        });
+
+        // 文档搜索:按 user.id (匿名按 IP)
+        RateLimiter::for('api-search', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.api-search', 60);
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response($buildJsonResponse);
+        });
+
+        // 批量导出:按 user.id,严格管控
+        RateLimiter::for('api-export', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.api-export', 5);
+            return Limit::perMinute($limit)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response($buildJsonResponse);
+        });
+
+        // OAuth 令牌:按 IP(防爆破)
+        RateLimiter::for('oauth-token', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.oauth-token', 10);
+            return Limit::perMinute($limit)
+                ->by($request->ip())
+                ->response($buildJsonResponse);
+        });
+
+        // Web 登录:按 name|ip,允许匿名(name 不一定存在,使用请求体 name 字段作为辅助)
+        RateLimiter::for('web-login', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.web-login', 5);
+            $key = (string) ($request->input('name') ?? '') . '|' . $request->ip();
+            return Limit::perMinute($limit)
+                ->by($key)
+                ->response($buildJsonResponse);
+        });
+
+        // Web 注册:按 IP
+        RateLimiter::for('web-register', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.web-register', 3);
+            return Limit::perMinute($limit)
+                ->by($request->ip())
+                ->response($buildJsonResponse);
+        });
+
+        // Web 密码找回/重置:按 IP
+        RateLimiter::for('web-password', function (Request $request) use ($buildJsonResponse) {
+            $limit = (int) config('ratelimit.web-password', 5);
+            return Limit::perMinute($limit)
+                ->by($request->ip())
+                ->response($buildJsonResponse);
+        });
     }
 
     /**

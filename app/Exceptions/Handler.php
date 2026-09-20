@@ -109,6 +109,13 @@ class Handler extends ExceptionHandler
             if ($e instanceof \Illuminate\Session\TokenMismatchException) {
                 return null;
             }
+            // HttpResponseException 用于中间件携带预构建的 Response(例如
+            // ThrottleRequests 的 429 responseCallback)。框架默认 render()
+            // 会调用 $e->getResponse(),但本闭包先匹配 Throwable,会拦截它。
+            // 透传:返回内嵌的 Response。
+            if ($e instanceof \Illuminate\Http\Exceptions\HttpResponseException) {
+                return $e->getResponse();
+            }
 
             $requestId = $request->attributes->get('request_id');
             if (!is_string($requestId) || $requestId === '') {

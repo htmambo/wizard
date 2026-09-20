@@ -30,8 +30,23 @@ Route::group(['middleware' => 'locale'], function () {
         'verify'   => false,
         'register' => register_enabled(),
     ];
-    Auth::routes($authRoutes);
 
+    /*
+    |--------------------------------------------------------------------------
+    | Auth 路由限速
+    |--------------------------------------------------------------------------
+    | Auth::routes() 注册的 POST /login, /register, /password/email, /password/reset
+    | 仅 GET 版本带 name(POST 版本匿名),且 RouteCollection 以 method+uri 为键去重
+    | (后注册同名路由会覆盖前者),在 routes/web.php 内重复注册不会生效。
+    |
+    | 因此 throttle 中间件挂载在对应控制器构造函数中:
+    |   - LoginController           -> throttle:web-login
+    |   - RegisterController        -> throttle:web-register
+    |   - ForgotPasswordController  -> throttle:web-password
+    |   - ResetPasswordController   -> throttle:web-password
+    | 命名 limiter 在 AppServiceProvider::registerRateLimiters() 中定义。
+    */
+    Auth::routes($authRoutes);
     // 博客子域名 或 /blog 前缀（二选一）
     $blogDomain = env('BLOG_DOMAIN', ''); // 有配置就使用子域名，否则使用 /blog 前缀
     if (!empty($blogDomain)) {
