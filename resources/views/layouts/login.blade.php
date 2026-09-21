@@ -13,7 +13,7 @@
     <link rel="icon" type="image/png" href="{{ cdn_resource('/favorite.png') }}">
 
     <title>@yield('title') - {{ config('app.name', 'Wizard API') }}</title>
-    <link rel="stylesheet" href="{{ cdn_resource('/assets/vendor/bootstrap-material-design/css/bootstrap-material-design.min.css') }}">
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <style type="text/css">
         html,
         body {
@@ -96,17 +96,8 @@
     </div>
 
 <script src="{{ cdn_resource('/assets/vendor/jquery.min.js') }}"></script>
-{{--<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>--}}
-<script src="{{ cdn_resource('/assets/vendor/popper.js') }}"></script>
-<script src="{{ cdn_resource('/assets/vendor/bootstrap-material-design/js/bootstrap-material-design.min.js') }}"></script>
 
 @stack('script')
-
-<script>
-    $(function () {
-        $('body').bootstrapMaterialDesign();
-    });
-</script>
 
 </body>
 </html>

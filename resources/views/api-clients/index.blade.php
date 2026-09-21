@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">API 客户端管理</h3>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createClientModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createClientModal">
                         <i class="fas fa-plus"></i> 创建新客户端
                     </button>
                 </div>
@@ -17,14 +17,14 @@
                 <div class="card-body">
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <button type="button" class="close" data-bs-dismiss="alert">&times;</button>
                             {{ session('success') }}
                         </div>
                     @endif
 
                     @if(session('client_credentials'))
                         <div class="alert alert-warning alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <button type="button" class="close" data-bs-dismiss="alert">&times;</button>
                             <h5><i class="icon fas fa-exclamation-triangle"></i> 重要！请妥善保存以下信息：</h5>
                             <strong>Client ID:</strong> {{ session('client_credentials.client_id') }}<br>
                             <strong>Client Secret:</strong> <code>{{ session('client_credentials.client_secret') }}</code><br>
@@ -107,17 +107,17 @@
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">创建 API 客户端</h5>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <button type="button" class="close" data-bs-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="name">客户端名称 *</label>
                         <input type="text" class="form-control" id="name" name="name" 
                                placeholder="例如：我的移动应用" required>
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="type">授权类型 *</label>
                         <select class="form-control" id="type" name="type" required>
                             <option value="">请选择授权类型</option>
@@ -126,7 +126,7 @@
                             <option value="authorization_code">授权码 (适用于第三方应用)</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="redirect">回调地址</label>
                         <input type="url" class="form-control" id="redirect" name="redirect" 
                                placeholder="http://localhost:3000/callback">
@@ -134,7 +134,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="submit" class="btn btn-primary">创建客户端</button>
                 </div>
             </form>

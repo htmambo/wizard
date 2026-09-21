@@ -9,7 +9,7 @@
             <div class="card-header-title">
                 @if (!empty($project_id))
                     <button type="button" data-href="{{ wzRoute('project:home', ['id' => $project_id]) }}"
-                            class="btn btn-default bmd-btn-icon" id="wz-document-goback">
+                            class="btn btn-secondary bmd-btn-icon" id="wz-document-goback">
                         <i class="fa fa-long-arrow-left"></i>
                     </button>
                 @endif

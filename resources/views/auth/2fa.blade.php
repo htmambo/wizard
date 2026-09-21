@@ -7,7 +7,7 @@
 
         {{ csrf_field() }}
 
-        <div class="text-left form-group{{ $errors->has('code') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('code') ? ' is-invalid' : '' }}">
             <label for="code" class="bmd-label-floating">验证码 / 备用码</label>
             <input id="code" type="text" class="form-control" name="code" value="{{ old('code') }}"
                    required autofocus autocomplete="one-time-code" inputmode="numeric">
@@ -19,7 +19,7 @@
             @endif
         </div>
 
-        <button type="submit" class="btn btn-lg btn-primary btn-block btn-raised">
+        <button type="submit" class="btn btn-lg btn-primary w-100 btn-raised">
             验证并登录
         </button>
 

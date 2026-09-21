@@ -17,19 +17,19 @@
                 然后输入应用显示的 6 位数字完成启用。
             </p>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label>otpauth URI（可粘贴到任意支持 otpauth 的应用）</label>
                 <input type="text" class="form-control" value="{{ $uri }}" readonly>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label>或手动输入密钥</label>
                 <input type="text" class="form-control" value="{{ $secret }}" readonly>
             </div>
 
             <form method="POST" action="{{ wzRoute('auth.2fa.enable') }}">
                 {{ csrf_field() }}
-                <div class="text-left form-group{{ $errors->has('code') ? ' has-error' : '' }}">
+                <div class="text-left mb-3{{ $errors->has('code') ? ' is-invalid' : '' }}">
                     <label for="code" class="bmd-label-floating">验证器中的 6 位数字</label>
                     <input id="code" type="text" class="form-control" name="code" value="{{ old('code') }}"
                            required autofocus autocomplete="one-time-code" inputmode="numeric">

@@ -17,22 +17,12 @@
     <link href="{{ cdn_resource('/assets/css/normalize.css') }}" rel="stylesheet">
     <link href="{{ cdn_resource('/assets/css/tagmanager.css') }}" rel="stylesheet">
 
-    <!-- Bootstrap core CSS -->
-    {{--<link href="{{ cdn_resource('/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">--}}
-    <link rel="stylesheet" href="{{ cdn_resource('/assets/vendor/bootstrap-material-design/css/bootstrap-material-design.min.css') }}">
+    <!-- Bootstrap 5 + 项目样式（Vite 构建） -->
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <link href="{{ cdn_resource('/assets/vendor/font-awesome6/css/all.min.css') }}" rel="stylesheet">
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="{{ cdn_resource('/assets/vendor/ie10-viewport-bug-workaround.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="/assets/css/style.css?{{ resourceVersion() }}" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="{{ cdn_resource('/assets/vendor/html5shiv.min.js') }}"></script>
-    <script src="{{ cdn_resource('/assets/vendor/respond.min.js') }}"></script>
-    <![endif]-->
 
     @stack('stylesheet')
 
@@ -92,19 +82,12 @@
 
 @stack('bottom')
 
-<script src="{{ cdn_resource('/assets/vendor/popper.js') }}"></script>
-<script src="{{ cdn_resource('/assets/vendor/bootstrap-material-design/js/bootstrap-material-design.min.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/jquery.easing.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/jquery.scrollUp.min.js') }}"></script>
 
-<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-<script src="{{ cdn_resource('/assets/vendor/ie10-viewport-bug-workaround.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/layer/layer.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/axios.min.js') }}"></script>
 <script src="/assets/js/wizard.js?{{ resourceVersion() }}"></script>
-<script src="/assets/js/app.js?{{ resourceVersion() }}"></script>
-<script src="{{ cdn_resource('/assets/js/tagmanager.js') }}"></script>
-
 @stack('script-pre')
 
 <script>
@@ -207,14 +190,6 @@
 
 @stack('script')
 
-
-@section('bootstrap-material-init')
-    <script>
-        $(function () {
-            $('body').bootstrapMaterialDesign();
-        });
-    </script>
-@show
 
 </body>
 </html>

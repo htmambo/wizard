@@ -1,0 +1,69 @@
+// =============================================================
+// Wizard 项目 — Bootstrap 5 覆盖与 BS3 → BS5 兼容层
+// =============================================================
+
+// ---- 1. BS5 变量覆盖（项目主色） ------------------------------
+// 参考原 public/assets/css/style.css 中主题色，统一为 Material Blue 700
+$primary:   #1976d2;
+$secondary: #6c757d;
+$success:   #198754;
+$info:      #0dcaf0;
+$warning:   #ffc107;
+$danger:    #dc3545;
+$light:     #f8f9fa;
+$dark:      #212529;
+
+// ---- 2. panel-* → card 别名映射 ------------------------------
+// 保留旧类名以便现有 blade 模板无需改动即可继续工作
+.panel          { @extend .card; }
+.panel-default  { @extend .card; }
+.panel-body     { @extend .card-body; }
+.panel-heading  { @extend .card-header; }
+.panel-footer   { @extend .card-footer; }
+.panel-title    { @extend .card-title; }
+
+// 项目自定义 panel-*：保留前缀但语义映射到 card
+.panel-breadcrumb {
+    @extend .card;
+    @extend .card-body;
+    padding: 0.75rem 1rem;
+    background: var(--bs-light, #f8f9fa);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+.panel-right {
+    @extend .card;
+    @extend .card-body;
+    padding: 1rem;
+}
+.panel-separator {
+    @extend .card;
+    @extend .card-body;
+    margin: 1rem 0;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--bs-border-color);
+    border-bottom: 1px solid var(--bs-border-color);
+    border-radius: 0;
+}
+.panel-limit {
+    @extend .card;
+    @extend .card-body;
+    background: var(--bs-warning-bg-subtle, #fff8e1);
+}
+
+// ---- 3. 项目自定义颜色 ---------------------------------------
+.bg-wizard-primary   { background: #1976d2 !important; }
+.text-wizard-primary { color: #1976d2 !important; }
+
+// ---- 4. BS3 → BS5 兼容垫片 ------------------------------------
+.btn-block { width: 100%; }
+
+// BS3 pull-left/right → BS5 float-start/end
+.pull-left  { @extend .float-start; }
+.pull-right { @extend .float-end; }
+
+// BS3 label → BS5 form-label
+label { @extend .form-label; }
+
+// BS3 input-lg/input-sm → BS5 form-control-lg/form-control-sm（轻量垫片）
+.input-lg  { @extend .form-control-lg; }
+.input-sm  { @extend .form-control-sm; }

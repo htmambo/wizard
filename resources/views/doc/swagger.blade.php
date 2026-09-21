@@ -14,7 +14,7 @@
                 <div class="swagger-editor-toolbar">
                     <div class="btn-toolbar btn-toolbar-left" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group" role="group" aria-label="First group">
-                            <button type="button" data-toggle="modal" data-target="#wz-select-template" class="btn btn-info btn-raised">@lang('document.select_template')</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#wz-select-template" class="btn btn-info btn-raised">@lang('document.select_template')</button>
                         </div>
                         <div class="btn-group">
                             <a href="https://swagger.io/docs/specification/about/" target="_blank" class="btn btn-dark">
@@ -42,7 +42,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">@lang('document.select_template')</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body wz-swagger-template">
                     @foreach(wzTemplates(\App\Repositories\Template::TYPE_SWAGGER) as $temp)
@@ -52,7 +52,7 @@
                                        data-content="{{ base64_encode($temp['content']) }}" {{ $temp['default'] ? 'checked' : '' }}>
                                 <span title="{{ $temp['description'] }}"> {{ $temp['name'] }}</span>
                                 @if($temp['scope'] == \App\Repositories\Template::SCOPE_PRIVATE)
-                                    <span class="glyphicon glyphicon-eye-close" title="@lang('project.privilege_private')"></span>
+                                    <span class="bi bi-eye-slash" title="@lang('project.privilege_private')"></span>
                                 @endif
                             </label>
                         </div>
@@ -60,7 +60,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success btn-raised mr-2" id="wz-select-template-confirm">@lang('common.btn_confirm')</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">@lang('common.btn_close')</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('common.btn_close')</button>
                 </div>
             </div>
         </div>

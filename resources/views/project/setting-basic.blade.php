@@ -7,13 +7,13 @@
                 {{ csrf_field() }}
                 <input type="hidden" name="project_id" value="{{ $project->id }}">
                 <input type="hidden" name="op" value="{{ $op }}">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="editor-project-name" class="bmd-label-floating">@lang('project.project_name')</label>
                     <input type="text" class="form-control"
                            name="name" id="editor-project-name"
                            value="{{ old('name', $project->name) }}" >
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="catalog-status" class="bmd-label-floating">项目目录</label>
                     <select id="catalog-status" name="catalog" class="form-control">
                         <option value="0" {{ empty($project->catalog) ? 'selected' : '' }}>无</option>
@@ -22,11 +22,11 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="editor-description" class="bmd-label-floating">@lang('project.description')</label>
                     <textarea class="form-control" name="description" id="editor-description" rows="3">{{ old('description', $project->description) }}</textarea>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="project-visibility" class="bmd-label-floating">@lang('project.privilege')</label>
                     <div class="radio mt-2">
                         <label class="radio-inline">
@@ -39,19 +39,19 @@
                         </label>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="project-sort" class="bmd-label-floating">项目排序（值越大越靠后）</label>
                     <input type="number" name="sort_level" class="form-control float-left w-75" id="project-sort" value="{{ old('sort_level', $project->sort_level) }}" {{ Auth::user()->can('project-sort') ? '' : 'disabled' }}/>
-                    <i class="fa fa-question-circle ml-2" data-toggle="tooltip" title="" data-original-title="只有管理员可以修改"></i>
+                    <i class="fa fa-question-circle ml-2" data-bs-toggle="tooltip" title="" data-original-title="只有管理员可以修改"></i>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="catalog-sort-style" class="bmd-label-floating">排序样式</label>
                     <select id="catalog-sort-style" name="catalog_sort_style" class="form-control">
                         <option value="0" {{ $project->catalog_sort_style == 0 ? 'selected' : '' }}>文件夹优先</option>
                         <option value="1" {{ $project->catalog_sort_style == 1 ? 'selected' : '' }}>自由</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="catalog-fold-style" class="bmd-label-floating">文件夹样式</label>
                     <select id="catalog-fold-style" name="catalog_fold_style" class="form-control">
                         <option value="0" {{ $project->catalog_fold_style == 0 ? 'selected' : '' }}>自动</option>
@@ -61,9 +61,9 @@
                 </div>
 
 
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" class="btn btn-success btn-raised mr-2">@lang('common.btn_save')</button>
-                    <a href="{{ wzRoute('project:home', ['id' => $project->id]) }}" class="btn btn-default">@lang('common.btn_back')</a>
+                    <a href="{{ wzRoute('project:home', ['id' => $project->id]) }}" class="btn btn-secondary">@lang('common.btn_back')</a>
                 </div>
             </form>
         </div>

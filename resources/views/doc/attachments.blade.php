@@ -66,13 +66,13 @@
                   action="{{ wzRoute('project:doc:attachment:upload', ['id' => $project->id, 'page_id' => $pageItem->id]) }}"
                   enctype="multipart/form-data">
                 {{ csrf_field() }}
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="form-attachment-upload" class="bmd-label-floating">文件上传</label>
                     <input type="file" name="attachment" class="form-control-file" id="form-attachment-upload">
                     <small class="text-muted">支持文件格式：{{ implode('，', $extensions) }}</small>
                 </div>
 
-                <div class="form-group" style="width: 40rem;">
+                <div class="mb-3" style="width: 40rem;">
                     <label for="form-attachment-name" class="bmd-label-floating">附件名称，为空则使用附件文件名</label>
                     <input type="text" class="form-control" name="name" value="{{ old('name') }}" id="form-attachment-name">
 

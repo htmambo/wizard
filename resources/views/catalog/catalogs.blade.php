@@ -15,15 +15,15 @@
             <form method="post"
                   action="{!! wzRoute('admin:catalogs:add') !!}">
                 {{ csrf_field() }}
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="form-name" class="bmd-label-floating">目录名称</label>
                     <input id="form-name" type="text" name="name" class="form-control" value="{{ old('name') }}" />
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="catalog-sort" class="bmd-label-floating">排序（值越大越靠后）</label>
                     <input type="number" name="sort_level" class="form-control float-left w-75" id="catalog-sort" value="1000" />
                 </div>
-                <div class="form-group mt-4">
+                <div class="mb-3 mt-4">
                     <div class="checkbox">
                         <label>
                             <input type="checkbox" name="show_in_home" value="1" checked> 在首页展示
@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <br/>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" class="btn btn-raised btn-primary" >创建目录</button>
                 </div>
             </form>

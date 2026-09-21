@@ -7,7 +7,7 @@
 
         {{ csrf_field() }}
 
-        <div class="text-left form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('email') ? ' is-invalid' : '' }}">
             <label for="email" class="bmd-label-floating">@lang('common.email')</label>
             <input id="email" type="text" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
 
@@ -18,7 +18,7 @@
             @endif
         </div>
 
-        <div class="text-left form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('password') ? ' is-invalid' : '' }}">
             <label for="password" class="bmd-label-floating">@lang('common.password')</label>
             <input id="password" type="password" class="form-control" name="password" required>
 
@@ -29,7 +29,7 @@
             @endif
         </div>
 
-        <div class="form-group ">
+        <div class="mb-3 ">
             <div class="checkbox mb-3">
                 <label>
                     <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> 下次自动登录
@@ -37,7 +37,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-lg btn-primary btn-block btn-raised">
+        <button type="submit" class="btn btn-lg btn-primary w-100 btn-raised">
             @lang('common.login')
         </button>
 

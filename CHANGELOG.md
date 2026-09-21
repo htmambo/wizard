@@ -28,6 +28,9 @@
 
 ### Added
 - **API 项目模块**：`Api\ProjectController` 补全 8 个缺失方法（`view`、`create`、`update`、`delete`、`members`、`addMember`、`deleteMember`、`logs`），权限与校验对齐 Web 端；并补注册缺失的 `GET api/project/{id}/documents` 路由。
+- **`resources/sass/app.scss` + `wizard-overrides.scss`**：BS5 入口 + 项目色板覆盖
+- **Vite 5 + laravel-vite-plugin**：取代 `webpack.mix.js`（之前已删）的构建基础设施
+- **Playwright e2e 套件**：`tests/e2e/` 目录 + 视觉基线
 - **Service 层抽取**：4 个 plain-class Service
   - `App\Services\ProjectService` —— listVisibleForUser / create / update / delete / addMember / removeMember / getMembers / listDocuments（带缓存版本号失效）
   - `App\Services\DocumentService` —— 9 个方法覆盖 CRUD、状态、过期检测、远程同步、移动、评分、博客开关（432 行）
@@ -57,6 +60,7 @@
 
 ### Changed
 - **`Api\ProjectController::lists()` 返回字段**：select 新增 `catalog_id`、`sort_level`，供前端按目录/排序分组使用
+- **前端 Bootstrap 3 → 5 升级**：移除已停维护的 `bootstrap-material-design` fork，引入 BS5 官方主题 + Sass 编译（Vite 5）；自定义 `panel-*` → `card` 别名映射保留向后兼容；blade 模板 sed 批量替换 + 手动精调；tagmanager.js jQuery 解耦
 - **数据库迁移**：
   - `2026_09_20_000001_add_sort_composite_indexes` —— `pages(project_id, sort_level)` + `projects(catalog_id, sort_level)`
   - `2026_09_20_000002_add_additional_perf_indexes` —— 11 个新索引（pages/comments/histories/share/score/projects 等）
@@ -70,10 +74,12 @@
 
 ### Removed
 - **前端 Vue 死代码**：`resources/assets/js/app.js`、`bootstrap.js`、`components/Example.vue`、`resources/assets/sass/`、`webpack.mix.js`、`package.json`、`yarn.lock`；该套构建从未生成产物、也无任何页面引用，连同 `laravel/ui` dev 依赖一并清理
+- **`bootstrap-material-design/`、`bootstrap-treeview.js`、`respond.min.js`、`html5shiv.min.js`、`ie10-viewport-bug-workaround.*`**：BS3 + IE 兼容时代的死代码与 polyfill
 - **旧 `Kernel.php` 的 `throttle:60,1`** —— 由命名 limiter `api-read`/`api-write` 等替代
 
 ### Documentation
 - `docs/Task/Archive/2026-09/WIZARD_PROJECT_ANALYSIS.md` —— 项目全面体检报告
+- `docs/Task/Archive/2026-09/BS5_UPGRADE_NOTES.md` —— Bootstrap 3 → 5 升级说明（breaking changes、panel→card 别名、tagmanager 解耦）
 - `docs/db/operation_logs_index_decision.md` —— 操作日志表索引优化决策
 - Scramble 注解改用 PHP Attributes 后 `docs/api.json` 中 8 个 `/project/*` 端点补齐 403/404 描述
 

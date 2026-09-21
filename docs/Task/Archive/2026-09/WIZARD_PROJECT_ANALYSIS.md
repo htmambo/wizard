@@ -62,6 +62,7 @@ app/
 
 ### 已修复 ✅
 - 前端依赖升级：axios 1.6 / jQuery 3.7 / Vue 2.7 / Mix 6（原 Critical 项）
+- **2026-09-21 Bootstrap 3 → 5 升级完成** —— 见 `docs/Task/Archive/2026-09/BS5_UPGRADE_NOTES.md`（如有）或 PR 描述
 - `fzaninotto/faker` → `fakerphp/faker`
 - 废弃的 yzalis/identicon → jdenticon
 - API 泄露 SQL/绑定参数：`Api/ProjectController` 已无 `'sql'`/`'bindings'` 输出
@@ -90,5 +91,6 @@ app/
 - [x] 为核心链路补 Feature 测试（认证 / 文档 CRUD / 权限）—— 2026-09-20 完成，36 tests / 99 assertions 全绿（`tests/Feature/Api/`）
 - [x] 生成并提交 `composer.lock` —— 2026-09-20 已生成（注：仓库 `.gitignore` 忽略了 composer.lock，如需入库需调整忽略规则）
 - [x] 搭建可运行开发环境（composer install + .env + migrate + passport:keys）—— 2026-09-20 完成，本地使用 SQLite（MySQL/ARCHIVE 不可用场景下已兼容）
+- [x] **Bootstrap 3 → 5 升级** —— 2026-09-21 完成；见 `docs/Task/Archive/2026-09/BS5_UPGRADE_NOTES.md`
 - [ ] Controller → Service 层下沉重构
 - [ ] 操作日志表索引优化落地（已确认按 `docs/db/operation_logs_index_decision.md` 决策留给 DBA，应用侧不动表结构；pages/projects 排序复合索引已于 2026-09-20 通过 `2026_09_20_000001_add_sort_composite_indexes` 迁移落地）

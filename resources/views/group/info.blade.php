@@ -12,13 +12,13 @@
 @section('admin-content')
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="member-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">成员</a>
+            <a class="nav-link active" id="member-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">成员</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="project-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">项目</a>
+            <a class="nav-link" id="project-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">项目</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="setting-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">设置</a>
+            <a class="nav-link" id="setting-tab" data-bs-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">设置</a>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
@@ -29,7 +29,7 @@
                     <form method="post"
                           action="{!! wzRoute('admin:groups:users:add', ['id' => $group->id]) !!}">
                         {{ csrf_field() }}
-                        <div class="form-group">
+                        <div class="mb-3">
                             <select name="users[]" style="width: 440px;" class="form-control select2-multiple" id="wz-user-select" multiple>
                                 @foreach($users_for_select as $user)
                                     <option value="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}">
@@ -39,9 +39,9 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-primary btn-raised">添加</button>
-                            <a href="{!! wzRoute('admin:groups') !!}" class="btn btn-default">@lang('common.btn_back')</a>
+                            <a href="{!! wzRoute('admin:groups') !!}" class="btn btn-secondary">@lang('common.btn_back')</a>
                         </div>
                     </form>
                 </div>
@@ -97,7 +97,7 @@
                         <div class="alert alert-info" role="alert">
                             以“<b>#</b>”开头的选项为项目目录，选择该项会将该目录下所有项目权限批量赋予用户组。
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <select name="projects[]" style="width: 440px;" class="form-control select2-multiple" id="wz-project-select" multiple>
                                 @foreach($catalogs as $cat)
                                     <option value="#{{ $cat->id }}" data-name="#{{ $cat->name }}">#{{ $cat->name }}</option>
@@ -113,7 +113,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="privilege" value="wr"> @lang('project.group_write_enabled')
@@ -121,7 +121,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-primary btn-raised">添加</button>
                         </div>
                     </form>
@@ -177,12 +177,12 @@
                     <form method="post"
                           action="{!! wzRoute('admin:groups:update', ['id' => $group->id]) !!}">
                         {{ csrf_field() }}
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="form-name" class="bmd-label-floating">用户组名称</label>
                             <input id="form-name" type="text" name="name" class="form-control" value="{{ old('name', $group->name) }}" />
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-raised btn-primary" >保存</button>
                         </div>
                     </form>

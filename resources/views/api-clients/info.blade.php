@@ -11,7 +11,7 @@
                 <div class="card-header">
                     <h3 class="card-title">{{ $client->name }}</h3>
                     <div class="card-tools">
-                        <a href="{{ wzRoute('admin:api-clients') }}" class="btn btn-default">
+                        <a href="{{ wzRoute('admin:api-clients') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> 返回列表
                         </a>
                     </div>
@@ -20,14 +20,14 @@
                 <div class="card-body">
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <button type="button" class="close" data-bs-dismiss="alert">&times;</button>
                             {{ session('success') }}
                         </div>
                     @endif
 
                     @if(session('new_secret'))
                         <div class="alert alert-warning alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <button type="button" class="close" data-bs-dismiss="alert">&times;</button>
                             <h5><i class="icon fas fa-exclamation-triangle"></i> 新的客户端密钥</h5>
                             <strong>Client Secret:</strong> <code>{{ session('new_secret') }}</code><br>
                             <small class="text-muted">请立即复制保存，密钥不会再次显示。</small>
@@ -121,7 +121,7 @@
                     <div class="row mt-3">
                         <div class="col-12">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#editClientModal">
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#editClientModal">
                                     <i class="fas fa-edit"></i> 编辑客户端
                                 </button>
                                 <button type="button" class="btn btn-warning" onclick="regenerateSecret()">
@@ -200,24 +200,24 @@
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">编辑客户端</h5>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <button type="button" class="close" data-bs-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="edit_name">客户端名称 *</label>
                         <input type="text" class="form-control" id="edit_name" name="name" 
                                value="{{ $client->name }}" required>
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="edit_redirect">回调地址</label>
                         <input type="url" class="form-control" id="edit_redirect" name="redirect" 
                                value="{{ $client->redirect }}">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="submit" class="btn btn-primary">保存更改</button>
                 </div>
             </form>

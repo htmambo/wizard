@@ -19,7 +19,7 @@
 <script type="text/javascript">
     $(function () {
         // 鼠标经过提示效果
-        $('[data-toggle="tooltip"]').tooltip({
+        $('[data-bs-toggle="tooltip"]').tooltip({
             delay: {"show": 500, "hide": 100}
         });
 

@@ -1,6 +1,6 @@
 @if (!Auth::guest())
     <li role="presentation" class="dropdown">
-        <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="wz-doc-more-btn" data-toggle="dropdown"
+        <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="wz-doc-more-btn" data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
             <i class="fa fa-sliders" title="@lang('common.btn_more')"></i>
         </button>
@@ -15,7 +15,7 @@
 
             @can('page-edit', $pageItem)
                 <a href="#" wz-move
-                   class="dropdown-item" data-toggle="modal" data-target="#wz-move-model">
+                   class="dropdown-item" data-bs-toggle="modal" data-bs-target="#wz-move-model">
                     <span class="fa fa-copy mr-2"></span>
                     移动
                 </a>
@@ -83,30 +83,30 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">移动到 ...</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
 
-                        <div class="form-group wz-document-form-select">
+                        <div class="mb-3 wz-document-form-select">
                             <label for="wz-target-project_id" class="bmd-label-static">项目</label>
                             <select class="form-control" name="target_project_id" id="wz-target-project_id"></select>
                         </div>
 
-                        <div class="form-group wz-document-form-select">
+                        <div class="mb-3 wz-document-form-select">
                             <label for="wz-target-page_id" class="bmd-label-static">目录</label>
                             <select class="form-control" name="target_page_id" id="wz-target-page_id"></select>
                         </div>
 
-                        <div class="form-group ">
+                        <div class="mb-3 ">
                             <div class="checkbox mb-3">
                                 <label>
                                     <input type="checkbox" name="dont_save_updated" value="1"> 不记录修改时间
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group ">
+                        <div class="mb-3 ">
                             <div class="checkbox mb-3">
                                 <label>
                                     <input type="checkbox" name="dont_jump_target" value="1"> 不跳转到新页面
@@ -133,7 +133,7 @@
                     area: ['300px', '240px'],
                     btnAlign: 'c',
                     closeBtn:'1',//右上角的关闭
-                    content: `<div class="form-group"><p>分享密码:</p><input name="passwd" id="passwd" class="form-control" placeholder="请输入密码" /><span class="bmd-label-floating">留空则为公开分享</span></div>`,
+                    content: `<div class="mb-3"><p>分享密码:</p><input name="passwd" id="passwd" class="form-control" placeholder="请输入密码" /><span class="bmd-label-floating">留空则为公开分享</span></div>`,
                     btn:['确认','取消'],
                     yes: function (index, layero) {
                         var url = $this.data('url');
