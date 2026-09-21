@@ -31,6 +31,7 @@
 - **BS4 工具类在 BS5 下失效** —— `wizard-overrides.scss` 新增垫片：`mr-/ml-/pr-/pl-` → `me-/ms-/pe-/ps-`、`float-left/right`、`badge-*`、`badge-pill`、`.close` → `.btn-close`、`font-weight-*`、`text-left/right`、`btn-raised`、`bmd-btn-icon`、`form-control-file`。
 - **裸 `.badge` 在 BS5 下白字不可见** —— 两处通知计数改为 `badge text-bg-danger`。
 - **`RouteHelper::url()` 拒绝标量参数** —— `wzRoute('admin:api-clients:view', $id)` 抛 TypeError 导致 API 客户端管理页 500；现兼容 Laravel `route()` 的标量简写。
+- **tagmanager.js `instanceof Element` 被 raphael 破坏** —— raphael.min.js 重写 `Element.prototype` 导致 `instanceof` 判断全部失效，`$().tagsManager()` 抛 `addEventListener is not a function`，文档页标签组件与正文渲染中断、长文档失去独立滚动区域。`resolveElements`/`resolveContainer` 改为 `nodeType` 鸭子检测（顺带修复空 jQuery 集合被当成单个元素的问题）。
 
 ### Added
 - **API 项目模块**：`Api\ProjectController` 补全 8 个缺失方法（`view`、`create`、`update`、`delete`、`members`、`addMember`、`deleteMember`、`logs`），权限与校验对齐 Web 端；并补注册缺失的 `GET api/project/{id}/documents` 路由。

@@ -66,22 +66,28 @@
 
   // ---------- helpers ----------
 
+  // raphael.min.js 会重写 Element.prototype,导致 instanceof Element 全面失效,
+  // 这里用 nodeType 鸭子检测代替
+  function isElement(o) {
+    return !!o && o.nodeType === 1;
+  }
+
   function resolveElements(selector) {
     if (selector == null) return [];
     if (typeof selector === 'string') {
       return Array.prototype.slice.call(document.querySelectorAll(selector));
     }
-    if (selector instanceof Element) return [selector];
+    if (isElement(selector)) return [selector];
     if (Array.isArray(selector)) return selector.filter(Boolean);
-    if (selector.length && (selector[0] instanceof Element || selector[0] === window)) {
+    if (selector.length && (isElement(selector[0]) || selector[0] === window)) {
       return Array.prototype.slice.call(selector);
     }
-    return [selector];
+    return [];
   }
 
   function resolveContainer(ref) {
     if (!ref) return null;
-    if (ref instanceof Element) return ref;
+    if (isElement(ref)) return ref;
     if (typeof ref === 'string') return document.querySelector(ref);
     return null;
   }
