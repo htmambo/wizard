@@ -21,7 +21,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="catalog-sort" class="bmd-label-floating">排序（值越大越靠后）</label>
-                    <input type="number" name="sort_level" class="form-control float-left w-75" id="catalog-sort" value="1000" />
+                    <input type="number" name="sort_level" class="form-control" id="catalog-sort" value="1000" />
                 </div>
                 <div class="mb-3 mt-4">
                     <div class="checkbox">

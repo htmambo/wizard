@@ -10,7 +10,7 @@ test.describe('Wizard smoke tests', () => {
         await page.goto('/login');
         await expect(page.locator('input[name="email"]')).toBeVisible();
         await expect(page.locator('input[name="password"]')).toBeVisible();
-        await expect(page.locator('button[type="submit"]')).toBeVisible();
+        await expect(page.locator('form:has(input[name="password"]) button[type="submit"]')).toBeVisible();
     });
 
     test('static pages render with BS5', async ({ page }) => {

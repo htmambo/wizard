@@ -17,7 +17,7 @@
                 <a class="nav-link {{ $op == 'notification' ? 'active':'' }}" href="{{ wzRoute('user:notifications') }}">
                     <i class="fa fa-bell mr-2"></i> 通知
                     @if(userHasNotifications())
-                        <span class="badge">{{ userNotificationCount() }}</span>
+                        <span class="badge text-bg-danger">{{ userNotificationCount() }}</span>
                     @endif
                 </a>
                 <a class="nav-link {{ $op == 'templates' ? 'active':'' }}" href="{{ wzRoute('user:templates') }}">

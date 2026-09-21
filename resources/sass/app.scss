@@ -1,6 +1,17 @@
+// ---- BS5 变量覆盖（必须在 bootstrap 之前定义才生效） ----------
+// 参考原 public/assets/css/style.css 中主题色，统一为 Material Blue 700
+$primary:   #1976d2;
+$secondary: #6c757d;
+$success:   #198754;
+$info:      #0dcaf0;
+$warning:   #ffc107;
+$danger:    #dc3545;
+$light:     #f8f9fa;
+$dark:      #212529;
+
 // Bootstrap 5 全量
 @import "bootstrap/scss/bootstrap";
 // Bootstrap Icons
 @import "bootstrap-icons/font/bootstrap-icons.css";
-// 项目自定义覆盖
+// 项目自定义覆盖与兼容垫片
 @import "./wizard-overrides.scss";

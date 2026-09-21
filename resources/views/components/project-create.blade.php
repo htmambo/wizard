@@ -43,7 +43,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="project-sort" class="bmd-label-floating">排序（值越大越靠后）</label>
-                        <input type="number" name="sort_level" class="form-control float-left w-75" id="project-sort" value="1000" {{ Auth::user()->can('project-sort') ? '' : 'disabled' }}/>
+                        <input type="number" name="sort_level" class="form-control w-75" id="project-sort" value="1000" {{ Auth::user()->can('project-sort') ? '' : 'disabled' }}/>
                         <i class="fa fa-question-circle ml-2" data-bs-toggle="tooltip" title="" data-original-title="只有管理员可以修改"></i>
                     </div>
                 </form>

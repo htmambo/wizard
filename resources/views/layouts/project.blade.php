@@ -18,10 +18,10 @@
                 @endphp
                 <div class="dropdown pull-right" style="margin-right: 20px;" role="group">
                     @if($hasEditPrivilege)
-                        <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="new-document" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-plus-square" data-toggle="tooltip" title="创建文档"></i>
+                        <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="new-document" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-plus-square" data-bs-toggle="tooltip" title="创建文档"></i>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-left" aria-labelledby="new-document" style="min-width: 13rem; overflow: hidden;">
+                        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="new-document" style="min-width: 13rem; overflow: hidden;">
                             <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'html', 'pid' => $pageID]) !!}" class="dropdown-item">
                                 <i class="fa fa-book mr-2"></i> 创建 HTML 文档
                             </a>
@@ -34,22 +34,22 @@
                             <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'sheet', 'pid' => $pageID]) !!}" class="dropdown-item">
                                 <i class="fa fa-table mr-2"></i> 创建 表格
                             </a>
-                            <a data-toggle="modal" data-target="#wz-document-import" class="dropdown-item">
+                            <a data-bs-toggle="modal" data-bs-target="#wz-document-import" class="dropdown-item">
                                 <i class="fa fa-upload mr-2"></i> 批量导入
                             </a>
                         </ul>
-                        <button type="button" class="btn bmd-btn-icon" data-href="{!! wzRoute('search:search', ['project_id' => $project->id]) !!}" data-toggle="tooltip" title="搜索">
+                        <button type="button" class="btn bmd-btn-icon" data-href="{!! wzRoute('search:search', ['project_id' => $project->id]) !!}" data-bs-toggle="tooltip" title="搜索">
                             <i class="fa fa-search"></i>
                         </button>
                     @endif
                     @if(!Auth::guest())
-                        <button type="button" class="btn bmd-btn-icon" data-method="post" data-href="{{ wzRoute('project:favorite', ['id' => $project->id, 'action' => $isFavorited ? 'unfav':'fav']) }}" data-toggle="tooltip" title="{{ $isFavorited ? '取消关注' : '关注该项目' }}">
+                        <button type="button" class="btn bmd-btn-icon" data-method="post" data-href="{{ wzRoute('project:favorite', ['id' => $project->id, 'action' => $isFavorited ? 'unfav':'fav']) }}" data-bs-toggle="tooltip" title="{{ $isFavorited ? '取消关注' : '关注该项目' }}">
                             <i class="fa fa-star {{ $isFavorited ? 'wz-box-tag-star' : '' }}"></i>
                         </button>
                     @endif
                     @if($hasEditPrivilege)
                         @can('project-edit', $project)
-                        <button class="btn bmd-btn-icon" type="button" data-href="{{ wzRoute('project:setting:show', ['id' => $project->id]) }}" data-toggle="tooltip" title="项目设置">
+                        <button class="btn bmd-btn-icon" type="button" data-href="{{ wzRoute('project:setting:show', ['id' => $project->id]) }}" data-bs-toggle="tooltip" title="项目设置">
                             <i class="fa fa-cog"></i>
                         </button>
                         @endcan
@@ -77,9 +77,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">文档批量导入</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-warning" role="alert" style="font-size: 85%;">
@@ -91,21 +89,21 @@
                     <form id="form-document-import" method="post" action="{{ wzRoute('project:doc:import', ['id' => $project->id]) }}" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="form-document-import">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="form-pid" class="bmd-label-floating">上级页面</label>
                                 <select class="form-control" name="page_id" id="form-pid">
                                     <option value="0">@lang('document.no_parent_page')</option>
                                     @include('components.doc-options', ['navbars' => navigator($project->id, $pageItem->id ?? 0), 'level' => 0])
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="form-document-upload" class="bmd-label-floating">选择文件</label>
-                                <input type="file" name="file" class="form-control-file" id="form-document-upload" required>
+                                <input type="file" name="file" class="form-control" id="form-document-upload" required>
                                 <small class="text-muted">支持文件格式：{{ implode('，', ['zip', 'md', 'markdown', 'json', 'yaml', 'yml']) }}</small>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-raised float-right mt-2">确认导入</button>
+                        <button type="submit" class="btn btn-primary btn-raised float-end mt-2">确认导入</button>
                     </form>
                 </div>
             </div>

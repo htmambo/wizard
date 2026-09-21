@@ -20,7 +20,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="search-email" class="bmd-label-floating">邮箱帐号</label>
-                    <input type="email" name="email" class="form-control float-left w-75" id="search-email" value="{{ $query['email'] ?? '' }}" />
+                    <input type="email" name="email" class="form-control w-75" id="search-email" value="{{ $query['email'] ?? '' }}" />
                 </div>
                 <br/>
                 <div class="mb-3">

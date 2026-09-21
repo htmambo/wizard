@@ -31,7 +31,7 @@ if (!function_exists('wzRoute')) {
      * 生成路由url
      *
      * @param string $name
-     * @param array  $parameters
+     * @param array|string|int $parameters
      * @param bool   $absolute
      *
      * @return string

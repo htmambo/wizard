@@ -19,9 +19,14 @@ class RouteHelper
 {
     /**
      * 生成路由 URL,对参数做 urlencode,https 请求自动升级协议。
+     *
+     * @param array|string|int $parameters 支持 Laravel route() 的标量简写
      */
-    public static function url(string $name, array $parameters = [], bool $absolute = false): string
+    public static function url(string $name, $parameters = [], bool $absolute = false): string
     {
+        if (!is_array($parameters)) {
+            $parameters = [$parameters];
+        }
         foreach ($parameters as $k => $v) {
             $parameters[$k] = urlencode($v);
         }

@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <div class="col-sm-offset-2 col-sm-10">
+                    <div>
                         <button type="submit" class="btn btn-success btn-raised">@lang('common.btn_save')</button>
                     </div>
                 </div>

@@ -22,7 +22,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="catalog-sort" class="bmd-label-floating">排序（值越大越靠后）</label>
-                    <input type="number" name="sort_level" class="form-control float-left w-75" id="catalog-sort" value="{{ $catalog->sort_level }}" />
+                    <input type="number" name="sort_level" class="form-control w-75" id="catalog-sort" value="{{ $catalog->sort_level }}" />
                 </div>
 
                 <div class="mb-3 mt-4">

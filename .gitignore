@@ -37,3 +37,7 @@ custom/
 
 # Scramble generated artifacts
 /api.json
+
+/test-results/
+database/database.sqlite-shm
+database/database.sqlite-wal

@@ -1,17 +1,7 @@
 // =============================================================
-// Wizard 项目 — Bootstrap 5 覆盖与 BS3 → BS5 兼容层
+// Wizard 项目 — Bootstrap 5 覆盖与 BS3/BS4 → BS5 兼容层
+// 注：BS5 变量覆盖（$primary 等）在 app.scss 顶部、bootstrap 导入之前定义
 // =============================================================
-
-// ---- 1. BS5 变量覆盖（项目主色） ------------------------------
-// 参考原 public/assets/css/style.css 中主题色，统一为 Material Blue 700
-$primary:   #1976d2;
-$secondary: #6c757d;
-$success:   #198754;
-$info:      #0dcaf0;
-$warning:   #ffc107;
-$danger:    #dc3545;
-$light:     #f8f9fa;
-$dark:      #212529;
 
 // ---- 2. panel-* → card 别名映射 ------------------------------
 // 保留旧类名以便现有 blade 模板无需改动即可继续工作
@@ -64,6 +54,67 @@ $dark:      #212529;
 // BS3 label → BS5 form-label
 label { @extend .form-label; }
 
+// bmd 浮动标签移除后，label 恢复块级显示（BS3 纵向表单布局），
+// 否则 label 会与 float-left 的输入框同行错位
+label { display: block; }
+.checkbox label, .radio label,
+.form-check-label,
+label.checkbox-inline, label.radio-inline { display: inline-block; }
+
 // BS3 input-lg/input-sm → BS5 form-control-lg/form-control-sm（轻量垫片）
 .input-lg  { @extend .form-control-lg; }
 .input-sm  { @extend .form-control-sm; }
+
+// ---- 5. BS4 工具类 → BS5 兼容垫片 -----------------------------
+// BS4 间距工具类（r/l）→ BS5 逻辑方向（e/s）
+@each $i in 0, 1, 2, 3, 4, 5 {
+    .mr-#{$i} { @extend .me-#{$i}; }
+    .ml-#{$i} { @extend .ms-#{$i}; }
+    .pr-#{$i} { @extend .pe-#{$i}; }
+    .pl-#{$i} { @extend .ps-#{$i}; }
+}
+.mr-auto    { @extend .me-auto; }
+.ml-auto    { @extend .ms-auto; }
+.mr-md-auto { @extend .me-md-auto; }
+.ml-md-auto { @extend .ms-md-auto; }
+
+// BS4 float → BS5
+.float-right { @extend .float-end; }
+.float-left  { @extend .float-start; }
+
+// BS4 字重/斜体/文本对齐 → BS5
+.font-weight-normal { @extend .fw-normal; }
+.font-weight-bold   { @extend .fw-bold; }
+.font-weight-light  { @extend .fw-light; }
+.font-italic        { @extend .fst-italic; }
+.text-left          { @extend .text-start; }
+.text-right         { @extend .text-end; }
+
+// BS4 badge 配色 → BS5 bg-*（.badge 本体 BS5 仍提供）
+.badge-primary   { @extend .bg-primary; }
+.badge-secondary { @extend .bg-secondary; }
+.badge-success   { @extend .bg-success; }
+.badge-info      { @extend .bg-info; }
+.badge-warning   { @extend .bg-warning; }
+.badge-danger    { @extend .bg-danger; }
+.badge-light     { @extend .bg-light; }
+.badge-dark      { @extend .bg-dark; }
+.badge-pill      { @extend .rounded-pill; }
+
+// BS3/BS4 关闭按钮 → BS5 btn-close（隐藏旧 &times; 占位）
+.close { @extend .btn-close; }
+.close span[aria-hidden="true"] { display: none; }
+
+// ---- 6. bootstrap-material-design 残留类垫片 -------------------
+// raised 按钮：Material 投影
+.btn-raised {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14),
+                0 3px 1px -2px rgba(0, 0, 0, .2),
+                0 1px 5px 0 rgba(0, 0, 0, .12);
+}
+
+// 图标按钮
+.bmd-btn-icon { padding: .375rem .5rem; }
+
+// 文件上传控件（BS4 类名）
+.form-control-file { display: block; width: 100%; }

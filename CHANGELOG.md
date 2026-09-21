@@ -25,6 +25,12 @@
 - **`UserHelper::impersonateUser()` 对 null Auth user 不守卫** —— 增加 null 守卫。
 - **`page_score` 迁移索引名冲突** —— SQLite 索引名全局唯一，`idx_page_id` 与 page_tag 同名冲突，改名 `idx_page_score_page_id`。
 - **`Exceptions\Handler` 把 `HttpResponseException` 错误转 500** —— 导致 throttle 中间件抛的 429 不可达；新增放行逻辑。
+- **BS5 主题变量未生效** —— `app.scss` 在 bootstrap 导入之后才定义 `$primary` 等变量（`!default` 不会回写），整站主题色退回 BS5 默认蓝；变量块已移至导入之前。
+- **BS5 升级残留 BS3/BS4 类导致交互失效与错位** —— 顶部用户菜单/项目页"新建文档"下拉与"批量导入"弹窗仍用 `data-toggle`（BS5 不识别，菜单完全点不开）；`col-sm-offset-2`、`control-label`、`bmd-form-group`、`input-group-append`、表单内 `float-left` 等残留类已清理或迁移。
+- **bmd 浮动标签移除后 label 与浮动输入框同行错位** —— 兼容层补 `label { display: block }`（checkbox/radio/form-check 除外）。
+- **BS4 工具类在 BS5 下失效** —— `wizard-overrides.scss` 新增垫片：`mr-/ml-/pr-/pl-` → `me-/ms-/pe-/ps-`、`float-left/right`、`badge-*`、`badge-pill`、`.close` → `.btn-close`、`font-weight-*`、`text-left/right`、`btn-raised`、`bmd-btn-icon`、`form-control-file`。
+- **裸 `.badge` 在 BS5 下白字不可见** —— 两处通知计数改为 `badge text-bg-danger`。
+- **`RouteHelper::url()` 拒绝标量参数** —— `wzRoute('admin:api-clients:view', $id)` 抛 TypeError 导致 API 客户端管理页 500；现兼容 Laravel `route()` 的标量简写。
 
 ### Added
 - **API 项目模块**：`Api\ProjectController` 补全 8 个缺失方法（`view`、`create`、`update`、`delete`、`members`、`addMember`、`deleteMember`、`logs`），权限与校验对齐 Web 端；并补注册缺失的 `GET api/project/{id}/documents` 路由。

@@ -110,11 +110,11 @@
                         {{ csrf_field() }}
                         <input type="hidden" name="type" value="{{ $type ?? 'markdown' }}"/>
                         <div class="mb-3">
-                            <label for="template-name" class="control-label">@lang('document.template_name')</label>
+                            <label for="template-name">@lang('document.template_name')</label>
                             <input type="text" name="name" class="form-control" id="template-name">
                         </div>
                         <div class="mb-3">
-                            <label for="template-description" class="control-label">
+                            <label for="template-description">
                                 @lang('document.template_description')
                             </label>
                             <textarea class="form-control" name="description" id="template-description"></textarea>

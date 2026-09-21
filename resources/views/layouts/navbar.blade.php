@@ -14,7 +14,7 @@
 {{--        <a class="btn btn-outline-primary ml-2" href="{{ wzRoute('register') }}">@lang('common.register')</a>--}}
     @else
         <nav class="my-2 my-md-0 wz-top-nav-item">
-            <a class="p-2 text-dark dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="p-2 text-dark dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                 @impersonating() 扮演：@endImpersonating
                 {{ Auth::user()->name ?? Auth::user()->email }}
                 @if(userHasNotifications())
@@ -28,7 +28,7 @@
                 <a href="{{ wzRoute('user:notifications') }}" class="dropdown-item">
                     <i class="fa fa-bell mr-2"></i> 通知
                     @if(userHasNotifications())
-                        <span class="badge">{{ userNotificationCount(999) }}</span>
+                        <span class="badge text-bg-danger">{{ userNotificationCount(999) }}</span>
                     @endif
                 </a>
                 <a href="{{ wzRoute('user:basic') }}" class="dropdown-item">

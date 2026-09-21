@@ -8,7 +8,7 @@
                 <input type="hidden" name="project_id" value="{{ $project->id }}">
                 <input type="hidden" name="op" value="{{ $op }}">
                 <div class="mb-3">
-                    <label for="editor-group-id" class="control-label">@lang('project.group_name')</label>
+                    <label for="editor-group-id">@lang('project.group_name')</label>
                     <select class="form-control" name="group_id" id="editor-group-id" style="min-width: 150px;">
                         @foreach($restGroups as $group)
                             <option value="{{ $group->id }}">{{ $group->name }}</option>
