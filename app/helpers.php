@@ -19,6 +19,13 @@ use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Typography\FontFactory;
 
+if (!function_exists('array_only')) {
+    function array_only($array, $keys)
+    {
+        return Arr::only($array, $keys);
+    }
+}
+
 if (!function_exists('wzRoute')) {
     /**
      * 生成路由url

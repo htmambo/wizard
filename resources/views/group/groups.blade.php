@@ -15,12 +15,12 @@
             <form method="post"
                   action="{!! wzRoute('admin:groups:add') !!}">
                 {{ csrf_field() }}
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="form-name" class="bmd-label-floating">用户组名称</label>
                     <input id="form-name" type="text" name="name" class="form-control" value="{{ old('name') }}" />
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" class="btn btn-raised btn-primary" >创建用户组</button>
                 </div>
             </form>

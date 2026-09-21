@@ -14,16 +14,16 @@
         <div class="card-body">
             <form method="get"
                   action="{!! wzRoute('admin:users') !!}">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="form-name" class="bmd-label-floating">用户名</label>
                     <input id="form-name" type="text" name="name" class="form-control w-75" value="{{ $query['name'] ?? ''  }}" />
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="search-email" class="bmd-label-floating">邮箱帐号</label>
                     <input type="email" name="email" class="form-control float-left w-75" id="search-email" value="{{ $query['email'] ?? '' }}" />
                 </div>
                 <br/>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" class="btn btn-raised btn-primary" >搜索</button>
                 </div>
             </form>

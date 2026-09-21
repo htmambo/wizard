@@ -18,12 +18,12 @@
 
         {{ csrf_field() }}
 
-        <div class="text-left form-group">
+        <div class="text-left mb-3">
             <label for="password" class="bmd-label-floating">@lang('common.password')</label>
             <input id="password" type="password" class="form-control" name="password" required>
         </div>
 
-        <button type="submit" class="btn btn-lg btn-primary btn-block btn-raised">提交</button>
+        <button type="submit" class="btn btn-lg btn-primary w-100 btn-raised">提交</button>
     </form>
 
 

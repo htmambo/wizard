@@ -2,28 +2,31 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\DocumentCreated;
-use App\Events\DocumentDeleted;
-use App\Events\DocumentMarkModified;
-use App\Events\DocumentModified;
-use App\Policies\ProjectPolicy;
+use App\Http\Requests\Api\AddProjectMemberRequest;
+use App\Http\Requests\Api\CreateProjectRequest;
+use App\Http\Requests\Api\UpdateProjectRequest;
 use App\Repositories\Document;
-use App\Repositories\DocumentHistory;
-use App\Repositories\DocumentScore;
-use App\Repositories\PageShare;
 use App\Repositories\Project;
-use Carbon\Carbon;
+use App\Services\ProjectService;
 use Dedoc\Scramble\Attributes\Group;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use League\CommonMark\CommonMarkConverter;
-use SoapBox\Formatter\Formatter;
+use App\Repositories\OperationLogs;
 
 #[Group('项目相关', '项目相关API', 3)]
 class ProjectController extends Controller
 {
+
+    /**
+     * @var ProjectService
+     */
+    protected $projectService;
+
+    public function __construct(ProjectService $projectService)
+    {
+        $this->projectService = $projectService;
+    }
 
     /**
      * 获取项目文档
@@ -32,6 +35,9 @@ class ProjectController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
     public function documents(Request $request, $id)
     {
         $perPage = $request->input('per_page', 20);
@@ -45,16 +51,7 @@ class ProjectController extends Controller
             return $this->error('Unauthorized', 403);
         }
 
-        // 获取项目文档
-        $result = Document::where('project_id', $id)
-            ->orderBy('sort_level', 'ASC')
-            ->with(['user' => function ($query) {
-                $query->select('id', 'name');
-            }, 'project' => function ($query) {
-                $query->select('id', 'name');
-            }])
-            ->select(['id', 'title', 'description', 'project_id', 'user_id'])
-            ->paginate($perPage);
+        $result = $this->projectService->listDocuments($project, (int)$perPage);
         $documents = $result->items();
         $meta = [
             'total'        => $result->total(),
@@ -73,24 +70,274 @@ class ProjectController extends Controller
      */
     public function lists(Request $request, $format = 'json')
     {
-        $projectModel = Project::query();
         $user = Auth::user();
-        $userGroups = empty($user) ? null : $user->groups->toArray();
-        $projectModel->where(function ($query) use ($user, $userGroups) {
-            $query->where('visibility', Project::VISIBILITY_PUBLIC)->orWhere('user_id', $user->id);
-            if (!empty($userGroups)) {
-                $query->orWhere(function ($query) use ($userGroups) {
-                    $query->where('visibility', '!=', Project::VISIBILITY_PUBLIC)
-                        ->whereHas('groups', function ($query) use ($userGroups) {
-                            $query->where('groups.id', $userGroups);
-                        });
-                });
-            }
-        });
-        $projects = $projectModel->select(['id', 'name'])->orderBy('catalog_id', 'ASC')->orderBy('sort_level', 'ASC')->orderBy('id', 'ASC')->get();
+        $projects = $this->projectService->listVisibleForUser($user);
+        $userGroupIds = $user->groups->pluck('id')->all();
         return $this->success($projects, 'Projects retrieved successfully', [
-            'usergroups' => $userGroups,
+            'usergroups' => $userGroupIds,
             'user' => $user ? $user->only(['id', 'name']) : null
         ]);
+    }
+
+    /**
+     * 获取项目详情
+     *
+     * @param Request $request
+     * @param int     $id 项目ID
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
+    public function view(Request $request, $id)
+    {
+        $project = Project::with(['catalog', 'user'])->find($id);
+        if (empty($project)) {
+            return $this->error('Project not found', 404);
+        }
+
+        // 检查用户权限
+        if (!Auth::user()->can('project-view', $project)) {
+            return $this->error('Unauthorized', 403);
+        }
+
+        return $this->success([
+            'id'                => $project->id,
+            'name'              => $project->name,
+            'description'       => $project->description,
+            'visibility'        => $project->visibility,
+            'sort_level'        => $project->sort_level,
+            'catalog_id'        => $project->catalog_id,
+            'catalog'           => $project->catalog ? $project->catalog->only(['id', 'name']) : null,
+            'user'              => $project->user ? $project->user->only(['id', 'name']) : null,
+            'is_favorited'      => $project->isFavoriteByUser(Auth::user()),
+            'created_at'        => $project->created_at,
+            'updated_at'        => $project->updated_at,
+        ], 'Project retrieved successfully');
+    }
+
+    /**
+     * 创建新项目
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(422, '验证失败')]
+    public function create(CreateProjectRequest $request)
+    {
+        // 检查用户是否有创建项目的权限
+        if (!Auth::user()->can('project-create')) {
+            return $this->error('Unauthorized', 403);
+        }
+
+        $project = $this->projectService->create(Auth::user(), $request->validated());
+
+        return $this->success([
+            'id'          => $project->id,
+            'name'        => $project->name,
+            'description' => $project->description,
+            'visibility'  => $project->visibility,
+            'sort_level'  => $project->sort_level,
+            'catalog_id'  => $project->catalog_id,
+        ], 'Project created successfully');
+    }
+
+    /**
+     * 更新项目基本信息
+     *
+     * @param Request $request
+     * @param int     $id 项目ID
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
+    #[Response(422, '验证失败')]
+    public function update(UpdateProjectRequest $request, $id)
+    {
+        $project = Project::find($id);
+        if (empty($project)) {
+            return $this->error('Project not found', 404);
+        }
+
+        // 检查用户权限
+        if (!Auth::user()->can('project-edit', $project)) {
+            return $this->error('Unauthorized', 403);
+        }
+
+        $updated = $this->projectService->update($project, Auth::user(), $request->validated());
+
+        return $this->success($updated->fresh()->toArray(), 'Project updated successfully');
+    }
+
+    /**
+     * 删除项目
+     *
+     * @param Request $request
+     * @param int     $id 项目ID
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
+    public function delete(Request $request, $id)
+    {
+        $project = Project::find($id);
+        if (empty($project)) {
+            return $this->error('Project not found', 404);
+        }
+
+        // 检查用户权限
+        if (!Auth::user()->can('project-delete', $project)) {
+            return $this->error('Unauthorized', 403);
+        }
+
+        $this->projectService->delete($project);
+
+        return $this->success(null, 'Project deleted successfully');
+    }
+
+    /**
+     * 获取项目成员列表（项目关联的用户组及其权限）
+     *
+     * @param Request $request
+     * @param int     $id 项目ID
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
+    public function members(Request $request, $id)
+    {
+        $project = Project::find($id);
+        if (empty($project)) {
+            return $this->error('Project not found', 404);
+        }
+
+        // 检查用户权限
+        if (!Auth::user()->can('project-view', $project)) {
+            return $this->error('Unauthorized', 403);
+        }
+
+        $members = $this->projectService->getMembers($project);
+
+        return $this->success($members, 'Project members retrieved successfully');
+    }
+
+    /**
+     * 添加项目成员（为项目关联用户组并授予读写/只读权限）
+     *
+     * @param Request $request
+     * @param int     $id 项目ID
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
+    #[Response(422, '验证失败')]
+    public function addMember(AddProjectMemberRequest $request, $id)
+    {
+        $project = Project::find($id);
+        if (empty($project)) {
+            return $this->error('Project not found', 404);
+        }
+
+        // 检查用户权限
+        if (!Auth::user()->can('project-edit', $project)) {
+            return $this->error('Unauthorized', 403);
+        }
+
+        $data = $request->validated();
+        $groupID = (int)$data['group_id'];
+        $privilege = (string)($data['privilege'] ?? 'r');
+
+        $this->projectService->addMember($project, $groupID, $privilege);
+
+        return $this->success([
+            'project_id' => $project->id,
+            'group_id'   => $groupID,
+            'privilege'  => $privilege === 'r' ? Project::PRIVILEGE_RO : Project::PRIVILEGE_WR,
+        ], 'Project member added successfully');
+    }
+
+    /**
+     * 删除项目成员（解除项目与用户组的关联，回收权限）
+     *
+     * @param Request $request
+     * @param int     $id       项目ID
+     * @param int     $memberId 用户组ID
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目或成员不存在')]
+    public function deleteMember(Request $request, $id, $memberId)
+    {
+        $project = Project::find($id);
+        if (empty($project)) {
+            return $this->error('Project not found', 404);
+        }
+
+        // 检查用户权限
+        if (!Auth::user()->can('project-edit', $project)) {
+            return $this->error('Unauthorized', 403);
+        }
+
+        if (!$this->projectService->removeMember($project, (int)$memberId)) {
+            return $this->error('Member not found', 404);
+        }
+
+        return $this->success(null, 'Project member deleted successfully');
+    }
+
+    /**
+     * 获取项目操作日志
+     *
+     * @param Request $request
+     * @param int     $id 项目ID
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '项目不存在')]
+    public function logs(Request $request, $id)
+    {
+        $perPage = $request->input('per_page', 20);
+
+        $project = Project::find($id);
+        if (empty($project)) {
+            return $this->error('Project not found', 404);
+        }
+
+        // 检查用户权限
+        if (!Auth::user()->can('project-view', $project)) {
+            return $this->error('Unauthorized', 403);
+        }
+
+        $result = OperationLogs::where('project_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+        $meta = [
+            'total'        => $result->total(),
+            'per_page'     => $result->perPage(),
+            'current_page' => $result->currentPage(),
+            'last_page'    => $result->lastPage(),
+        ];
+
+        return $this->success($result->items(), 'Project logs retrieved successfully', $meta);
     }
 }

@@ -60,9 +60,8 @@ class UserHelper
      */
     public static function impersonateUser(): ?array
     {
-        /** @var User $user */
         $user = Auth::user();
-        if (!$user->isImpersonated()) {
+        if ($user === null || !$user->isImpersonated()) {
             return null;
         }
         $impersonateUser = $user->impersonator();

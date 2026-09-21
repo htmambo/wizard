@@ -16,16 +16,16 @@
 
             <form class="form-horizontal" method="post" action="{{ wzRoute('admin:catalogs:edit', ['id' => $catalog->id])  }}" style="max-width: 300px;">
                 {{ csrf_field() }}
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="editor-name" class="bmd-label-floating">目录名称</label>
                     <input type="text" class="form-control" value="{{ $catalog->name }}" id="editor-name" name="name">
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="catalog-sort" class="bmd-label-floating">排序（值越大越靠后）</label>
                     <input type="number" name="sort_level" class="form-control float-left w-75" id="catalog-sort" value="{{ $catalog->sort_level }}" />
                 </div>
 
-                <div class="form-group mt-4">
+                <div class="mb-3 mt-4">
                     <div class="checkbox">
                         <label>
                             <input type="checkbox" name="show_in_home" value="1" {{ ($catalog->show_in_home ?? true) ? 'checked':'' }}> 在首页展示
@@ -34,9 +34,9 @@
                 </div>
 
                 <br/>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" class="btn btn-success btn-raised" >保存</button>
-                    <a class="btn btn-default" href="{{ wzRoute('admin:catalogs') }}">返回</a>
+                    <a class="btn btn-secondary" href="{{ wzRoute('admin:catalogs') }}">返回</a>
                 </div>
             </form>
         </div>
@@ -81,9 +81,11 @@
     <script>
         $(function () {
             // 鼠标经过提示
-            $('[data-toggle="tooltip"]').tooltip({
-                delay: { "show": 500, "hide": 100 }
-            });
+            if (window.bootstrap && window.bootstrap.Tooltip) {
+                document.querySelectorAll('[data-bs-toggle="tooltip"], [data-toggle="tooltip"]').forEach(function (el) {
+                    new window.bootstrap.Tooltip(el, { delay: { show: 500, hide: 100 } });
+                });
+            }
         });
     </script>
 @endpush

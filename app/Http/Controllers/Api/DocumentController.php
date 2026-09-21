@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Api\CreateDocumentRequest;
+use App\Http\Requests\Api\UpdateDocumentRequest;
 use Illuminate\Validation\ValidationException;
 use App\Components\Readability\Readability;
 use App\Events\DocumentCreated;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SoapBox\Formatter\Formatter;
 use Dedoc\Scramble\Attributes\Group;
+use Dedoc\Scramble\Attributes\Response;
 use League\HTMLToMarkdown\HtmlConverter;
 use App\Repositories\Tag;
 
@@ -43,6 +46,9 @@ class DocumentController extends Controller
      *
      * @return JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '文档或标签不存在')]
     public function deleteTag(Request $request, $id, $tag_id, $format = 'json'){
         $document = Document::find($id);
         if (!$document) {
@@ -68,6 +74,7 @@ class DocumentController extends Controller
      *
      * @return JsonResponse
      */
+    #[Response(401, '未认证')]
     public function exists(Request $request){
         $url = $request->input('url');
         $exists = Document::exists($url);
@@ -82,6 +89,9 @@ class DocumentController extends Controller
      *
      * @return JsonResponse
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '页面不存在')]
     public function delete(Request $request, $id){
         $document = Document::find($id);
         if (!$document) {
@@ -111,7 +121,10 @@ class DocumentController extends Controller
      *
      * @return JsonResponse
      */
-    public function update(Request $request, $id){
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '页面不存在')]
+    public function update(UpdateDocumentRequest $request, $id){
         $document = Document::find($id);
         if (!$document) {
             return $this->error('Document not found', 404);
@@ -183,18 +196,9 @@ class DocumentController extends Controller
      * @return JsonResponse
      * @throws ValidationException
      */
-    public function create(Request $request){
-        $this->validate($request, [
-            // 标题
-            'title' => 'required|string|max:255',
-            // 内容
-            'content' => 'required|string',
-            // 来源网址
-            'url' => 'required|url',
-            // 格式，raw或markdown
-            'format' => 'in:html,markdown',
-            // 'project_id' => 'required|integer|exists:projects,id',
-        ]);
+    #[Response(401, '未认证')]
+    #[Response(422, '验证失败')]
+    public function create(CreateDocumentRequest $request){
         $url = $request->input('url');
         $content = $request->input('content');
         $readability = new Readability($content, $url, 'libxml', false);
@@ -276,6 +280,9 @@ class DocumentController extends Controller
      * @return JsonResponse
      * @throws CommonMarkException
      */
+    #[Response(401, '未认证')]
+    #[Response(403, '无权限')]
+    #[Response(404, '页面不存在')]
     public function view(Request $request, $id){
         $document = Document::find($id);
         if (!$document) {

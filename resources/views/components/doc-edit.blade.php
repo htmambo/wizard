@@ -22,7 +22,7 @@
                 <li role="presentation" class="">
                     <button type="button"
                             data-href="{{ wzRoute('project:home', ['id' => $project->id] + (empty($pageItem) ? [] : ['p' => $pageItem->id])) }}"
-                            class="btn btn-default bmd-btn-icon" id="wz-document-goback">
+                            class="btn btn-secondary bmd-btn-icon" id="wz-document-goback">
                         <i class="fa fa-close"></i>
                     </button>
                 </li>
@@ -32,16 +32,16 @@
     </div>
     <div class="col wz-edit-control">
 
-        <div class="form-group pull-right wz-edit-btn-group">
+        <div class="mb-3 pull-right wz-edit-btn-group">
             <button type="button" class="btn btn-raised btn-primary mr-3" wz-doc-form-submit id="wz-doc-form-submit">
                 <i class="fa fa-save mr-1"></i> 保存
             </button>
-            <button class="btn  dropdown-toggle" type="button" id="form-save-extra-menu" data-toggle="dropdown"
+            <button class="btn  dropdown-toggle" type="button" id="form-save-extra-menu" data-bs-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                 更多
             </button>
             <div class="dropdown-menu" aria-labelledby="form-save-extra-menu" style="min-width: 12rem;">
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#wz-new-template">
+                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#wz-new-template">
                     <i class="fa fa-th mr-2"></i>
                     @lang('document.save_as_template')
                 </a>
@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="pull-left wz-document-form" style="width: calc( 100% - 95px);">
-            <div class="form-group wz-document-form-select">
+            <div class="mb-3 wz-document-form-select">
                 <label for="form-pid" class="bmd-label-static">上级页面</label>
                 <select class="form-control" name="pid" id="form-pid">
                     <option value="0">@lang('document.no_parent_page')</option>
@@ -65,25 +65,25 @@
             </div>
 
             @if($type === 'swagger')
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="editor-title" class="bmd-label-static">@lang('document.title')</label>
                     <input type="text" class="form-control wz-input-long" name="title" id="editor-title"
                            value="{{ $pageItem->title ?? '' }}">
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="form-sync-url" class="bmd-label-static">文档同步地址</label>
                     <input type="text" class="form-control wz-input-long" name="sync_url" id="editor-sync_url" value="{{ $pageItem->sync_url ?? '' }}" placeholder="http://"/>
                 </div>
             @else
                 @if($type === 'markdown' || $type === 'html')
-                <div class="form-group wz-document-form-select">
+                <div class="mb-3 wz-document-form-select">
                     <label for="form-sync-url" class="bmd-label-static">文档来源地址</label>
                     <input type="text" class="form-control wz-input-long" name="sync_url" id="editor-sync_url" value="{{ $pageItem->sync_url ?? '' }}" placeholder="http://"/>
                 </div>
                 @else
                     <input type="hidden" class="form-control" name="sync_url" value="{{ $pageItem->sync_url?? ''}}">
                 @endif
-                <div class="form-group wz-document-form-select">
+                <div class="mb-3 wz-document-form-select">
                     <label for="editor-title" class="bmd-label-static">@lang('document.title')</label>
                     <input type="text" class="form-control wz-input-long" name="title" id="editor-title"
                            value="{{ $pageItem->title ?? '' }}">
@@ -102,25 +102,25 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">@lang('document.save_as_template')</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <form method="post" action="{{ wzRoute('template:create') }}" id="wz-template-save-form">
                         {{ csrf_field() }}
                         <input type="hidden" name="type" value="{{ $type ?? 'markdown' }}"/>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="template-name" class="control-label">@lang('document.template_name')</label>
                             <input type="text" name="name" class="form-control" id="template-name">
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="template-description" class="control-label">
                                 @lang('document.template_description')
                             </label>
                             <textarea class="form-control" name="description" id="template-description"></textarea>
                         </div>
                         @can('template-global-create')
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="">
                                     <label>
                                         <input type="checkbox" name="scope" value="1">
@@ -136,8 +136,8 @@
                     <button type="button" class="btn btn-success btn-raised mr-3" id="wz-template-save">
                         @lang('common.btn_save')
                     </button>
-                    <button type="button" class="btn btn-default"
-                            data-dismiss="modal">@lang('common.btn_close')</button>
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">@lang('common.btn_close')</button>
                 </div>
             </div>
         </div>
@@ -252,7 +252,12 @@
                 var form = $('#wz-template-save-form');
                 $.wz.asyncForm(form, {content: $.global.getEditorContent()}, function (data) {
                     $.wz.message_success('@lang('common.operation_success')', function () {
-                        $('#wz-new-template').modal('hide');
+                        var modalEl = document.getElementById('wz-new-template');
+                        if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+                            var inst = window.bootstrap.Modal.getInstance(modalEl);
+                            if (!inst) inst = new window.bootstrap.Modal(modalEl);
+                            inst.hide();
+                        }
                     });
                 });
             });

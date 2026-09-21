@@ -13,7 +13,7 @@
             </div>
         @endif
 
-        <div class="text-left form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('email') ? ' is-invalid' : '' }}">
             <label for="email" class="bmd-label-floating">邮箱地址</label>
             <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
 
@@ -24,7 +24,7 @@
             @endif
         </div>
 
-        <button type="submit" class="btn btn-lg btn-primary btn-block btn-raised">
+        <button type="submit" class="btn btn-lg btn-primary w-100 btn-raised">
             发送密码重置链接
         </button>
         <a href="{{ wzRoute('login') }}" class="btn btn-link">返回登录页</a>

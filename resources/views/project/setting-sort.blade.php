@@ -9,15 +9,15 @@
                 <input type="hidden" name="project_id" value="{{ $project->id }}">
                 <input type="hidden" name="op" value="{{ $op }}">
 
-                <div class="form-group wz-nav-editor">
+                <div class="mb-3 wz-nav-editor">
                     <ul>@include('components.navbar-edit', ['navbars' => $navigators, 'indent' => 0, 'project' => $project])</ul>
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="button"
                             class="btn btn-success btn-raised wz-save-sort">@lang('common.btn_save')</button>
                     <a href="{{ wzRoute('project:home', ['id' => $project->id]) }}"
-                       class="btn btn-default">@lang('common.btn_back')</a>
+                       class="btn btn-secondary">@lang('common.btn_back')</a>
                 </div>
             </form>
         </div>

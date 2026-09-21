@@ -13,25 +13,24 @@ use App\Components\Segmentation\Analysis;
 use App\Components\Segmentation\Jieba;
 use App\Components\Segmentation\JiebaFinalseg;
 use App\Components\Segmentation\PSCWS;
-use App\Events\DocumentCreated;
-use App\Events\DocumentDeleted;
 use App\Events\DocumentMarkModified;
-use App\Events\DocumentModified;
 use App\Policies\ProjectPolicy;
 use App\Repositories\Document;
-use App\Repositories\DocumentHistory;
-use App\Repositories\DocumentScore;
-use App\Repositories\PageShare;
 use App\Repositories\Project;
+use App\Services\DocumentService;
+use App\Services\SyncUrlGuard;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SoapBox\Formatter\Formatter;
 
 class DocumentController extends Controller
 {
+
+    public function __construct(private DocumentService $documentService)
+    {
+    }
 
     /**
      * 创建一个新文档页面
@@ -123,12 +122,15 @@ class DocumentController extends Controller
             ]
         );
 
-        $this->authorize('page-add', $id);
+        /** @var Project $project */
+        $project = Project::where('id', $id)->firstOrFail();
+
+        $this->authorize('page-add', $project);
 
         // SSRF 防护:校验 sync_url,失败抛 422
         if ($request->filled('sync_url')) {
             try {
-                \App\Services\SyncUrlGuard::validate($request->input('sync_url'));
+                SyncUrlGuard::validate($request->input('sync_url'));
             } catch (\InvalidArgumentException $e) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'sync_url' => [$e->getMessage()],
@@ -136,15 +138,8 @@ class DocumentController extends Controller
             }
         }
 
-        $pid       = $request->input('pid', 0);
-        $projectID = $request->input('project_id');
-        $title     = $request->input('title');
-        $content   = $request->input('content');
         $type      = $request->input('type', 'markdown');
-        $sortLevel = $request->input('sort_level', 1000);
-        $syncUrl   = $request->input('sync_url');
-
-        $html_code = $description = '';
+        $content   = $request->input('content');
 
         // 类型如果是表格，则需要检验表格内容是否合法
         if ($type === 'table') {
@@ -155,50 +150,30 @@ class DocumentController extends Controller
                 ]);
             }
         }
-        else if ($type === 'markdown') {
-            $content_html = $request->input('editormd-html-code', '');
-            if ($content_html) {
-                $html_code   = $content_html;
-                $description = mb_substr(strip_tags($content_html), 0, 300);
-            }
-        }
-        else if ($type === 'html') {
-            // XSS 净化(AD5:写入时净化,渲染时直接输出)
-            $content = \App\Support\HtmlPurifierService::clean($content);
-            //简介信息
-            $description = mb_substr(strip_tags($content), 0, 300);
-            $content     = formatHtml($content);
-        }
 
-        $pageItem = Document::create([
-            'pid'               => $pid,
-            'title'             => $title,
-            'description'       => $description,
-            'content'           => $content,
-            'html_code'         => $html_code,
-            'project_id'        => $projectID,
-            'user_id'           => \Auth::user()->id,
-            'last_modified_uid' => \Auth::user()->id,
-            'type'              => documentType($type, true),
-            'status'            => Document::STATUS_NORMAL,
-            'sort_level'        => $sortLevel,
-            'sync_url'          => $syncUrl,
-        ]);
-
-        // 记录文档变更历史
-        DocumentHistory::write($pageItem);
-
-        event(new DocumentCreated($pageItem));
+        $pageItem = $this->documentService->create(
+            Auth::user(),
+            $project,
+            [
+                'pid'           => $request->input('pid', 0),
+                'title'         => $request->input('title'),
+                'type'          => $type,
+                'sort_level'    => $request->input('sort_level', 1000),
+                'sync_url'      => $request->input('sync_url'),
+                'content'       => $content,
+                'content_html'  => $request->input('editormd-html-code', ''),
+            ]
+        );
 
         return [
             'redirect' => [
                 'edit' => wzRoute(
                     'project:doc:edit:show',
-                    ['id' => $projectID, 'page_id' => $pageItem->id]
+                    ['id' => $id, 'page_id' => $pageItem->id]
                 ),
                 'show' => wzRoute(
                     'project:home',
-                    ['id' => $projectID, 'p' => $pageItem->id]
+                    ['id' => $id, 'p' => $pageItem->id]
                 )
             ],
             'message'  => __('common.operation_success'),
@@ -238,19 +213,13 @@ class DocumentController extends Controller
             ]
         );
 
-        $pid            = $request->input('pid', 0);
-        $projectID      = $request->input('project_id');
-        $title          = $request->input('title');
         $content        = $request->input('content');
-        $lastModifiedAt = Carbon::parse($request->input('last_modified_at'));
-        $history_id     = $request->input('history_id');
-        $forceSave      = $request->input('force', false);
-        $sortLevel      = $request->input('sort_level', 1000);
         $syncUrl        = $request->input('sync_url');
-        $orig_content   = '';
 
         /** @var Document $pageItem */
         $pageItem = Document::where('id', $page_id)->firstOrFail();
+
+        $this->authorize('page-edit', $pageItem);
 
         // 类型如果是表格，则需要检验表格内容是否合法
         if ($pageItem->isTable()) {
@@ -261,29 +230,25 @@ class DocumentController extends Controller
                 ]);
             }
         }
-        else if ($pageItem->isMarkdown()) {
-            $orig_content = trim($pageItem->content);
-            //简介信息
-            $content_html = $request->input('editormd-html-code', '');
-            if ($content_html) {
-                $pageItem->html_code   = $content_html;
-                $pageItem->description = mb_substr(strip_tags($content_html), 0, 300);
+
+        // SSRF 防护:更新 sync_url 前校验,失败抛 422
+        if (!empty($syncUrl)) {
+            try {
+                SyncUrlGuard::validate($syncUrl);
+            } catch (\InvalidArgumentException $e) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'sync_url' => [$e->getMessage()],
+                ]);
             }
         }
-        else if ($pageItem->isHtml()) {
-            // XSS 净化(AD5:写入时净化,渲染时直接输出)
-            $content = \App\Support\HtmlPurifierService::clean($content);
-            //简介信息
-            $pageItem->description = mb_substr(strip_tags($content), 0, 300);
-            $content               = formatHtml($content);
-        }
-
-        $this->authorize('page-edit', $pageItem);
 
         // 检查文档是否已经被别人修改过了，避免修改覆盖
+        $lastModifiedAt = Carbon::parse($request->input('last_modified_at'));
+        $historyId      = $request->input('history_id');
+        $forceSave      = $request->input('force', false);
         if (!$forceSave
             && (!$pageItem->updated_at->equalTo($lastModifiedAt)
-                || $history_id != $pageItem->history_id)
+                || $historyId != $pageItem->history_id)
         ) {
             return $this->buildFailedValidationResponse($request, [
                 'last_modified_at' => [
@@ -295,56 +260,30 @@ class DocumentController extends Controller
             ]);
         }
 
-        $pageItem->pid        = $pid;
-        $pageItem->project_id = $projectID;
-        $pageItem->title      = $title;
-        $pageItem->content    = $content;
-        $pageItem->sort_level = $sortLevel;
-
-        // SSRF 防护:更新 sync_url 前校验,失败抛 422
-        if (!empty($syncUrl)) {
-            try {
-                \App\Services\SyncUrlGuard::validate($syncUrl);
-            } catch (\InvalidArgumentException $e) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'sync_url' => [$e->getMessage()],
-                ]);
-            }
-        }
-        $pageItem->sync_url   = $syncUrl;
-        $changed              = $pageItem->getDirty();
-        if ($changed) {
-            // 从LEANOTE迁移时有可能会在结尾添加了两个空格，这里忽略一下
-            if (isset($changed['content']) && $changed['content'] == $orig_content) {
-                unset($changed['content']);
-            }
-            if (isset($changed['html_code']))
-                unset($changed['html_code']);
-            if (isset($changed['description']))
-                unset($changed['description']);
-        }
-        // 只有文档内容发生修改才进行保存
-        if ($pageItem->isDirty()) {
-            $pageItem->last_modified_uid = Auth::user()->id;
-            $pageItem->save();
-
-            // 记录文档变更历史
-            if ($changed) {
-                DocumentHistory::write($pageItem);
-                event(new DocumentModified($pageItem));
-            }
-        }
+        $this->documentService->update(
+            $pageItem,
+            Auth::user(),
+            [
+                'pid'           => $request->input('pid', 0),
+                'project_id'    => $request->input('project_id'),
+                'title'         => $request->input('title'),
+                'content'       => $content,
+                'sort_level'    => $request->input('sort_level', 1000),
+                'sync_url'      => $syncUrl,
+                'content_html'  => $request->input('editormd-html-code', ''),
+            ]
+        );
 
         return [
             'message'  => __('common.operation_success'),
             'redirect' => [
                 'edit' => wzRoute(
                     'project:doc:edit:show',
-                    ['id' => $projectID, 'page_id' => $pageItem->id]
+                    ['id' => $id, 'page_id' => $pageItem->id]
                 ),
                 'show' => wzRoute(
                     'project:home',
-                    ['id' => $projectID, 'p' => $pageItem->id]
+                    ['id' => $id, 'p' => $pageItem->id]
                 )
             ]
         ];
@@ -373,14 +312,7 @@ class DocumentController extends Controller
         $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
         $this->authorize('page-edit', $pageItem);
 
-        $pageItem->status = $request->input('status');
-        // 只有文档内容发生修改才进行保存
-        if ($pageItem->isDirty()) {
-            $pageItem->last_modified_uid = \Auth::user()->id;
-            $pageItem->save();
-
-            event(new DocumentMarkModified($pageItem));
-        }
+        $this->documentService->markStatus($pageItem, Auth::user(), $request->input('status'));
 
         $this->alertSuccess('操作成功');
         return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_id]));
@@ -410,21 +342,7 @@ class DocumentController extends Controller
         /** @var Document $pageItem */
         $pageItem = Document::where('id', $page_id)->firstOrFail();
 
-        // 检查文档是否已经被别人修改过了，避免修改覆盖
-        if (!$pageItem->updated_at->equalTo($lastModifiedAt)) {
-            return [
-                'message' => __('document.validation.doc_modified_by_user', [
-                    'username' => $pageItem->lastModifiedUser->name,
-                    'time'     => $pageItem->updated_at
-                ]),
-                'expired' => true,
-            ];
-        }
-
-        return [
-            'message' => 'ok',
-            'expired' => false,
-        ];
+        return $this->documentService->checkExpired($pageItem, $lastModifiedAt);
     }
 
     /**
@@ -443,18 +361,9 @@ class DocumentController extends Controller
         $pageItem = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
         $this->authorize('page-edit', $pageItem);
 
-        // 页面删除后，所有下级页面全部移动到该页面的上级
-        $pageItem->subPages()->update(['pid' => $pageItem->pid]);
+        $this->documentService->delete($pageItem, Auth::user());
 
-        // 更新删除文档的用户
-        $pageItem->last_modified_uid = \Auth::user()->id;
-        $pageItem->save();
-
-        // 删除文档
-        $pageItem->delete();
         $this->alertSuccess(__('document.document_delete_success'));
-
-        event(new DocumentDeleted($pageItem));
 
         return redirect(wzRoute('project:home', ['id' => $id]));
     }
@@ -627,68 +536,9 @@ class DocumentController extends Controller
 
         $this->authorize('page-edit', $pageItem);
 
-        $synced = false;
-        if (!empty($pageItem->sync_url)) {
-            // SSRF 防护:解析 host → 黑名单 → 锁定 IP(防 DNS rebinding)
-            $lockedIp = \App\Services\SyncUrlGuard::validate($pageItem->sync_url);
-            $syncHost = parse_url($pageItem->sync_url, PHP_URL_HOST);
-            // IPv6 字面量在锁定时需方括号
-            $resolveHost = filter_var($syncHost, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
-                ? "[{$syncHost}]"
-                : $syncHost;
+        $result = $this->documentService->syncFromRemote($pageItem, Auth::user());
 
-            $client   = new \GuzzleHttp\Client([
-                'timeout'         => 10,
-                'connect_timeout' => 5,
-                // AD1:禁重定向,避免 302 绕过黑名单
-                'allow_redirects' => false,
-                'http_errors'     => false,
-                'headers'         => [
-                    'Accept' => 'application/json, application/yaml, text/yaml, text/plain',
-                ],
-                // CURLOPT_RESOLVE 锁定 host → IP,防止 DNS rebinding
-                'force_ip_resolve' => filter_var($lockedIp, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? 'v6' : 'v4',
-                'curl'             => [
-                    CURLOPT_RESOLVE => [
-                        "{$resolveHost}:80:{$lockedIp}",
-                        "{$resolveHost}:443:{$lockedIp}",
-                    ],
-                ],
-            ]);
-            $resp     = $client->get($pageItem->sync_url);
-            $respCode = $resp->getStatusCode();
-            $respBody = $resp->getBody()->getContents();
-
-            if ($respCode !== 200) {
-                \Log::error('document_sync_failed', [
-                    'status_code' => $respCode,
-                    'resp_body'   => $respBody,
-                    'project_id'  => $id,
-                    'page_id'     => $page_id,
-                    'operator_id' => \Auth::user()->id,
-                ]);
-                throw new \Exception('文档同步失败');
-            }
-
-            $pageItem->content = $respBody;
-
-            // 只有文档内容发生修改才进行保存
-            if ($pageItem->isDirty()) {
-                $pageItem->last_modified_uid = \Auth::user()->id;
-                $pageItem->last_sync_at      = Carbon::now();
-
-                $pageItem->save();
-
-                // 记录文档变更历史
-                DocumentHistory::write($pageItem);
-
-                event(new DocumentModified($pageItem));
-
-                $synced = true;
-            }
-        }
-
-        if ($synced) {
+        if ($result['synced']) {
             $this->alertSuccess('文档同步成功');
         }
         else {
@@ -723,11 +573,10 @@ class DocumentController extends Controller
         $pageItem = Document::where('id', $page_id)->firstOrFail();
         $this->authorize('page-edit', $pageItem);
 
-        // 检查目标项目权限
         $targetProjectId = $request->input('target_project_id', 0);
         $targetPageId    = $request->input('target_page_id', 0);
         $dontSaveUpdated = $request->input('dont_save_updated', 0);
-        $dontJumpTarget = $request->input('dont_jump_target', 0);
+        $dontJumpTarget  = $request->input('dont_jump_target', 0);
 
         /** @var Project $targetProject */
         $targetProject = Project::where('id', $targetProjectId)->firstOrFail();
@@ -740,44 +589,21 @@ class DocumentController extends Controller
             $targetPage = $targetProject->pages()->where('id', $targetPageId)->firstOrFail();
         }
 
+        // 提取当前页面下所有子文档 id（递归），用于级联更新 project_id
         $navigators = navigatorSort(navigator($project_id, 0));
-        $navigators = $this->filterNavigators($navigators, function (array $nav) use ($pageItem) {
+        $childNavigators = $this->filterNavigators($navigators, function (array $nav) use ($pageItem) {
             return (int)$nav['id'] === (int)$pageItem->id;
         });
+        $subNavigatorIds = $this->collectNavigatorIds($childNavigators);
 
-        DB::transaction(function () use ($pageItem, $targetProject, $targetPage, $navigators, $dontSaveUpdated) {
-            // 修改当前页面的pid和project_id
-            $pageItem->project_id = $targetProject->id;
-            $pageItem->pid        = $targetPage->id ?? 0;
-            if($dontSaveUpdated) {
-                // 移动文档时不更新最后修改时间
-                $pageItem->timestamps = false;
-            }
-
-            $pageItem->save();
-
-            // 历史
-            DocumentHistory::where('page_id', $pageItem->id)->update([
-                'project_id' => $targetProject->id,
-                'pid'        => $targetPage->id ?? 0,
-            ]);
-
-            // 修改文档分享信息
-            PageShare::where('page_id', $pageItem->id)->update([
-                'project_id' => $targetProject->id,
-            ]);
-
-            // 修改子页面的project_id
-            $this->traverseNavigators(
-                $navigators,
-                function ($id, array $parents) use ($targetProject) {
-                    Document::where('id', $id)->update(['project_id' => $targetProject->id]);
-                    DocumentHistory::where('page_id', $id)->update([
-                        'project_id' => $targetProject->id,
-                    ]);
-                }
-            );
-        });
+        $this->documentService->move(
+            $pageItem,
+            Auth::user(),
+            $targetProject,
+            $targetPage,
+            (bool)$dontSaveUpdated,
+            $subNavigatorIds
+        );
 
         $param = ['id' => $targetProject->id, 'p' => $targetPage->id ?? $pageItem->id];
         if($dontJumpTarget) {
@@ -811,26 +637,12 @@ class DocumentController extends Controller
 
         /** @var Document $pageItem */
         $pageItem  = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
-        $scoreType = (int)$request->input('score_type');
 
-        /** @var DocumentScore $existedScore */
-        $existedScore = DocumentScore::where('page_id', $pageItem->id)->where('user_id', Auth::user()->id)->first();
-        if ($existedScore) {
-            if ($existedScore->score_type == $scoreType) {
-                $existedScore->delete();
-            }
-            else {
-                $existedScore->score_type = $scoreType;
-                $existedScore->save();
-            }
-        }
-        else {
-            DocumentScore::create([
-                'user_id'    => Auth::user()->id,
-                'page_id'    => $pageItem->id,
-                'score_type' => $scoreType,
-            ]);
-        }
+        $this->documentService->updateScore(
+            $pageItem,
+            Auth::user(),
+            (int)$request->input('score_type')
+        );
 
         $this->alertSuccess('操作成功');
         return [];
@@ -862,15 +674,21 @@ class DocumentController extends Controller
     }
 
     /**
-     * 遍历所有目录
+     * 将目录树扁平化为 id 列表
      *
      * @param array $navigators
-     * @param \Closure $callback
-     * @param array $parents
+     * @return array
      */
-    private function traverseNavigators(array $navigators, \Closure $callback, array $parents = [])
+    private function collectNavigatorIds(array $navigators): array
     {
-        traverseNavigators($navigators, $callback, $parents);
+        $ids = [];
+        foreach ($navigators as $nav) {
+            $ids[] = $nav['id'];
+            if (!empty($nav['nodes'])) {
+                $ids = array_merge($ids, $this->collectNavigatorIds($nav['nodes']));
+            }
+        }
+        return $ids;
     }
 
     public function unBlog(Request $request, $id, $page_id)
@@ -879,14 +697,7 @@ class DocumentController extends Controller
         $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
         $this->authorize('page-toblog', $pageItem);
 
-        $pageItem->is_blog = 0;
-        // 只有文档内容发生修改才进行保存
-        if ($pageItem->isDirty()) {
-            $pageItem->last_modified_uid = \Auth::user()->id;
-            $pageItem->save();
-
-            event(new DocumentMarkModified($pageItem));
-        }
+        $this->documentService->setBlogStatus($pageItem, Auth::user(), false);
 
         $this->alertSuccess('操作成功');
         return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_id]));
@@ -937,15 +748,8 @@ class DocumentController extends Controller
             $title = str_replace([' ', '_'], ['', '-'], $title);
             $alias = Str::slug($title);
         }
-        $pageItem->alias = $alias;
-        $pageItem->is_blog = 1;
-        // 只有文档内容发生修改才进行保存
-        if ($pageItem->isDirty()) {
-            $pageItem->last_modified_uid = \Auth::user()->id;
-            $pageItem->save();
 
-            event(new DocumentMarkModified($pageItem));
-        }
+        $this->documentService->setBlogStatus($pageItem, Auth::user(), true, $alias);
 
         $this->alertSuccess('操作成功');
         return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_id]));

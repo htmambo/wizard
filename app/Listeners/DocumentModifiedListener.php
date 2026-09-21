@@ -40,11 +40,11 @@ class DocumentModifiedListener
 
         // 记录操作日志
         OperationLogs::log(
-            \Auth::user()->id,
+            \Auth::id() ?? 0,
             'document_updated',
             [
-                'username'     => \Auth::user()->name,
-                'user_id'      => \Auth::user()->id,
+                'username'     => \Auth::user()?->name ?? 'system',
+                'user_id'      => \Auth::id() ?? 0,
                 'project_name' => $doc->project->name,
                 'project_id'   => $doc->project_id,
                 'doc_title'    => $doc->title,

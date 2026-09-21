@@ -13,7 +13,7 @@
             </div>
         @endif
 
-        <div class="text-left form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('email') ? ' is-invalid' : '' }}">
             <label for="email" class="bmd-label-floating">邮箱地址</label>
             <input id="email" type="email" class="form-control" name="email" value="{{ $email ?? old('email') }}" required autofocus>
 
@@ -22,7 +22,7 @@
             @endif
         </div>
 
-        <div class="text-left form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('password') ? ' is-invalid' : '' }}">
             <label for="password" class="bmd-label-floating">密码</label>
             <input id="password" type="password" class="form-control" name="password" required>
 
@@ -33,7 +33,7 @@
             @endif
         </div>
 
-        <div class="text-left form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('password_confirmation') ? ' is-invalid' : '' }}">
             <label for="password-confirm" class="bmd-label-floating">重复密码</label>
             <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
 
@@ -45,7 +45,7 @@
         </div>
 
 
-        <button type="submit" class="btn btn-lg btn-primary btn-block btn-raised">
+        <button type="submit" class="btn btn-lg btn-primary w-100 btn-raised">
             重置密码
         </button>
         <a href="{{ wzRoute('login') }}" class="btn btn-link">返回登录页</a>

@@ -29,6 +29,7 @@
         "php-http/guzzle7-adapter": "^1.1",
         "psr/http-factory-implementation": "*",
         "sebastian/diff": "*",
+        "sentry/sentry-laravel": "^4.0",
         "soapbox/laravel-formatter": "^2.0",
         "symfony/psr-http-message-bridge": "^7.3"
     },

@@ -1,5 +1,5 @@
 <li role="presentation" class="mr-2">
-    <button type="button" data-toggle="modal" data-target="#wz-export" title="导出全部文档"
+    <button type="button" data-bs-toggle="modal" data-bs-target="#wz-export" title="导出全部文档"
             class="btn btn-primary bmd-btn-icon" id="wz-export-trigger">
         <span class="fa fa-download"></span>
     </button>
@@ -12,13 +12,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">导出为</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
 
-                    <div class="form-group wz-document-form-select">
+                    <div class="mb-3 wz-document-form-select">
                         <label for="form-pid" class="bmd-label-static">选择要导出的目录</label>
                         <select class="form-control" name="pid" id="wz-export-pid">
                             <option value="0">所有文件</option>

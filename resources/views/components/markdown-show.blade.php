@@ -4,7 +4,6 @@
 @endpush
 
 @push('script')
-<script src="{{ cdn_resource('/assets/vendor/bootstrap-treeview.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/prettify.min.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/marked.min.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/raphael.min.js') }}"></script>
@@ -19,15 +18,24 @@
 <script type="text/javascript">
     $(function () {
         // 鼠标经过提示效果
-        $('[data-toggle="tooltip"]').tooltip({
-            delay: {"show": 500, "hide": 100}
-        });
+        if (window.bootstrap && window.bootstrap.Tooltip) {
+            document.querySelectorAll('[data-bs-toggle="tooltip"], [data-toggle="tooltip"]').forEach(function (el) {
+                new window.bootstrap.Tooltip(el, { delay: { show: 500, hide: 100 } });
+            });
+        }
 
         // 初始化 Mermaid
         // mermaid.initialize({startOnLoad:true});
         mermaid.init(undefined, $(".markdown-body .mermaid"));
 
         editormd.defaults.resourcesVersion = "{{ resourceVersion() }}";
+        // 使用本地 KaTeX 资源,避免 cdnjs 被 CSP 拦截。
+        // editormd.loadCSS / loadScript 内部会自动在路径后追加 .css/.js 并拼接 ?v=,
+        // 所以这里必须传纯路径,否则会拼成 ".../katex.min?v=XXX.css" 这种坏路径。
+        editormd.katexURL  = {
+            css : "/assets/vendor/katex/katex.min",
+            js  : "/assets/vendor/katex/katex.min"
+        };
         // 内容区域解析markdown
         editormd.markdownToHTML('markdown-body', {
             tocm: true,

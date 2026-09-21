@@ -17,7 +17,7 @@
     <div class="row wz-full-box" id="wz-main-box">
         <div class="wz-diff-control">
             <button class="btn btn-primary wz-switch-display">
-                <i class="fa fa-columns" data-toggle="tooltip" title="切换展示方式"></i>
+                <i class="fa fa-columns" data-bs-toggle="tooltip" title="切换展示方式"></i>
             </button>
 
             <div class="wz-title-changed">

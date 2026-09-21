@@ -9,9 +9,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Events\ProjectCreated;
-use App\Events\ProjectDeleted;
-use App\Events\ProjectModified;
 use App\Policies\ProjectPolicy;
 use App\Repositories\Catalog;
 use App\Repositories\Document;
@@ -21,6 +18,7 @@ use App\Repositories\OperationLogs;
 use App\Repositories\PageShare;
 use App\Repositories\Project;
 use App\Repositories\DocumentHistory;
+use App\Services\ProjectService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -31,6 +29,16 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class ProjectController extends Controller
 {
+
+    /**
+     * @var ProjectService
+     */
+    protected $projectService;
+
+    public function __construct(ProjectService $projectService)
+    {
+        $this->projectService = $projectService;
+    }
 
     /**
      * 用户个人首页（个人项目列表）
@@ -91,27 +99,7 @@ class ProjectController extends Controller
             ]
         );
 
-        $name = $request->input('name');
-        $description = $request->input('description');
-        $visibility = $request->input('visibility');
-        $catalog = $request->input('catalog');
-
-        if (\Auth::user()->can('project-sort')) {
-            $sortLevel = $request->input('sort_level', 1000);
-        } else {
-            $sortLevel = 1000;
-        }
-
-        $project = Project::create([
-            'name'        => $name,
-            'description' => $description,
-            'user_id'     => \Auth::user()->id,
-            'visibility'  => $visibility,
-            'sort_level'  => (int)$sortLevel,
-            'catalog_id'  => $catalog,
-        ]);
-
-        event(new ProjectCreated($project));
+        $project = $this->projectService->create(\Auth::user(), $request->all());
 
         $this->alertSuccess(__('common.operation_success'));
         return [
@@ -137,8 +125,7 @@ class ProjectController extends Controller
         $project = Project::where('id', $id)->firstOrFail();
         $this->authorize('project-delete', $project);
 
-        $project->delete();
-        event(new ProjectDeleted($project));
+        $this->projectService->delete($project);
 
         return redirect(wzRoute('user:home'));
     }
@@ -318,23 +305,16 @@ class ProjectController extends Controller
 
         switch ($op) {
             case 'basic':
-                $updated = $this->basicSettingHandle($request, $project);
+                $this->basicSettingHandle($request, $project);
                 break;
             case 'privilege':
-                $updated = $this->privilegeSettingHandle($request, $project);
+                $this->privilegeSettingHandle($request, $project);
                 break;
             case 'advanced':
-                $updated = false;
                 break;
             case 'sort':
-                $updated = $this->sortSettingHandle($request, $project);
+                $this->sortSettingHandle($request, $project);
                 break;
-            default:
-                $updated = false;
-        }
-
-        if ($updated) {
-            event(new ProjectModified($project, $op));
         }
 
         $this->alertSuccess(__('project.project_update_success'));
@@ -351,10 +331,9 @@ class ProjectController extends Controller
      * @param Request $request
      * @param Project $project
      *
-     * @return bool
      * @throws \Illuminate\Validation\ValidationException
      */
-    private function basicSettingHandle(Request $request, Project $project): bool
+    private function basicSettingHandle(Request $request, Project $project): void
     {
         $this->validate(
             $request,
@@ -375,30 +354,7 @@ class ProjectController extends Controller
             ]
         );
 
-        $name = $request->input('name');
-        $description = $request->input('description');
-        $visibility = $request->input('visibility');
-        $sortLevel = $request->input('sort_level');
-        $catalog = $request->input('catalog');
-        $catalogSortStyle = $request->input('catalog_sort_style', Project::SORT_STYLE_DIR_FIRST);
-        $catalogFoldStyle = $request->input('catalog_fold_style', Project::FOLD_STYLE_AUTO);
-
-        $project->name = $name;
-        $project->description = $description;
-        $project->visibility = $visibility;
-        $project->catalog_id = empty($catalog) ? null : $catalog;
-        $project->catalog_fold_style = $catalogFoldStyle;
-        $project->catalog_sort_style = $catalogSortStyle;
-        if (\Auth::user()->can('project-sort') && $sortLevel != null) {
-            $project->sort_level = (int)$sortLevel;
-        }
-
-        if ($project->isDirty()) {
-            $project->save();
-            return true;
-        }
-
-        return false;
+        $this->projectService->update($project, \Auth::user(), $request->all());
     }
 
     /**
@@ -407,10 +363,9 @@ class ProjectController extends Controller
      * @param Request $request
      * @param Project $project
      *
-     * @return bool 如果返回true，说明执行了更新操作，false说明没有更新
      * @throws \Illuminate\Validation\ValidationException
      */
-    private function privilegeSettingHandle(Request $request, Project $project): bool
+    private function privilegeSettingHandle(Request $request, Project $project): void
     {
         $this->validate(
             $request,
@@ -420,13 +375,11 @@ class ProjectController extends Controller
             ]
         );
 
-        $groupID = $request->input('group_id');
-        $privilege = $request->input('privilege', 'r');
-
-        $project->groups()->detach($groupID);
-        $project->groups()->attach($groupID, ['privilege' => $privilege == 'r' ? 2 : 1]);
-
-        return true;
+        $this->projectService->addMember(
+            $project,
+            (int)$request->input('group_id'),
+            (string)$request->input('privilege', 'r')
+        );
     }
 
     /**
@@ -490,7 +443,7 @@ class ProjectController extends Controller
         $project = Project::where('id', $id)->firstOrFail();
         $this->authorize('project-edit', $project);
 
-        $project->groups()->detach($group_id);
+        $this->projectService->removeMember($project, (int)$group_id);
 
         $this->alertSuccess(__('project.revoke_privilege_success'));
 

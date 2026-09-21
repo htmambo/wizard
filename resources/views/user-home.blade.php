@@ -27,7 +27,7 @@
                 @can('project-create')
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <a class="wz-box wz-box-new" href="#"
-                           data-toggle="modal" data-target="#wz-new-project">
+                           data-bs-toggle="modal" data-bs-target="#wz-new-project">
                             <p class="wz-title"><span class="fa fa-plus"></span> @lang('project.new_project')</p>
                         </a>
                     </div>

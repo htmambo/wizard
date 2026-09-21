@@ -52,13 +52,13 @@
             </div>
         </nav>
         @impersonating()
-        <button type="button" class="btn bmd-btn-icon" data-toggle="tooltip" title="停止扮演" wz-form-submit data-form="#stop-impersonate">
+        <button type="button" class="btn bmd-btn-icon" data-bs-toggle="tooltip" title="停止扮演" wz-form-submit data-form="#stop-impersonate">
             <i class="fa fa-user-secret wz-theme-support-icon"></i>
             <form action="{{ wzRoute('impersonate:stop') }}" method="post" id="stop-impersonate">{{method_field('DELETE')}}{{ csrf_field() }}</form>
         </button>
         @endImpersonating
     @endif
-    <button type="button" class="wz-hide-small-screen btn bmd-btn-icon wz-theme-indicator ml-2" data-toggle="tooltip" title="切换主题">
+    <button type="button" class="wz-hide-small-screen btn bmd-btn-icon wz-theme-indicator ml-2" data-bs-toggle="tooltip" title="切换主题">
         <i class="far fa-sun"></i>
     </button>
 </div>
@@ -79,17 +79,26 @@
                     currentTheme = '{{ config('wizard.theme') }}';
                 }
 
-                var themeIndicator = $('.wz-theme-indicator .far');
-                if(currentTheme === 'dark') {
-                    themeIndicator.removeClass('fa-sun').addClass('fa-moon');
-                } else {
-                    themeIndicator.removeClass('fa-moon').addClass('fa-sun');
-                }
+                var syncIndicator = function (theme) {
+                    var $icon = $('.wz-theme-indicator .far');
+                    if (!$icon.length) return;
+                    if (theme === 'dark') {
+                        $icon.removeClass('fa-sun').addClass('fa-moon');
+                    } else {
+                        $icon.removeClass('fa-moon').addClass('fa-sun');
+                    }
+                };
+
+                syncIndicator(currentTheme);
+                document.body.dataset.theme = currentTheme;
 
                 $('.wz-theme-indicator').on('click', function () {
-                    if (currentTheme === 'default') {
-                        currentTheme = 'dark';
-                        // themeIndicator.text('brightness_3');
+                    var body = document.body;
+                    currentTheme = (body.dataset.theme === 'dark') ? 'default' : 'dark';
+                    body.dataset.theme = currentTheme;
+                    syncIndicator(currentTheme);
+
+                    if (currentTheme === 'dark') {
                         $('body').addClass('wz-dark-theme');
                         if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
@@ -106,7 +115,6 @@
                             }
                         }
                     } else {
-                        currentTheme = 'default';
                         $('body').removeClass('wz-dark-theme');
                         if(typeof($.global.markdownEditor)==='object' && $.global.markdownEditor!==null) {
                             if(typeof(window.wangEditor)=='function') {
@@ -121,11 +129,6 @@
                                 $.global.markdownEditor.setTheme('default');
                             }
                         }
-                    }
-                    if(currentTheme === 'dark') {
-                        themeIndicator.removeClass('fa-sun').addClass('fa-moon');
-                    } else {
-                        themeIndicator.removeClass('fa-moon').addClass('fa-sun');
                     }
                     $.wz.setCookie('wizard-theme', currentTheme, 365);
                     store.set('wizard-theme', currentTheme);

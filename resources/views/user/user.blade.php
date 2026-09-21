@@ -13,13 +13,13 @@
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">基本信息</a>
+            <a class="nav-link active" id="basic-tab" data-bs-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">基本信息</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="user-group-tab" data-toggle="tab" href="#user-group" role="tab" aria-controls="user-group" aria-selected="false">用户组</a>
+            <a class="nav-link" id="user-group-tab" data-bs-toggle="tab" href="#user-group" role="tab" aria-controls="user-group" aria-selected="false">用户组</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="project-tab" data-toggle="tab" href="#project" role="tab" aria-controls="project" aria-selected="false">项目</a>
+            <a class="nav-link" id="project-tab" data-bs-toggle="tab" href="#project" role="tab" aria-controls="project" aria-selected="false">项目</a>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
@@ -34,17 +34,17 @@
 
                     <form class="form-horizontal" method="post" action="{{ wzRoute('admin:user:update', ['id' => $user->id])  }}" style="max-width: 300px;">
                         {{ csrf_field() }}
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="editor-email" class="bmd-label-floating">@lang('common.email')</label>
                             <input type="text" class="form-control" value="{{ $user->email }}" id="editor-email"
                                    name="email" readonly>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="editor-username" class="bmd-label-floating">@lang('common.username')</label>
                             <input type="text" class="form-control" value="{{ $user->name }}" id="editor-username"
                                    name="username" {{ ($user->id == Auth::user()->id) ? 'readonly':'' }}>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="bmd-label-floating">角色</label>
                             <div class="radio mt-2">
                                 <label class="radio-inline">
@@ -55,12 +55,12 @@
                                 </label>
 
                                 @if($user->id == 1)
-                                    <i class="fa fa-question-circle" data-toggle="tooltip" title="该用户为系统初始管理员，不允许修改其身份"></i>
+                                    <i class="fa fa-question-circle" data-bs-toggle="tooltip" title="该用户为系统初始管理员，不允许修改其身份"></i>
                                 @endif
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="editor-status" class="bmd-label-floating">状态</label>
                             <select id="editor-status" name="status" class="form-control"  {{ $user->id == Auth::user()->id ? 'disabled':'' }}>
                                 <option value="0" {{ $user->status == 0 ? 'selected':'' }}>未激活</option>
@@ -69,9 +69,9 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-success btn-raised"  {{ $user->id == Auth::user()->id ? 'disabled':'' }}>保存</button>
-                            <a class="btn btn-default" href="{{ wzRoute('admin:users') }}">返回</a>
+                            <a class="btn btn-secondary" href="{{ wzRoute('admin:users') }}">返回</a>
                         </div>
                     </form>
                 </div>
@@ -85,7 +85,7 @@
                     <form method="post"
                           action="{!! wzRoute('admin:user:join-group', ['id' => $user->id]) !!}">
                         {{ csrf_field() }}
-                        <div class="form-group">
+                        <div class="mb-3">
                             <select name="groups[]" style="width: 440px;" class="form-control select2-multiple" id="wz-group-select" multiple>
                                 @foreach($group_for_select as $group)
                                     <option value="{{ $group->id }}" data-name="{{ $group->name }}">
@@ -95,7 +95,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-primary btn-raised">加入</button>
                         </div>
                     </form>
@@ -186,9 +186,11 @@
     <script>
     $(function () {
         // 鼠标经过提示
-        $('[data-toggle="tooltip"]').tooltip({
-            delay: { "show": 500, "hide": 100 }
-        });
+        if (window.bootstrap && window.bootstrap.Tooltip) {
+            document.querySelectorAll('[data-bs-toggle="tooltip"], [data-toggle="tooltip"]').forEach(function (el) {
+                new window.bootstrap.Tooltip(el, { delay: { show: 500, hide: 100 } });
+            });
+        }
 
         $.fn.select2.defaults.set("theme", "bootstrap");
 

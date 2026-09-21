@@ -9,7 +9,7 @@
         {{ csrf_field() }}
 
         @if (config('wizard.register_invitation'))
-            <div class="text-left form-group{{ $errors->has('invitation_code') ? ' has-error' : '' }}">
+            <div class="text-left mb-3{{ $errors->has('invitation_code') ? ' is-invalid' : '' }}">
                 <label for="invitation_code" class="bmd-label-floating">邀请码</label>
                 <input id="invitation_code" type="text" class="form-control" name="invitation_code" value="{{ old('invitation_code') }}" required autofocus>
 
@@ -21,7 +21,7 @@
             </div>
         @endif
 
-        <div class="text-left form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('name') ? ' is-invalid' : '' }}">
             <label for="name" class="bmd-label-floating">@lang('common.username')</label>
             <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
 
@@ -32,7 +32,7 @@
             @endif
         </div>
 
-        <div class="text-left form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('email') ? ' is-invalid' : '' }}">
             <label for="email" class="bmd-label-floating">@lang('common.email')</label>
             <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
 
@@ -43,7 +43,7 @@
             @endif
         </div>
 
-        <div class="text-left form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+        <div class="text-left mb-3{{ $errors->has('password') ? ' is-invalid' : '' }}">
             <label for="password" class="bmd-label-floating">@lang('common.password')</label>
             <input id="password" type="password" class="form-control" name="password" required>
 
@@ -54,12 +54,12 @@
             @endif
         </div>
 
-        <div class="text-left form-group">
+        <div class="text-left mb-3">
             <label for="password-confirm" class="bmd-label-floating">@lang('common.password_confirm')</label>
             <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
         </div>
 
-        <button type="submit" class="btn btn-lg btn-primary btn-block btn-raised">
+        <button type="submit" class="btn btn-lg btn-primary w-100 btn-raised">
            @lang('common.register')
         </button>
 

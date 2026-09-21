@@ -37,7 +37,7 @@ class DocumentCreatedListener
         $doc = $event->getDocument();
 
         OperationLogs::log(
-            \Auth::user()->id,
+            \Auth::id() ?? 0,
             'document_created',
             [
                 'username'     => $doc->user->name,

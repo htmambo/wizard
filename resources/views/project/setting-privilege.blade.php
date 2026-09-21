@@ -7,7 +7,7 @@
                 {{ csrf_field() }}
                 <input type="hidden" name="project_id" value="{{ $project->id }}">
                 <input type="hidden" name="op" value="{{ $op }}">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="editor-group-id" class="control-label">@lang('project.group_name')</label>
                     <select class="form-control" name="group_id" id="editor-group-id" style="min-width: 150px;">
                         @foreach($restGroups as $group)
@@ -16,7 +16,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <div class="checkbox">
                         <label>
                             <input type="checkbox" name="privilege" value="wr"> @lang('project.group_write_enabled')
@@ -24,9 +24,9 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" class="btn btn-success btn-raised" {{ empty($restGroups) ? 'disabled="disabled"' : '' }}>@lang('common.btn_add')</button>
-                    <a href="{{ wzRoute('project:home', ['id' => $project->id]) }}" class="btn btn-default">@lang('common.btn_back')</a>
+                    <a href="{{ wzRoute('project:home', ['id' => $project->id]) }}" class="btn btn-secondary">@lang('common.btn_back')</a>
                 </div>
             </form>
         </div>

@@ -14,12 +14,12 @@
             <ul class="nav nav-pills pull-right wz-hide-small-screen">
                 @can('page-edit', $pageItem)
                     <li role="presentation" class="mr-2">
-                        <button type="button" data-href="{{ wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" data-toggle="tooltip" title="@lang('common.btn_edit')" class="btn btn-primary bmd-btn-icon">
+                        <button type="button" data-href="{{ wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" data-bs-toggle="tooltip" title="@lang('common.btn_edit')" class="btn btn-primary bmd-btn-icon">
                             <i class="fa fa-pencil"></i>
                         </button>
                     </li>
                     <li role="presentation" class="mr-2">
-                        <button type="button" data-href="{{ wzRoute('project:doc:attachment', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" data-toggle="tooltip" title="附件" class="btn btn-primary bmd-btn-icon">
+                        <button type="button" data-href="{{ wzRoute('project:doc:attachment', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" data-bs-toggle="tooltip" title="附件" class="btn btn-primary bmd-btn-icon">
                             <span class="fa fa-paperclip"></span>
                         </button>
                     </li>
@@ -29,7 +29,7 @@
                         <button type="button" wz-doc-compare-submit
                                 data-doc1="{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id]) }}"
                                 data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}"
-                                data-toggle="tooltip"
+                                data-bs-toggle="tooltip"
                                 title="@lang('common.btn_diff')" class="btn btn-primary  bmd-btn-icon">
                             <i class="fa fa-clock-rotate-left"></i>
                         </button>
@@ -37,7 +37,7 @@
                 @endif
 
                 <li role="presentation" class="mr-2">
-                    <button type="button" data-href="{{ wzRoute('project:doc:read', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}" data-toggle="tooltip" title="阅读模式" class="btn btn-primary bmd-btn-icon">
+                    <button type="button" data-href="{{ wzRoute('project:doc:read', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}" data-bs-toggle="tooltip" title="阅读模式" class="btn btn-primary bmd-btn-icon">
                         <span class="fa fa-laptop"></span>
                     </button>
                 </li>
@@ -51,7 +51,7 @@
         <div class="wz-project-main">
             <nav class="wz-page-control clearfix">
                 <h1 class="wz-page-title">
-                    <i class="fa fa-hashtag" style="color: #909090;" title="文档标题" data-toggle="tooltip"></i>
+                    <i class="fa fa-hashtag" style="color: #909090;" title="文档标题" data-bs-toggle="tooltip"></i>
                     @if($pageItem->status == \App\Repositories\Document::STATUS_OUTDATED)
                         <del class="doc-outdated">{{ $pageItem->title }}</del>
                         <span class="badge badge-pill badge-warning">已过时</span>
@@ -94,7 +94,7 @@
                             @if($pageItem->isSwagger())
                             @can('page-edit', $pageItem)
                                 <a href="#" wz-form-submit data-form="#form-document-sync" data-confirm="执行文档同步后，您将成为最后修改人，确定要执行文档同步吗？" class="ml-2" title="同步文档">
-                                    <i class="fa fa-refresh" data-toggle="tooltip" title="同步文档"></i>
+                                    <i class="fa fa-refresh" data-bs-toggle="tooltip" title="同步文档"></i>
                                     <form id="form-document-sync" method="post" style="display: none;"
                                           action="{{ wzRoute('project:doc:sync-from', ['id' => $pageItem->project_id, 'page_id' => $pageItem->id]) }}">
                                         {{ csrf_field() }}
@@ -130,15 +130,15 @@
                 @if (!Auth::guest())
                     <fieldset {{ Auth::guest() ? 'disabled':'' }}>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 1 ? 'active' : '' }} bmd-btn-fab" style="color: #21b351" data-type="1"><i class="far fa-smile"></i></button>
+                            <button type="button" class="btn btn-secondary {{ $user_score_type == 1 ? 'active' : '' }} bmd-btn-fab" style="color: #21b351" data-type="1"><i class="far fa-smile"></i></button>
                             <p>{{ $scores[1] ?? '' }} 很赞</p>
                         </div>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 2 ? 'active' : '' }} bmd-btn-fab" style="color: #989898" data-type="2"><i class="far fa-face-dizzy fa-shake"></i></button>
+                            <button type="button" class="btn btn-secondary {{ $user_score_type == 2 ? 'active' : '' }} bmd-btn-fab" style="color: #989898" data-type="2"><i class="far fa-face-dizzy fa-shake"></i></button>
                             <p>{{ $scores[2] ?? '' }} 看不懂</p>
                         </div>
                         <div class="wz-score-opt">
-                            <button type="button" class="btn btn-default {{ $user_score_type == 3 ? 'active' : '' }} bmd-btn-fab" style="color: #fed612" data-type="3"><i class="far fa-frown"></i></button>
+                            <button type="button" class="btn btn-secondary {{ $user_score_type == 3 ? 'active' : '' }} bmd-btn-fab" style="color: #fed612" data-type="3"><i class="far fa-frown"></i></button>
                             <p>{{ $scores[3] ?? '' }} 潦草</p>
                         </div>
                     </fieldset>

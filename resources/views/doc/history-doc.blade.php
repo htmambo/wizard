@@ -11,7 +11,7 @@
                 @can('page-edit', $pageItem)
                     <a href="#" wz-form-submit data-form="#form-recover-{{ $history->id }}"
                        data-confirm="@lang('document.recover_confirm')" style="position: absolute; top: 15px; right: 80px;">
-                        <i class="fa fa-rotate-right" title="@lang('document.btn_recover')" data-toggle="tooltip"></i>
+                        <i class="fa fa-rotate-right" title="@lang('document.btn_recover')" data-bs-toggle="tooltip"></i>
                         <form id="form-recover-{{ $history->id }}"
                               action="{{ wzRoute('project:doc:history:recover', ['id' => $project->id, 'p' => $pageItem->id, 'history_id' => $history->id]) }}"
                               method="post">{{ csrf_field() }}{{ method_field('PUT') }}</form>
@@ -20,7 +20,7 @@
                 <a href="#" wz-doc-compare-submit
                    data-doc1="{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" style="position: absolute; top: 15px; right: 40px;"
                    data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}">
-                    <i class="fa fa-columns" data-toggle="tooltip" title=" @lang('common.btn_diff')"></i>
+                    <i class="fa fa-columns" data-bs-toggle="tooltip" title=" @lang('common.btn_diff')"></i>
                 </a>
             </div>
             <hr />

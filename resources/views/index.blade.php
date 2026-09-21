@@ -9,10 +9,10 @@
         <div class="card-header">
             <div class="card-header-operation">
                 <div class="bmd-form-group bmd-collapse-inline pull-left">
-                    <a href="{{ wzRoute('home') }}" class="fa fa-home" data-toggle="tooltip" title="返回首页"></a>
+                    <a href="{{ wzRoute('home') }}" class="fa fa-home" data-bs-toggle="tooltip" title="返回首页"></a>
                 </div>
                 <div class="bmd-form-group bmd-collapse-inline pull-right">
-                    <a class="badge badge-success badge-pill" href="{{ wzRoute('home', ['catalog' => $catalog_id]) }}" data-toggle="tooltip" title="点击此处刷新页面">#{{ $catalog->name }}</a>
+                    <a class="badge badge-success badge-pill" href="{{ wzRoute('home', ['catalog' => $catalog_id]) }}" data-bs-toggle="tooltip" title="点击此处刷新页面">#{{ $catalog->name }}</a>
                 </div> 
             </div>
         </div>
@@ -22,7 +22,7 @@
             <div class="row marketing wz-main-container-full">
                 @unless(Auth::guest() || !empty($catalog_id))
                     <div class="col alert alert-info alert-dismissible" data-alert-id="public-home-tip">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span
                                     aria-hidden="true">&times;</span></button>
                         提示： 该页面为公共主页，查看您自己创建的项目，请到 <a href="{{ wzRoute('user:home') }}">@lang('common.user_home')</a>。
                     </div>
@@ -72,7 +72,7 @@
         @can('project-create')
             <div class="card-footer" style="padding: 0">
                 <div class="row col-12 wz-new-project-box">
-                    <a href="#" class="wz-new-project-btn" data-toggle="modal" data-target="#wz-new-project">
+                    <a href="#" class="wz-new-project-btn" data-bs-toggle="modal" data-bs-target="#wz-new-project">
                         <span class="fa fa-plus"></span> @lang('project.new_project')
                     </a>
                 </div>
