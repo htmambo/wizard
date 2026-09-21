@@ -252,7 +252,12 @@
                 var form = $('#wz-template-save-form');
                 $.wz.asyncForm(form, {content: $.global.getEditorContent()}, function (data) {
                     $.wz.message_success('@lang('common.operation_success')', function () {
-                        $('#wz-new-template').modal('hide');
+                        var modalEl = document.getElementById('wz-new-template');
+                        if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+                            var inst = window.bootstrap.Modal.getInstance(modalEl);
+                            if (!inst) inst = new window.bootstrap.Modal(modalEl);
+                            inst.hide();
+                        }
                     });
                 });
             });

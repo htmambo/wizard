@@ -19,9 +19,11 @@
 <script type="text/javascript">
     $(function () {
         // 鼠标经过提示效果
-        $('[data-bs-toggle="tooltip"]').tooltip({
-            delay: {"show": 500, "hide": 100}
-        });
+        if (window.bootstrap && window.bootstrap.Tooltip) {
+            document.querySelectorAll('[data-bs-toggle="tooltip"], [data-toggle="tooltip"]').forEach(function (el) {
+                new window.bootstrap.Tooltip(el, { delay: { show: 500, hide: 100 } });
+            });
+        }
 
         // 初始化 Mermaid
         // mermaid.initialize({startOnLoad:true});

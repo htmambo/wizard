@@ -87,6 +87,7 @@
 
 <script src="{{ cdn_resource('/assets/vendor/layer/layer.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/axios.min.js') }}"></script>
+<script src="/assets/js/app.js?{{ resourceVersion() }}"></script>
 <script src="/assets/js/wizard.js?{{ resourceVersion() }}"></script>
 @stack('script-pre')
 
@@ -168,9 +169,11 @@
             });
 
             // 鼠标经过提示
-            $('[data-toggle="tooltip"]').tooltip({
-                delay: {"show": 500, "hide": 100}
-            });
+            if (window.bootstrap && window.bootstrap.Tooltip) {
+                document.querySelectorAll('[data-bs-toggle="tooltip"], [data-toggle="tooltip"]').forEach(function (el) {
+                    new window.bootstrap.Tooltip(el, { delay: { show: 500, hide: 100 } });
+                });
+            }
         }, 500);
 
         // 左侧导航栏自适应布局切换

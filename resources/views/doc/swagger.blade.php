@@ -118,13 +118,21 @@
             $('#wz-select-template-confirm').on('click', function() {
                 var templateSelector = $("#wz-select-template");
                 var template = templateSelector.find("input[name=template]:checked");
+                var hideModal = function () {
+                    var el = templateSelector.get(0);
+                    if (el && window.bootstrap && window.bootstrap.Modal) {
+                        var inst = window.bootstrap.Modal.getInstance(el);
+                        if (!inst) inst = new window.bootstrap.Modal(el);
+                        inst.hide();
+                    }
+                };
                 if (template.length === 0) {
-                    templateSelector.modal('hide');
+                    hideModal();
                     return ;
                 }
 
                 window.editor.specActions.updateSpec(Base64.decode(template.data('content')));
-                templateSelector.modal('hide');
+                hideModal();
             });
 
             // 更新编辑器内容
