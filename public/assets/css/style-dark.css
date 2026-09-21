@@ -737,3 +737,294 @@ body.wz-dark-theme,
 .wz-dark-theme .cm-s-default .cm-link {
   color: #03a9f4;
 }
+
+/* ============================================================
+ * BS5 兼容垫片 — 暗色主题扩展覆盖
+ * ------------------------------------------------------------
+ * BS3 残留的 .panel* / wz-white-panel / form-control / bg-white
+ * 等类在 BS5 下默认继承 var(--bs-body-bg) = #fff，需要在
+ * 暗色主题下显式覆盖。
+ * ============================================================ */
+
+/* ---- 主面板：中部内容区 ---- */
+body.wz-dark-theme .panel,
+body.wz-dark-theme .panel-default,
+body.wz-dark-theme .panel-body,
+body.wz-dark-theme .panel-heading,
+body.wz-dark-theme .panel-footer,
+body.wz-dark-theme .wz-white-panel,
+body.wz-dark-theme .card:not(.card-white):not(.card-keep-light) {
+  background-color: rgb(24, 26, 27) !important;
+  background: rgb(24, 26, 27) !important;
+  color: #ccc !important;
+}
+
+/* ---- 顶部 navbar（带 bg-white 工具类） ---- */
+body.wz-dark-theme .wz-top-navbar,
+body.wz-dark-theme .wz-top-navbar.bg-white,
+body.wz-dark-theme .navbar.bg-white {
+  background-color: rgb(23, 32, 36) !important;
+  background: rgb(23, 32, 36) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ---- 表单输入（添加标签、评论框、搜索框等） ---- */
+body.wz-dark-theme .form-control,
+body.wz-dark-theme .form-select,
+body.wz-dark-theme input[type="text"],
+body.wz-dark-theme input[type="email"],
+body.wz-dark-theme input[type="password"],
+body.wz-dark-theme input[type="search"],
+body.wz-dark-theme input[type="url"],
+body.wz-dark-theme input[type="number"],
+body.wz-dark-theme textarea,
+body.wz-dark-theme select,
+body.wz-dark-theme .wz-tag-input,
+body.wz-dark-theme .wz-tag-container .tm-input,
+body.wz-dark-theme .wz-form-comment-content {
+  background-color: rgb(47, 47, 47) !important;
+  color: #ccc !important;
+  border-color: rgb(70, 70, 70) !important;
+}
+body.wz-dark-theme .form-control::placeholder,
+body.wz-dark-theme textarea::placeholder,
+body.wz-dark-theme input::placeholder {
+  color: #888 !important;
+}
+body.wz-dark-theme .form-control:focus,
+body.wz-dark-theme textarea:focus,
+body.wz-dark-theme input:focus,
+body.wz-dark-theme select:focus {
+  background-color: rgb(47, 47, 47) !important;
+  color: #fff !important;
+  border-color: #1976d2 !important;
+}
+
+/* ---- 面包屑区域（顶部路径导航） ---- */
+body.wz-dark-theme .wz-panel-breadcrumb,
+body.wz-dark-theme .wz-panel-breadcrumb .breadcrumb,
+body.wz-dark-theme .wz-panel-breadcrumb .breadcrumb-item,
+body.wz-dark-theme .panel-breadcrumb {
+  background-color: rgb(24, 26, 27) !important;
+  background: rgb(24, 26, 27) !important;
+}
+
+/* ---- 阴影（BS5 box-shadow 默认白色调） ---- */
+body.wz-dark-theme .shadow,
+body.wz-dark-theme .shadow-sm,
+body.wz-dark-theme .shadow-lg,
+body.wz-dark-theme .box-shadow {
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .5) !important;
+}
+
+/* ---- 列表 / 下拉 ---- */
+body.wz-dark-theme .list-group,
+body.wz-dark-theme .list-group-item,
+body.wz-dark-theme .dropdown-menu,
+body.wz-dark-theme .dropdown-item {
+  background-color: rgb(30, 30, 30) !important;
+  color: #ccc !important;
+  border-color: rgb(70, 70, 70) !important;
+}
+body.wz-dark-theme .list-group-item:hover,
+body.wz-dark-theme .dropdown-item:hover {
+  background-color: rgb(52, 58, 64) !important;
+  color: #fff !important;
+}
+
+/* ---- 模态框 ---- */
+body.wz-dark-theme .modal-content,
+body.wz-dark-theme .modal-header,
+body.wz-dark-theme .modal-footer {
+  background-color: rgb(30, 30, 30) !important;
+  color: #ccc !important;
+  border-color: rgb(70, 70, 70) !important;
+}
+body.wz-dark-theme .modal-backdrop {
+  background-color: #000 !important;
+}
+
+/* ---- 按钮（bs5 .btn-light / .btn-secondary） ---- */
+body.wz-dark-theme .btn-light,
+body.wz-dark-theme .btn-secondary,
+body.wz-dark-theme .bmd-btn-fab {
+  background-color: rgb(60, 60, 60) !important;
+  color: #fff !important;
+  border-color: rgb(80, 80, 80) !important;
+}
+body.wz-dark-theme .btn-light:hover,
+body.wz-dark-theme .btn-secondary:hover {
+  background-color: rgb(80, 80, 80) !important;
+  color: #fff !important;
+}
+
+/* ---- 评论编辑器（写评论/预览 tab 按钮） ---- */
+body.wz-dark-theme .wz-comment-editor .wz-comment-editor-header,
+body.wz-dark-theme .wz-comment-editor {
+  background-color: rgb(30, 30, 30) !important;
+  color: #ccc !important;
+  border-color: rgb(70, 70, 70) !important;
+}
+body.wz-dark-theme .wz-comment-editor .wz-comment-editor-header .wz-comment-editor-write {
+  background-color: rgb(47, 47, 47) !important;
+  color: #ccc !important;
+  border-color: rgb(70, 70, 70) !important;
+  border-bottom-color: rgb(47, 47, 47) !important;
+}
+body.wz-dark-theme .wz-comment-editor .wz-comment-editor-header .wz-comment-editor-readonly {
+  background-color: transparent !important;
+  color: #888 !important;
+}
+body.wz-dark-theme .wz-comment-editor .wz-comment-editor-body textarea {
+  background-color: rgb(47, 47, 47) !important;
+  color: #fff !important;
+  border-color: rgb(70, 70, 70) !important;
+}
+body.wz-dark-theme .wz-comment-editor .wz-comment-editor-body textarea:focus {
+  background-color: rgb(60, 60, 60) !important;
+  color: #fff !important;
+}
+
+/* ---- alert 提示框（评论上方蓝色提示） ---- */
+body.wz-dark-theme .alert {
+  background-color: rgb(47, 47, 47) !important;
+  color: #ccc !important;
+  border-color: rgb(70, 70, 70) !important;
+}
+body.wz-dark-theme .alert-info {
+  background-color: #1e3a5f !important;
+  color: #b3d7ff !important;
+  border-color: #2a4a7f !important;
+}
+
+/* ---- 通用 BS5 背景工具类 ---- */
+body.wz-dark-theme .bg-white,
+body.wz-dark-theme .bg-light {
+  background-color: rgb(24, 26, 27) !important;
+  background: rgb(24, 26, 27) !important;
+}
+body.wz-dark-theme .bg-body,
+body.wz-dark-theme .bg-body-tertiary {
+  background-color: rgb(24, 26, 27) !important;
+}
+
+/* ---- card body / card footer / card header ---- */
+body.wz-dark-theme .card-body,
+body.wz-dark-theme .card-header,
+body.wz-dark-theme .card-footer {
+  background-color: rgb(24, 26, 27) !important;
+  color: #ccc !important;
+}
+
+/* ---- pre/code（prettyprint） ---- */
+body.wz-dark-theme pre.prettyprint {
+  background: #2f1e2e !important;
+}
+body.wz-dark-theme pre.prettyprint,
+body.wz-dark-theme pre code {
+  background-color: #2b2b2b !important;
+  color: #ddd !important;
+}
+
+/* ---- BS5 表头与边框颜色修正 ---- */
+body.wz-dark-theme table,
+body.wz-dark-theme table th,
+body.wz-dark-theme table td {
+  color: #ccc !important;
+}
+body.wz-dark-theme table {
+  --bs-table-bg: rgb(24, 26, 27);
+  --bs-table-color: #ccc;
+  --bs-table-border-color: rgb(70, 70, 70);
+}
+
+/* ---- nav-tabs ---- */
+body.wz-dark-theme .nav-tabs {
+  border-bottom-color: rgb(70, 70, 70) !important;
+}
+body.wz-dark-theme .nav-tabs .nav-link {
+  color: #ccc !important;
+  border-color: transparent !important;
+  background-color: transparent !important;
+}
+body.wz-dark-theme .nav-tabs .nav-link.active {
+  background-color: rgb(30, 30, 30) !important;
+  color: #fff !important;
+  border-color: rgb(70, 70, 70) rgb(70, 70, 70) rgb(30, 30, 30) !important;
+}
+
+/* ---- 用户头像背景（避免黑色头像融进黑色面板） ---- */
+body.wz-dark-theme .wz-userface-small {
+  background: #555 !important;
+  border: 1px solid rgb(70, 70, 70) !important;
+}
+
+/* ---- 表情按钮（btn-secondary bmd-btn-fab） ---- */
+body.wz-dark-theme .wz-score-opt button,
+body.wz-dark-theme .wz-score-box .btn {
+  background-color: rgb(60, 60, 60) !important;
+  color: #fff !important;
+  border-color: rgb(80, 80, 80) !important;
+}
+body.wz-dark-theme .wz-score-opt button:hover,
+body.wz-dark-theme .wz-score-box .btn:hover {
+  background-color: rgb(80, 80, 80) !important;
+}
+body.wz-dark-theme .wz-score-opt button.active {
+  background-color: #1976d2 !important;
+  border-color: #1976d2 !important;
+}
+
+/* ---- 页脚 ---- */
+body.wz-dark-theme .footer {
+  background-color: rgb(24, 26, 27) !important;
+  color: #ccc !important;
+}
+
+/* ---- swagger 区域 ---- */
+body.wz-dark-theme .swagger-ui .info,
+body.wz-dark-theme .swagger-ui .scheme-container,
+body.wz-dark-theme .swagger-ui section.models {
+  background-color: rgb(30, 30, 30) !important;
+}
+body.wz-dark-theme .swagger-ui .opblock {
+  background-color: rgb(30, 30, 30) !important;
+}
+body.wz-dark-theme .swagger-ui .model-box,
+body.wz-dark-theme .swagger-ui .scheme-container {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ---- layout 容器 ---- */
+body.wz-dark-theme .wz-main-container,
+body.wz-dark-theme .container,
+body.wz-dark-theme .container-fluid {
+  background-color: transparent !important;
+}
+
+/* ---- 块级文本选择高亮 ---- */
+body.wz-dark-theme ::selection {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+/* ---- wysiwyg / editormd 边线 ---- */
+body.wz-dark-theme #editormd,
+body.wz-dark-theme .wz-edit-control,
+body.wz-dark-theme .wz-markdown-comment {
+  border-color: rgb(70, 70, 70) !important;
+}
+
+/* ---- 文档头部面板限宽 ---- */
+body.wz-dark-theme .wz-document-header {
+  background-color: rgb(30, 30, 30) !important;
+  color: #cecece !important;
+  border-color: rgb(70, 70, 70) !important;
+}
+
+/* ---- 列表/侧边栏分隔线 ---- */
+body.wz-dark-theme hr,
+body.wz-dark-theme .border-top,
+body.wz-dark-theme .border-bottom {
+  border-color: rgb(70, 70, 70) !important;
+}
