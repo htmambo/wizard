@@ -1,0 +1,48 @@
+diff --git a/node_modules/bootstrap/dist/js/bootstrap.esm.js b/node_modules/bootstrap/dist/js/bootstrap.esm.js
+index 04807b9..7a690d0 100644
+--- a/node_modules/bootstrap/dist/js/bootstrap.esm.js
++++ b/node_modules/bootstrap/dist/js/bootstrap.esm.js
+@@ -732,10 +732,15 @@ const getSelector = element => {
+ };
+ const SelectorEngine = {
+   find(selector, element = document.documentElement) {
+-    return [].concat(...Element.prototype.querySelectorAll.call(element, selector));
++    // Patched for Wizard: see node_modules/bootstrap/js/src/dom/selector-engine.js
++    // (Raphael / editor-md 流程图会改写 Element.prototype, 这里改用元素自身的 querySelectorAll,
++    // 避开对全局 Element.prototype 的依赖。)
++    const root = element || document.documentElement;
++    return [].concat(...root.querySelectorAll(selector));
+   },
+   findOne(selector, element = document.documentElement) {
+-    return Element.prototype.querySelector.call(element, selector);
++    const root = element || document.documentElement;
++    return root.querySelector(selector);
+   },
+   children(element, selector) {
+     return [].concat(...element.children).filter(child => child.matches(selector));
+diff --git a/node_modules/bootstrap/js/src/dom/selector-engine.js b/node_modules/bootstrap/js/src/dom/selector-engine.js
+index a4d81f3..a344a71 100644
+--- a/node_modules/bootstrap/js/src/dom/selector-engine.js
++++ b/node_modules/bootstrap/js/src/dom/selector-engine.js
+@@ -34,11 +34,19 @@ const getSelector = element => {
+ 
+ const SelectorEngine = {
+   find(selector, element = document.documentElement) {
+-    return [].concat(...Element.prototype.querySelectorAll.call(element, selector))
++    // Patched for Wizard:
++    // 旧版 Raphaël (被 editor-md 用于 flowchart/sequence-diagram) 会直接重写
++    // `Element.prototype = $b`,把浏览器原生 Element.prototype 上的 querySelectorAll/querySelector 抹掉,
++    // 之后再调用 BS5 这两个方法就会抛 "Cannot read properties of undefined (reading 'call')"。
++    // 这里改用 element 自带的 querySelectorAll/querySelector (所有 Element/Document 都已实现),
++    // 既能避免第三方库污染的问题,行为上也和原实现完全等价。
++    const root = element || document.documentElement
++    return [].concat(...root.querySelectorAll(selector))
+   },
+ 
+   findOne(selector, element = document.documentElement) {
+-    return Element.prototype.querySelector.call(element, selector)
++    const root = element || document.documentElement
++    return root.querySelector(selector)
+   },
+ 
+   children(element, selector) {

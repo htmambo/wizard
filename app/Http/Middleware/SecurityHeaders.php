@@ -22,21 +22,40 @@ use Symfony\Component\HttpFoundation\Response;
  *     仍可在白名单内继续工作。其余路由统一走 strict 策略。
  *   - CSP 指令故意保留 self + unsafe-inline/unsafe-eval 而非 strict-dynamic:
  *     渲染视图层仍有大量内联脚本/样式(Blade 注入、vendor 包),短期内无法彻底清退。
+ *   - 已知外部 CDN 域名(blog 子站使用的 BS4/font-awesome/jQuery 等老依赖,以及
+ *     KaTeX 的字体与样式)显式加入白名单,避免被 CSP 拦截导致控制台一片红叉。
  */
 class SecurityHeaders
 {
+    /**
+     * 受信任的外部 CDN 列表。所有列出的域名在 style-src / script-src / font-src
+     * / img-src 中都会放开;若业务对 CSP 严格度有进一步要求,可在后续迭代中按需
+     * 拆分(例如把 jQuery 单独的 blog 路由加入 csp_exempt_routes)。
+     */
+    private const TRUSTED_CDN_HOSTS = [
+        // blog 子站使用 BS4 + font-awesome 5 + jQuery 3 的 CDN
+        'cdn.jsdelivr.net',
+        'code.jquery.com',
+        // cdnjs 公共镜像(KaTeX / FontAwesome 备用源)
+        'cdnjs.cloudflare.com',
+    ];
+
     /** @var string 默认 CSP 策略 */
-    private const DEFAULT_CSP
-        = "default-src 'self';"
-        . " script-src 'self' 'unsafe-inline' 'unsafe-eval';"
-        . " style-src 'self' 'unsafe-inline';"
-        . " font-src 'self' data:;"
-        . " img-src 'self' data: https://*.alicdn.com;"
-        . " connect-src 'self';"
-        . " frame-ancestors 'self';"
-        . " object-src 'none';"
-        . " base-uri 'self';"
-        . " form-action 'self'";
+    private function defaultCsp(): string
+    {
+        $cdn = implode(' ', array_map(static fn (string $host) => "https://{$host}", self::TRUSTED_CDN_HOSTS));
+
+        return "default-src 'self';"
+            . " script-src 'self' 'unsafe-inline' 'unsafe-eval' {$cdn};"
+            . " style-src 'self' 'unsafe-inline' {$cdn};"
+            . " font-src 'self' data: {$cdn};"
+            . " img-src 'self' data: https://*.alicdn.com {$cdn};"
+            . " connect-src 'self';"
+            . " frame-ancestors 'self';"
+            . " object-src 'none';"
+            . " base-uri 'self';"
+            . " form-action 'self'";
+    }
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -48,7 +67,7 @@ class SecurityHeaders
 
         $headers = $response->headers;
         if (!$headers->has('Content-Security-Policy')) {
-            $headers->set('Content-Security-Policy', self::DEFAULT_CSP);
+            $headers->set('Content-Security-Policy', $this->defaultCsp());
         }
         if (!$headers->has('X-Frame-Options')) {
             $headers->set('X-Frame-Options', 'SAMEORIGIN');

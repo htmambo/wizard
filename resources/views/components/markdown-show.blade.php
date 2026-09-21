@@ -4,7 +4,6 @@
 @endpush
 
 @push('script')
-<script src="{{ cdn_resource('/assets/vendor/bootstrap-treeview.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/prettify.min.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/marked.min.js') }}"></script>
 <script src="{{ cdn_resource('/assets/vendor/editor-md/lib/raphael.min.js') }}"></script>
@@ -30,6 +29,13 @@
         mermaid.init(undefined, $(".markdown-body .mermaid"));
 
         editormd.defaults.resourcesVersion = "{{ resourceVersion() }}";
+        // 使用本地 KaTeX 资源,避免 cdnjs 被 CSP 拦截。
+        // editormd.loadCSS / loadScript 内部会自动在路径后追加 .css/.js 并拼接 ?v=,
+        // 所以这里必须传纯路径,否则会拼成 ".../katex.min?v=XXX.css" 这种坏路径。
+        editormd.katexURL  = {
+            css : "/assets/vendor/katex/katex.min",
+            js  : "/assets/vendor/katex/katex.min"
+        };
         // 内容区域解析markdown
         editormd.markdownToHTML('markdown-body', {
             tocm: true,

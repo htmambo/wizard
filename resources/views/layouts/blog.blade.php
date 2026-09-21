@@ -7,6 +7,9 @@
 
     <title>@yield('title', '果农笔记')</title>
 
+    {{-- 提供显式 favicon,避免浏览器自动请求默认 /favicon.ico 拿到 404 --}}
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ cdn_resource('/favorite.png') }}">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
