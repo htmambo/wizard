@@ -34,7 +34,7 @@ return [
         'sqlite' => [
             'driver'   => 'sqlite',
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
-            'prefix'   => '',
+            'prefix'   => 'wz_',
             // 外部工具(Navicat 等)短暂持锁时等待而非立即 database is locked
             'busy_timeout' => 5000,
         ],
