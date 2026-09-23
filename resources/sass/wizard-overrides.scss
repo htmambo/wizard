@@ -101,6 +101,10 @@ label.checkbox-inline, label.radio-inline { display: inline-block; }
 .badge-dark      { @extend .bg-dark; }
 .badge-pill      { @extend .rounded-pill; }
 
+// BS4 media 对象 → BS5（BS5 已移除该组件，官方建议用 flex 工具类替代）
+.media      { display: flex; align-items: flex-start; }
+.media-body { flex: 1; }
+
 // BS3/BS4 关闭按钮 → BS5 btn-close（隐藏旧 &times; 占位）
 .close { @extend .btn-close; }
 .close span[aria-hidden="true"] { display: none; }
