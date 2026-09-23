@@ -7,7 +7,7 @@
 // 保留旧类名以便现有 blade 模板无需改动即可继续工作
 .panel          { @extend .card; }
 .panel-default  { @extend .card; }
-.panel-body     { @extend .card-body; }
+// .panel-body     { @extend .card-body; }
 .panel-heading  { @extend .card-header; }
 .panel-footer   { @extend .card-footer; }
 .panel-title    { @extend .card-title; }
@@ -114,7 +114,7 @@ label.checkbox-inline, label.radio-inline { display: inline-block; }
 }
 
 // 图标按钮
-.bmd-btn-icon { padding: .375rem .5rem; }
+.bmd-btn-icon { padding: .375rem .5rem .275rem; }
 
 // 文件上传控件（BS4 类名）
 .form-control-file { display: block; width: 100%; }
