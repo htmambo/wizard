@@ -9,8 +9,6 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Passport\Http\Controllers\AccessTokenController as PassportAccessTokenController;
 use League\OAuth2\Server\AuthorizationServer;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Laravel\Passport\TokenRepository;
 use Nyholm\Psr7\Factory\Psr17Factory;
 
 class OAuthController extends Controller
@@ -53,15 +51,21 @@ class OAuthController extends Controller
             $psrResponse = $psr17Factory->createResponse();
 
             // 使用 Laravel Passport 的内置控制器处理 OAuth 请求
+            // issueToken 返回的是 Symfony Response（由 PSR-7 响应转换而来）
             $controller = new PassportAccessTokenController(
-                app(AuthorizationServer::class),
-                app(TokenRepository::class)
+                app(AuthorizationServer::class)
             );
 
             $response = $controller->issueToken($psrRequest, $psrResponse);
 
-            return response()->json(json_decode((string) $response->getBody(), true));
+            return response()->json(
+                json_decode($response->getContent(), true),
+                $response->getStatusCode()
+            );
 
+        } catch (\Laravel\Passport\Exceptions\OAuthServerException $e) {
+            // HttpResponseException 子类，携带标准 OAuth 错误响应与状态码（如 401），直接返回
+            return $e->getResponse();
         } catch (\Exception $e) {
             \App\Support\ErrorLogger::record($e, ['context' => 'OAuthController']);
             return response()->json([
