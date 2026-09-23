@@ -563,7 +563,7 @@
 
     // initial fill
     if (opts.prefilled != null) {
-      this.prefill(opts.prefilled);
+      this.prefill(this._prefilled);
     } else if (opts.output !== null && this.lhiddenTagList && this.lhiddenTagList.value) {
       this.prefill(this.lhiddenTagList.value.split(opts.baseDelimiter));
     }

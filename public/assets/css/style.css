@@ -323,16 +323,17 @@ a:hover {
 .wz-page-count {
     display: none;
 }
-
+.wz-box-catalog:hover .wz-page-count,
 .wz-box-project:hover .wz-page-count {
     display: block;
     color: #7693c399;
     font-size: 12px;
     margin: -35px auto 0;
 }
-
+.wz-box-catalog:hover .wz-title,
 .wz-box-project:hover .wz-title {
-    margin-top: 25px;
+    margin-top: 5px;
+    font-size: 36px;
 }
 
 .wz-box-tag-star {
