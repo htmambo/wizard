@@ -33,6 +33,7 @@
 - **`RouteHelper::url()` 拒绝标量参数** —— `wzRoute('admin:api-clients:view', $id)` 抛 TypeError 导致 API 客户端管理页 500；现兼容 Laravel `route()` 的标量简写。
 - **tagmanager.js `instanceof Element` 被 raphael 破坏** —— raphael.min.js 重写 `Element.prototype` 导致 `instanceof` 判断全部失效，`$().tagsManager()` 抛 `addEventListener is not a function`，文档页标签组件与正文渲染中断、长文档失去独立滚动区域。`resolveElements`/`resolveContainer` 改为 `nodeType` 鸭子检测（顺带修复空 jQuery 集合被当成单个元素的问题）。
 - **sqlite 外部持锁即 500** —— 开发库被 Navicat 等工具持有写事务时，应用 UPDATE 立即抛 `database is locked`；sqlite 连接增加 `busy_timeout = 5000`，短暂竞争等待 5 秒而不是直接失败。
+- **`laravel/ui` 误归 `require-dev` 导致生产 `Auth::routes()` 抛 RuntimeException** —— `routes/web.php` 通过 `Auth::routes()` 调用 `Laravel\Ui\UiServiceProvider`（由 `laravel/ui` 自动发现注册），同时 `Auth\LoginController` 等控制器 `use Illuminate\Foundation\Auth\AuthenticatesUsers/RegistersUsers/...` 等 trait 由 `laravel/ui` 的 PSR-4 autoload 映射提供，均属于运行时依赖；之前误放 `require-dev` 使生产 `--no-dev` 安装缺失，`Auth::routes()` 抛 `"please install the laravel/ui package"`。已迁移到 `require`，并刷新 `composer.lock`。
 
 ### Added
 - **API 项目模块**：`Api\ProjectController` 补全 8 个缺失方法（`view`、`create`、`update`、`delete`、`members`、`addMember`、`deleteMember`、`logs`），权限与校验对齐 Web 端；并补注册缺失的 `GET api/project/{id}/documents` 路由。

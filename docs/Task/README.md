@@ -7,6 +7,7 @@
 ## Completed Tasks (Archive)
 
 ### 2026-09
+- ✅ [laravel/ui require-dev → require 迁移](Archive/2026-09/LARAVEL_UI_REQUIRE_FIX_PLAN.md) — 修复生产 `Auth::routes()` 抛 "please install laravel/ui"，完成于 2026-09-23
 - 📋 [Wizard 项目检查与分析报告](Archive/2026-09/WIZARD_PROJECT_ANALYSIS.md) — 全面项目体检（技术栈/架构/运行状态/安全对照审计），完成于 2026-09-20
 
 ### 2026-06

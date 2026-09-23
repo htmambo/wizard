@@ -20,6 +20,7 @@
         "laravel/framework": "^12",
         "laravel/passport": "^13.0",
         "laravel/tinker": "*",
+        "laravel/ui": "^4.6",
         "lcobucci/jwt": "^5.5",
         "league/html-to-markdown": "^5.1",
         "maennchen/zipstream-php": "*",
@@ -39,7 +40,6 @@
         "doctrine/dbal": "^4.3",
         "filp/whoops": "^2.18",
         "laravel/pint": "^1.24",
-        "laravel/ui": "^4.6",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^13.0",
         "fakerphp/faker": "^1.23"
